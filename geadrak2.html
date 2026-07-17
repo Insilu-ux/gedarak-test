@@ -1,0 +1,1336 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<style>
+    *{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:Arial,Helvetica,sans-serif;
+}
+
+body{
+background:#f5f7fb;
+color:#222;
+}
+
+header{
+height:90px;
+display:flex;
+align-items:center;
+justify-content:space-between;
+padding:0 35px;
+background:white;
+box-shadow:0 2px 10px rgba(0,0,0,.08);
+position:sticky;
+top:0;
+z-index:1000;
+}
+
+.logo{
+display:flex;
+align-items:center;
+gap:18px;
+}
+
+.logo img{
+height:60px;
+}
+
+.logo h1{
+font-size:42px;
+font-weight:700;
+}
+
+#menuBtn{
+font-size:34px;
+background:none;
+border:none;
+cursor:pointer;
+}
+
+.navButtons{
+display:flex;
+gap:15px;
+}
+
+.navButtons button{
+padding:12px 22px;
+border:none;
+border-radius:10px;
+cursor:pointer;
+font-size:16px;
+font-weight:bold;
+}
+
+#loginBtn{
+background:white;
+border:2px solid royalblue;
+color:royalblue;
+}
+
+#registerBtn{
+background:#0d6efd;
+color:white;
+}
+
+#postBtn{
+background:#17a34a;
+color:white;
+}
+
+.hero{
+padding:50px 30px;
+text-align:center;
+}
+
+.hero h2{
+font-size:42px;
+margin-bottom:35px;
+}
+
+.searchBar{
+display:flex;
+justify-content:center;
+gap:12px;
+flex-wrap:wrap;
+margin-bottom:25px;
+}
+
+.searchBar input{
+width:550px;
+height:52px;
+padding:0 18px;
+font-size:18px;
+border-radius:12px;
+border:2px solid #ccc;
+}
+
+.searchBar button{
+height:52px;
+padding:0 20px;
+border:none;
+border-radius:10px;
+cursor:pointer;
+font-weight:bold;
+}
+
+#searchBtn{
+background:#0d6efd;
+color:white;
+}
+
+#filterBtn{
+background:#f4f4f4;
+}
+
+#sortFilter{
+height:52px;
+padding:0 15px;
+border-radius:10px;
+font-size:17px;
+}
+
+.categories{
+display:flex;
+justify-content:center;
+gap:18px;
+flex-wrap:wrap;
+margin-top:25px;
+}
+
+.categories button{
+padding:14px 30px;
+border-radius:35px;
+border:none;
+cursor:pointer;
+font-size:17px;
+font-weight:bold;
+background:#1f7ae0;
+color:white;
+transition:.25s;
+}
+
+.categories button:hover{
+transform:translateY(-3px);
+}
+
+#propertiesSection{
+width:96%;
+max-width:1700px;
+margin:40px auto;
+}
+
+#newProperties{
+display:flex;
+flex-direction:column;
+gap:30px;
+}
+.property-card{
+
+display:grid;
+
+grid-template-columns:520px 1fr;
+
+background:white;
+
+border-radius:18px;
+
+overflow:hidden;
+
+box-shadow:0 8px 25px rgba(0,0,0,.08);
+
+transition:.25s;
+
+}
+
+.property-card:hover{
+
+transform:translateY(-6px);
+
+box-shadow:0 15px 40px rgba(0,0,0,.15);
+
+}
+
+.property-image{
+
+position:relative;
+
+height:360px;
+
+overflow:hidden;
+
+background:#ddd;
+
+}
+
+.property-photo{
+
+width:100%;
+
+height:100%;
+
+object-fit:cover;
+
+display:block;
+
+}
+
+.arrow{
+
+position:absolute;
+
+top:50%;
+
+transform:translateY(-50%);
+
+width:48px;
+
+height:48px;
+
+border:none;
+
+border-radius:50%;
+
+background:rgba(0,0,0,.55);
+
+color:white;
+
+font-size:24px;
+
+cursor:pointer;
+
+}
+
+.left{
+
+left:15px;
+
+}
+
+.right{
+
+right:15px;
+
+}
+
+.share-btn{
+
+position:absolute;
+
+left:15px;
+
+top:15px;
+
+width:45px;
+
+height:45px;
+
+background:white;
+
+border-radius:50%;
+
+display:flex;
+
+justify-content:center;
+
+align-items:center;
+
+font-size:24px;
+
+cursor:pointer;
+
+box-shadow:0 5px 15px rgba(0,0,0,.2);
+
+}
+
+.heart-btn{
+
+position:absolute;
+
+right:15px;
+
+top:15px;
+
+width:45px;
+
+height:45px;
+
+background:white;
+
+border-radius:50%;
+
+display:flex;
+
+justify-content:center;
+
+align-items:center;
+
+font-size:28px;
+
+cursor:pointer;
+
+box-shadow:0 5px 15px rgba(0,0,0,.2);
+
+}
+
+.new-badge{
+
+position:absolute;
+
+left:15px;
+
+top:75px;
+
+background:#16a34a;
+
+color:white;
+
+padding:8px 16px;
+
+border-radius:30px;
+
+font-weight:bold;
+
+}
+
+.boost-badge{
+
+position:absolute;
+
+right:15px;
+
+bottom:15px;
+
+background:#7c3aed;
+
+color:white;
+
+padding:8px 18px;
+
+border-radius:25px;
+
+font-weight:bold;
+
+}
+
+.image-counter{
+
+position:absolute;
+
+right:15px;
+
+bottom:15px;
+
+background:rgba(0,0,0,.7);
+
+color:white;
+
+padding:7px 15px;
+
+border-radius:30px;
+
+font-weight:bold;
+
+}
+
+.property-info{
+
+padding:35px;
+
+display:flex;
+
+flex-direction:column;
+
+justify-content:center;
+
+}
+
+.property-title{
+
+font-size:34px;
+
+margin-bottom:20px;
+
+}
+
+.property-type{
+
+font-size:22px;
+
+margin-bottom:15px;
+
+color:#555;
+
+}
+
+.property-location{
+
+font-size:22px;
+
+margin-bottom:30px;
+
+}
+
+.property-features{
+
+display:grid;
+
+grid-template-columns:repeat(2,1fr);
+
+gap:18px;
+
+font-size:22px;
+
+margin-bottom:35px;
+
+}
+
+.property-price{
+
+font-size:42px;
+
+font-weight:bold;
+
+color:#16953d;
+
+margin-bottom:35px;
+
+}
+
+.property-buttons{
+
+display:grid;
+
+grid-template-columns:1fr 1fr;
+
+gap:18px;
+
+}
+
+.view-btn{
+
+height:60px;
+
+border:none;
+
+background:#0d6efd;
+
+color:white;
+
+font-size:20px;
+
+font-weight:bold;
+
+border-radius:12px;
+
+cursor:pointer;
+
+}
+
+.contact-btn{
+
+height:60px;
+
+border:none;
+
+background:#16a34a;
+
+color:white;
+
+font-size:20px;
+
+font-weight:bold;
+
+border-radius:12px;
+
+cursor:pointer;
+
+}
+.latest-properties{
+
+padding:60px 7%;
+background:white;
+
+}
+
+.section-header{
+
+display:flex;
+justify-content:space-between;
+align-items:center;
+margin-bottom:35px;
+
+}
+
+.section-header h2{
+
+font-size:34px;
+font-weight:bold;
+color:#111;
+
+}
+
+.section-header p{
+
+margin-top:8px;
+color:#777;
+
+}
+
+.property-controls select{
+
+padding:12px 20px;
+border-radius:10px;
+border:1px solid #ddd;
+font-size:15px;
+
+}
+
+#propertyGrid{
+
+display:grid;
+
+grid-template-columns:
+repeat(auto-fill,minmax(340px,1fr));
+
+gap:30px;
+
+}
+.property-card{
+
+background:white;
+
+border-radius:18px;
+
+overflow:hidden;
+
+box-shadow:0 10px 30px rgba(0,0,0,.08);
+
+transition:.35s;
+
+position:relative;
+
+}
+
+.property-card:hover{
+
+transform:translateY(-8px);
+
+box-shadow:0 20px 40px rgba(0,0,0,.15);
+
+}
+.property-image{
+
+height:260px;
+
+position:relative;
+
+overflow:hidden;
+
+}
+
+.property-image img{
+
+width:100%;
+
+height:100%;
+
+object-fit:cover;
+
+transition:.4s;
+
+}
+
+.property-card:hover img{
+
+transform:scale(1.08);
+
+}
+.favourite-button{
+
+position:absolute;
+
+top:15px;
+
+right:15px;
+
+width:42px;
+
+height:42px;
+
+border-radius:50%;
+
+background:white;
+
+display:flex;
+
+justify-content:center;
+
+align-items:center;
+
+font-size:24px;
+
+cursor:pointer;
+
+box-shadow:0 5px 20px rgba(0,0,0,.15);
+
+}
+.share-button{
+
+position:absolute;
+
+left:15px;
+
+top:15px;
+
+width:42px;
+
+height:42px;
+
+background:white;
+
+border-radius:50%;
+
+display:flex;
+
+justify-content:center;
+
+align-items:center;
+
+cursor:pointer;
+
+box-shadow:0 5px 20px rgba(0,0,0,.15);
+
+}
+.new-badge{
+
+position:absolute;
+
+left:15px;
+
+bottom:15px;
+
+background:#16a34a;
+
+color:white;
+
+padding:8px 16px;
+
+border-radius:50px;
+
+font-size:13px;
+
+font-weight:bold;
+
+}
+.boost-badge{
+
+position:absolute;
+
+right:15px;
+
+bottom:15px;
+
+background:#7c3aed;
+
+color:white;
+
+padding:8px 16px;
+
+border-radius:40px;
+
+font-size:13px;
+
+font-weight:bold;
+
+}
+Details
+.property-info{
+
+padding:22px;
+
+}
+
+.property-title{
+
+font-size:24px;
+
+font-weight:bold;
+
+margin-bottom:12px;
+
+}
+
+.property-location{
+
+color:#666;
+
+margin-bottom:18px;
+
+}
+
+.property-icons{
+
+display:flex;
+
+justify-content:space-between;
+
+margin-bottom:18px;
+
+font-weight:600;
+
+}
+
+.property-price{
+
+font-size:28px;
+
+font-weight:bold;
+
+color:#16a34a;
+
+margin-bottom:20px;
+
+}
+.property-buttons{
+
+display:flex;
+
+gap:12px;
+
+}
+
+.property-buttons button{
+
+flex:1;
+
+padding:14px;
+
+border:none;
+
+border-radius:10px;
+
+font-size:16px;
+
+font-weight:bold;
+
+cursor:pointer;
+
+transition:.25s;
+
+}
+
+.view-button{
+
+background:#0d6efd;
+
+color:white;
+
+}
+
+.contact-button{
+
+background:#16a34a;
+
+color:white;
+
+}
+
+.property-buttons button:hover{
+
+transform:translateY(-3px);
+
+}
+
+.skeleton{
+
+height:500px;
+
+border-radius:18px;
+
+background:linear-gradient(
+
+90deg,
+
+#f0f0f0 25%,
+
+#fafafa 50%,
+
+#f0f0f0 75%
+
+);
+
+background-size:400% 100%;
+
+animation:loading 1.2s infinite;
+
+}
+
+@keyframes loading{
+
+0%{
+
+background-position:100% 0;
+
+}
+
+100%{
+
+background-position:-100% 0;
+
+}
+
+}
+
+.empty-properties{
+
+text-align:center;
+
+padding:100px;
+
+color:#888;
+
+font-size:22px;
+
+}
+.property-section{
+
+    width:95%;
+    max-width:1700px;
+
+    margin:40px auto;
+
+}
+
+.property-grid{
+
+    display:grid;
+
+    grid-template-columns:repeat(auto-fill,minmax(550px,1fr));
+
+    gap:30px;
+
+}
+
+.loading-box{
+
+    text-align:center;
+
+    padding:60px;
+
+    font-size:22px;
+
+    color:#666;
+
+}
+
+.no-results{
+
+    display:none;
+
+    text-align:center;
+
+    padding:80px;
+
+    font-size:24px;
+
+    color:#888;
+
+}
+.property-card{
+
+    background:white;
+
+    border-radius:18px;
+
+    overflow:hidden;
+
+    display:grid;
+
+    grid-template-columns:45% 55%;
+
+    box-shadow:0 12px 35px rgba(0,0,0,.12);
+
+    transition:.3s;
+
+}
+
+.property-card:hover{
+
+    transform:translateY(-8px);
+
+}
+
+.card-image{
+
+    position:relative;
+
+}
+
+.card-image img{
+
+    width:100%;
+
+    height:100%;
+
+    object-fit:cover;
+
+}
+
+.card-details{
+
+    padding:30px;
+
+}
+
+.card-details h2{
+
+    font-size:32px;
+
+    margin-bottom:20px;
+
+}
+
+.info-row{
+
+    display:flex;
+
+    gap:25px;
+
+    margin:18px 0;
+
+    font-size:18px;
+
+}
+
+.price{
+
+    color:#118a1f;
+
+    margin:30px 0;
+
+    font-size:38px;
+
+}
+
+.buttons{
+
+    display:flex;
+
+    gap:20px;
+
+}
+
+.buttons button{
+
+    flex:1;
+
+    padding:16px;
+
+    border:none;
+
+    border-radius:12px;
+
+    color:white;
+
+    font-size:18px;
+
+    cursor:pointer;
+
+}
+
+.buttons button:first-child{
+
+    background:#1565ff;
+
+}
+
+.buttons button:last-child{
+
+    background:#19a94c;
+
+}
+#pagination{
+
+display:flex;
+
+justify-content:center;
+
+gap:12px;
+
+margin:50px 0;
+
+flex-wrap:wrap;
+
+}
+
+#pagination button{
+
+padding:12px 20px;
+
+border:none;
+
+border-radius:10px;
+
+background:#1565ff;
+
+color:white;
+
+cursor:pointer;
+
+font-size:17px;
+
+}
+
+#pagination button.active{
+
+background:#0b3ea8;
+
+}
+.contact-popup{
+
+display:none;
+
+position:fixed;
+
+top:0;
+
+left:0;
+
+width:100%;
+
+height:100%;
+
+background:rgba(0,0,0,.45);
+
+backdrop-filter:blur(5px);
+
+justify-content:center;
+
+align-items:center;
+
+z-index:99999;
+
+}
+
+.contact-box{
+
+background:white;
+
+width:420px;
+
+max-width:92%;
+
+border-radius:18px;
+
+padding:30px;
+
+box-shadow:0 15px 50px rgba(0,0,0,.25);
+
+}
+
+.contact-box textarea{
+
+width:100%;
+
+height:120px;
+
+margin-top:15px;
+
+padding:12px;
+
+border-radius:12px;
+
+resize:none;
+
+font-size:15px;
+
+}
+
+.popup-buttons{
+
+display:flex;
+
+gap:12px;
+
+margin-top:20px;
+
+}
+
+.popup-buttons button{
+
+flex:1;
+
+padding:12px;
+
+border:none;
+
+border-radius:12px;
+
+cursor:pointer;
+
+font-weight:bold;
+
+}
+</style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Gedarak.lk</title>
+
+<link rel="stylesheet" href="style.css">
+
+<link rel="stylesheet"
+href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+
+</head>
+
+<body>
+
+<header class="navbar">
+
+<button id="menuBtn">
+☰
+</button>
+
+<div class="logo">
+
+<img src="Frame 1.png">
+
+<h1>Gedarak.lk</h1>
+
+</div>
+
+<div class="navButtons">
+
+<button id="loginBtn" onclick="goLogin()">Login</button>
+
+<button id="registerBtn" onclick="goSignup()">Register</button>
+
+<button id="postBtn" onclick="goPostProperty()">
+Post Property
+</button>
+
+</div>
+
+</header>
+
+<section class="hero">
+
+<h2>Find Your Perfect Property</h2>
+
+<div class="searchBar">
+
+<input
+type="text"
+id="searchInput"
+placeholder="Search by City, District, Address">
+
+<button id="searchBtn">
+Search
+</button>
+
+<button id="filterBtn">
+Filters
+</button>
+
+<select id="sortFilter">
+
+<option value="newest">
+Newest
+</option>
+
+<option value="priceLow">
+Price Low
+</option>
+
+<option value="priceHigh">
+Price High
+</option>
+
+<option value="views">
+Most Viewed
+</option>
+
+</select>
+
+</div>
+
+<div class="categories">
+
+<button>All</button>
+
+<button>Apartments</button>
+
+<button>Homes</button>
+
+<button>Lands</button>
+
+<button>Others</button>
+
+<button>Rentals</button>
+
+</div>
+
+</section>
+
+<section class="latest-properties">
+
+    <div class="section-header">
+
+        <div>
+
+            <h2>Latest Properties</h2>
+
+            <p>Fresh properties uploaded across Sri Lanka.</p>
+
+        </div>
+
+        <div class="property-controls">
+
+            <select id="sortFilter">
+
+                <option value="newest">Newest</option>
+                <option value="priceLow">Price Low → High</option>
+                <option value="priceHigh">Price High → Low</option>
+                <option value="views">Most Viewed</option>
+
+            </select>
+
+        </div>
+
+    </div>
+
+    <main class="property-section">
+    <div id="resultCount" class="result-count">
+
+0 Properties Found
+
+</div>
+    <div id="propertyGrid" class="property-grid">
+
+        <!-- Properties from backend -->
+
+    </div>
+    <div id="pagination"></div>
+    <div id="loadingBox" class="loading-box">
+
+        Loading properties...
+
+    </div>
+
+    <div id="noResults" class="no-results">
+
+        No properties found.
+
+    </div>
+
+</main>
+
+</section>
+
+<script src="home.js"></script>
+<script src="homeNavigation.js"></script>
+
+<div id="contactPopup" class="contact-popup">
+
+<div class="contact-box">
+
+<h2>Contact Seller</h2>
+
+<h3 id="popupProperty"></h3>
+
+<p id="popupPrice"></p>
+
+<p>
+
+👤
+
+<span id="popupOwner"></span>
+
+</p>
+
+<p>
+
+📞
+
+<span id="popupPhone"></span>
+
+</p>
+
+<textarea
+
+id="popupMessage"
+
+placeholder="Write your message..."
+
+></textarea>
+
+<div class="popup-buttons">
+
+<button id="popupWhatsapp">
+
+💬 WhatsApp
+
+</button>
+
+<button id="popupCall">
+
+📞 Call
+
+</button>
+
+<button onclick="closeContactPopup()">
+
+✕ Close
+
+</button>
+
+</div>
+
+</div>
+
+</div>
+</body>
+</html>

@@ -1,0 +1,904 @@
+<!DOCTYPE html>
+<html>
+    <head>
+       <meta charset="UTF-8">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <style>
+           #passwordStrength{
+
+font-size:15px;
+
+font-weight:bold;
+
+margin-bottom:15px;
+
+}
+
+.weak{
+
+color:red;
+
+}
+
+.medium{
+
+color:orange;
+
+}
+
+.strong{
+
+color:green;
+
+}
+body{
+    margin:0;
+    font-family:Arial,sans-serif;
+    background:#f5f5f5;
+}
+
+.auth-container{
+
+max-width:430px;
+
+margin:30px auto;
+
+background:white;
+
+padding:35px;
+
+border-radius:14px;
+
+box-shadow:0 3px 18px rgba(0,0,0,.12);
+
+}
+input{
+
+width:100%;
+
+padding:13px;
+
+font-size:16px;
+
+border:1px solid #ccc;
+
+border-radius:8px;
+
+box-sizing:border-box;
+
+margin-bottom:15px;
+
+}
+input:focus{
+
+outline:none;
+
+border:1px solid #0d8ae8;
+
+box-shadow:0 0 6px rgba(13,138,232,.25);
+
+}
+.authButton{
+
+width:100%;
+
+padding:13px;
+
+font-size:17px;
+
+font-weight:bold;
+
+background:#0d8ae8;
+
+color:white;
+
+border:none;
+
+border-radius:8px;
+
+cursor:pointer;
+
+}
+.authButton{
+
+transition:.25s;
+
+}
+
+.authButton:hover{
+
+background:#0a6fbd;
+
+transform:translateY(-2px);
+
+}
+
+.authButton:active{
+
+transform:scale(.98);
+
+}
+.authButton:disabled{
+
+opacity:.6;
+
+cursor:not-allowed;
+
+}
+
+footer{
+
+text-align:center;
+
+margin-top:45px;
+
+padding:20px;
+
+font-size:15px;
+
+color:#777;
+
+line-height:1.8;
+
+}
+a{
+
+color:#0d8ae8;
+
+text-decoration:none;
+
+font-weight:bold;
+
+}
+
+a:hover{
+
+text-decoration:underline;
+
+}
+label{
+
+font-size:15px;
+
+display:flex;
+
+align-items:center;
+
+gap:8px;
+
+margin-bottom:18px;
+
+}
+#caps{
+
+color:red;
+
+font-weight:bold;
+
+font-size:14px;
+
+margin-top:-10px;
+
+margin-bottom:12px;
+
+}
+.logo{
+
+display:block;
+
+width:85px;
+
+margin:auto;
+
+margin-bottom:20px;
+
+}
+@media(max-width:600px){
+
+.auth-container{
+
+margin:12px;
+
+margin-top:18px;
+
+padding:22px;
+
+}
+
+.pageLogo{
+
+width:42px;
+
+height:42px;
+
+}
+
+.logoLink h2{
+
+font-size:24px;
+
+}
+
+.logo{
+
+width:72px;
+
+}
+
+h1{
+
+font-size:30px;
+
+}
+
+.subtitle{
+
+font-size:15px;
+
+line-height:1.6;
+
+}
+
+input{
+
+padding:16px;
+
+font-size:17px;
+
+}
+
+.authButton{
+
+padding:16px;
+
+font-size:18px;
+
+}
+.auth-links{
+
+text-align:center;
+
+margin-top:25px;
+
+line-height:2;
+
+font-size:16px;
+
+}
+
+.auth-links a{
+
+text-decoration:none;
+
+font-weight:bold;
+
+color:#0d8ae8;
+
+}
+
+.auth-links a:hover{
+
+text-decoration:underline;
+
+}
+
+footer{
+
+padding:20px;
+
+font-size:15px;
+
+}
+
+}
+.show-password{
+    width:100%;
+    max-width:400px;
+    margin:10px auto 20px auto;
+    text-align:left;
+}
+
+.show-password label{
+    display:flex;
+    align-items:center;
+    gap:8px;
+    cursor:pointer;
+    font-size:15px;
+    font-weight:500;
+}
+
+.show-password input[type="checkbox"]{
+    width:auto;
+    margin:0;
+}
+                   .pageHeader{
+
+display:flex;
+
+justify-content:center;
+
+align-items:center;
+
+margin-bottom:30px;
+
+padding-bottom:15px;
+
+border-bottom:1px solid #ddd;
+
+}
+
+.logoLink{
+
+display:flex;
+
+align-items:center;
+
+gap:12px;
+
+text-decoration:none;
+
+color:black;
+
+}
+
+.pageLogo{
+
+width:55px;
+
+height:55px;
+
+object-fit:contain;
+
+}
+
+.logoLink h2{
+
+margin:0;
+
+font-size:32px;
+
+font-weight:bold;
+
+color:#8b008b;
+
+}
+
+@media(max-width:600px){
+
+.pageLogo{
+
+width:42px;
+
+height:42px;
+
+}
+
+.logoLink h2{
+
+font-size:24px;
+
+}
+
+}
+.tagline{
+
+margin:3px 0 0;
+
+font-size:13px;
+
+font-weight:400;
+
+color:#777;
+
+line-height:1.4;
+
+}
+        </style>
+    </head>
+    <body>
+         <a href="index.html">
+        <button>
+            💒 Home
+        </button>
+    </a>
+       <header class="pageHeader">
+
+<a href="index.html" class="logoLink">
+
+<img
+src="Frame 1.png"
+class="pageLogo">
+
+<div>
+
+<h2>
+
+Gedarak.lk
+
+</h2>
+
+<p class="tagline">
+
+Sri Lanka's Property Marketplace
+
+</p>
+
+</div>
+
+</a>
+
+</header>
+    <div class="auth-container">
+        <img src="Frame 1.png"
+class="logo">
+       <h1
+       style="
+       text-align: center;">Create Your Account</h1>
+
+<p>
+
+Join Gedarak.lk to save favourites,
+post properties and contact sellers.
+
+</p>
+       <input 
+       type="text"
+       id="newUsername"
+       placeholder="Choose a Username">
+       <br></br>
+
+<input
+
+type="email"
+
+id="email"
+
+placeholder="Enter your Email">
+<br><br>
+       <input 
+       type="password"
+       id="newPassword"
+       placeholder="Password">
+       <br><br>
+       <p id="caps"></p>
+
+<input
+type="password"
+id="confirmPassword"
+placeholder="Confirm Password">
+       <br><br>
+  <p id="passwordStrength"></p>
+
+<div class="show-password">
+    <label>
+        <input
+        type="checkbox"
+        onclick="togglePassword()">
+        Show Password
+    </label>
+</div>
+
+<br>
+      <button
+
+id="signupButton"
+class="authButton"
+onclick="signup()">
+      Create Account
+    </button>
+    <br><br>
+
+Already have an account?
+
+<a href="login.html">
+
+Login
+
+</a>
+      <footer>
+        <h3>Gedarak.lk</h3>
+        <p>Find your dream property</p>
+        <p>Email: <a href="mailto:gedarak.lk@gmail.com">
+gedarak.lk@gmail.com
+</a></p>
+        <p>Phone: +94 771 234 567</p>
+        <p>&copy; 2026 Gedarak.lk</p>
+      </footer>
+    </div>
+    <script>
+        function signup(){
+                    let btn=
+
+document.getElementById("signupButton");
+
+btn.disabled=true;
+
+btn.innerHTML="Creating...";
+           let username=
+
+document.getElementById(
+
+"newUsername"
+
+).value
+
+.trim()
+
+.toLowerCase();
+             let password=
+            document.getElementById(
+                "newPassword"
+            ).value;
+            let confirmPassword=
+document.getElementById(
+"confirmPassword"
+).value;
+let email=
+
+document.getElementById(
+
+"email"
+
+).value.trim();
+           if(
+
+username.trim()=="" ||
+
+password.trim()=="" ||
+
+confirmPassword.trim()==""
+
+){
+
+alert(
+
+"Please fill all fields."
+
+);
+btn.disabled=false;
+
+btn.innerHTML="Create Account";
+
+return;
+
+}
+
+if(password.length<4){
+
+alert("Password must contain at least 4 characters.");
+
+btn.disabled=false;
+
+btn.innerHTML="Create Account";
+
+return;
+
+}
+if(password!==confirmPassword){
+
+alert("Passwords do not match.");
+
+btn.disabled=false;
+
+btn.innerHTML="Create Account";
+
+return;
+
+}
+if(
+
+!email.includes("@")||
+
+!email.includes(".")
+
+){
+
+alert("Invalid email.");
+btn.disabled=false;
+
+btn.innerHTML="Create Account";
+
+return;
+
+}
+if(
+
+username.length<3
+
+){
+
+alert(
+
+"Username must contain at least 3 characters."
+
+);
+btn.disabled=false;
+
+btn.innerHTML="Create Account";
+
+return;
+
+}
+let usernamePattern=/^[a-zA-Z0-9_]+$/;
+
+if(
+
+!usernamePattern.test(username)
+
+){
+
+alert(
+
+"Username can only contain letters, numbers and _"
+
+);
+btn.disabled=false;
+
+btn.innerHTML="Create Account";
+
+return;
+
+}
+           let user={
+
+id:"USER"+Date.now(),
+
+username:username,
+
+password:password,
+
+email:email,
+
+role:"User",
+
+createdAt:new Date().toISOString(),
+
+savedProperties:[],
+
+postedProperties:[],
+
+status:"Active"
+
+}
+if(
+
+localStorage.getItem(
+
+"user_"+username
+
+)
+
+){
+
+alert(
+
+"Username already exists."
+
+);
+btn.disabled=false;
+
+btn.innerHTML="Create Account";
+
+return;
+
+}
+for(
+
+let i=0;
+
+i<localStorage.length;
+
+i++
+
+){
+
+let key=
+
+localStorage.key(i);
+
+if(key.startsWith("user_")){
+
+let u=
+
+JSON.parse(
+
+localStorage.getItem(key)
+
+);
+
+if(
+
+u.email===email
+
+){
+
+alert(
+
+"Email already registered."
+
+);
+btn.disabled=false;
+
+btn.innerHTML="Create Account";
+
+return;
+
+}
+
+}
+
+}
+
+
+            localStorage.setItem(
+"user_" + username,
+JSON.stringify(user)
+);
+           localStorage.setItem(
+
+"loggedIn",
+
+"true"
+
+);
+
+localStorage.setItem(
+
+"currentUser",
+
+username
+
+);
+
+alert(
+
+"Welcome to Gedarak.lk!"
+
+);
+
+window.location.href=
+
+"index.html";
+        }
+        function togglePassword(){
+
+
+let newPassword=
+
+document.getElementById(
+
+"newPassword"
+
+);
+
+if(newPassword){
+
+newPassword.type=
+
+newPassword.type=="password"
+
+?
+
+"text"
+
+:
+
+"password";
+
+}
+let confirmPassword =
+
+document.getElementById(
+
+"confirmPassword"
+
+);
+
+if(confirmPassword){
+
+confirmPassword.type=
+
+confirmPassword.type=="password"
+
+?
+
+"text"
+
+:
+
+"password";
+
+}
+}
+document.getElementById(
+
+"newPassword"
+
+).addEventListener(
+
+"input",
+
+function(){
+
+let p=this.value;
+
+let strength="Weak";
+
+if(
+
+p.length>=8
+
+){
+
+strength="Medium";
+
+}
+
+if(
+
+p.length>=10 &&
+
+/[A-Z]/.test(p)&&
+
+/[0-9]/.test(p)
+
+){
+
+strength="Strong";
+
+}
+
+});
+let strength=document.getElementById("passwordStrength");
+
+document.getElementById("newPassword")
+.addEventListener("input",function(){
+
+let p=this.value;
+
+strength.className="";
+
+if(p.length<4){
+
+strength.innerHTML="Weak Password";
+
+strength.classList.add("weak");
+
+}
+
+else if(p.length<8){
+
+strength.innerHTML="Good Password";
+
+strength.classList.add("medium");
+
+}
+
+else{
+
+strength.innerHTML="Strong Password";
+
+strength.classList.add("strong");
+
+}
+
+});
+
+document.addEventListener(
+
+"keydown",
+
+function(event){
+
+if(event.key==="Enter"){
+
+signup();
+
+}
+
+});
+document.getElementById("newUsername").focus();
+    </script>
+    </body>
+</html>

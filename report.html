@@ -1,0 +1,698 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <style>
+
+body{
+
+max-width:900px;
+
+margin:auto;
+
+padding:30px;
+
+font-family:Arial,sans-serif;
+
+}
+
+input,
+textarea,
+select{
+
+width:100%;
+
+padding:12px;
+
+font-size:16px;
+
+border-radius:8px;
+
+border:1px solid #ccc;
+
+box-sizing:border-box;
+
+}
+
+button{
+
+padding:12px 24px;
+
+cursor:pointer;
+
+font-size:17px;
+
+border:none;
+
+border-radius:8px;
+
+}
+                   .pageHeader{
+
+display:flex;
+
+justify-content:center;
+
+align-items:center;
+
+margin-bottom:30px;
+
+padding-bottom:15px;
+
+border-bottom:1px solid #ddd;
+
+}
+
+.logoLink{
+
+display:flex;
+
+align-items:center;
+
+gap:12px;
+
+text-decoration:none;
+
+color:black;
+
+}
+
+.pageLogo{
+
+width:55px;
+
+height:55px;
+
+object-fit:contain;
+
+}
+
+.logoLink h2{
+
+margin:0;
+
+font-size:32px;
+
+font-weight:bold;
+
+color:#8b008b;
+
+}
+
+@media(max-width:600px){
+
+.pageLogo{
+
+width:42px;
+
+height:42px;
+
+}
+
+.logoLink h2{
+
+font-size:24px;
+
+}
+
+}
+.tagline{
+
+margin:0;
+
+font-size:14px;
+
+color:#666;
+
+}
+</style>
+        <title>Report a Problem</title>
+        <link rel="stylesheet" href="style.css">
+    </head>
+    <body>
+    <a href="index.html">
+        <button class="home-btn">
+            💒 Home
+        </button>
+    </a>
+       <header class="pageHeader">
+
+<a href="index.html" class="logoLink">
+
+<img
+src="Frame 1.png"
+class="pageLogo">
+
+<div>
+
+<h2>
+
+Gedarak.lk
+
+</h2>
+
+<p class="tagline">
+
+Sri Lanka's Property Marketplace
+
+</p>
+
+</div>
+
+</a>
+
+</header>
+   <h1 style="text-align: center;">Report a Problem</h1>
+
+<p style="
+font-size:20px;
+text-align:center;
+max-width:750px;
+margin:auto;
+margin-bottom:35px;
+">
+
+Found something wrong?
+
+Help us improve Gedarak.lk by reporting bugs,
+fake listings or other issues.
+
+</p>
+   <form id="reportForm">
+
+<input
+type="text"
+id="reportName"
+placeholder="Your Name"
+required>
+
+<br><br>
+
+<div style="display:flex;align-items:center;">
+
+<span
+style="
+padding:12px;
+background:#f2f2f2;
+border:1px solid #ccc;
+border-right:none;
+border-radius:8px 0 0 8px;
+font-weight:bold;
+">
++94
+</span>
+
+<input
+type="tel"
+id="reportPhone"
+placeholder="771234567"
+maxlength="9"
+inputmode="numeric"
+oninput="this.value=this.value.replace(/[^0-9]/g,'');"
+style="
+border-radius:0 8px 8px 0;
+width:110px;
+flex:none;
+">
+
+</div>
+
+<br><br>
+
+<input
+type="email"
+id="reportEmail"
+placeholder="Your Email"
+required>
+
+<br><br>
+
+<select id="reportType">
+
+<option value="">Select Problem</option>
+
+<option>Bug / Error</option>
+
+<option>Property Information Incorrect</option>
+
+<option>Fake Listing</option>
+
+<option>Scam / Fraud</option>
+
+<option>Inappropriate Images</option>
+
+<option>Spam Listing</option>
+
+<option>Account Problem</option>
+
+<option>Suggestion</option>
+
+<option>Other</option>
+
+</select>
+
+<br><br>
+
+<label>Priority</label>
+
+<select id="reportPriority">
+
+<option value="Low">Low</option>
+
+<option value="Medium">Medium</option>
+
+<option value="High">High</option>
+
+</select>
+
+<br><br>
+
+<input
+type="text"
+id="propertyID"
+placeholder="
+Property Name 
+
+Example:
+Luxury Villa - Colombo 7">
+
+<br><br>
+
+<label><b>Attach Screenshot (Optional)</b></label>
+
+<br><br>
+
+<input
+type="file"
+id="reportImage"
+accept="image/*"
+onchange="previewReportImage()">
+
+<br><br>
+
+<div
+id="reportPreviewContainer"
+style="
+display:none;
+position:relative;
+width:320px;
+">
+
+<img
+id="reportPreview"
+style="
+width:100%;
+height:220px;
+object-fit:cover;
+border-radius:12px;
+border:1px solid #ccc;
+">
+
+<div
+onclick="removeReportImage()"
+style="
+position:absolute;
+top:10px;
+right:10px;
+width:40px;
+height:40px;
+font-size:24px;
+background:rgba(0,0,0,.65);
+color:white;
+display:flex;
+justify-content:center;
+align-items:center;
+border-radius:50%;
+cursor:pointer;
+font-weight:bold;
+">
+
+✖
+
+</div>
+
+</div>
+
+<br><br>
+
+<textarea
+id="reportMessage"
+rows="8"
+placeholder="Describe the problem..."
+required></textarea>
+
+<br><br>
+
+<button
+type="button"
+onclick="submitReport()">
+
+🚩 Report Issue
+
+</button>
+<p
+
+style="
+
+font-size:15px;
+
+color:#666;
+
+margin-top:20px;
+
+text-align:center;
+
+">
+
+By submitting this report you agree
+that Gedarak.lk may contact you
+regarding this issue.
+
+</p>
+
+</form>
+<h2>
+
+What Happens Next?
+
+</h2>
+
+<p>
+
+• Your report is safely received.
+
+</p>
+
+<p>
+
+• Our team reviews every report.
+
+</p>
+
+<p>
+
+• Serious issues such as fake listings
+receive higher priority.
+
+</p>
+
+<p>
+
+• We may contact you if more
+information is needed.
+
+</p>
+
+<h2>
+
+Privacy
+
+</h2>
+
+<p>
+
+Your information will only be used
+to investigate this report.
+
+We never sell or share your personal
+information.
+
+</p>
+
+<hr>
+
+<h2
+style="
+text-align:center;
+margin-top:40px;
+">
+
+Common Problems
+
+</h2>
+
+<ul
+style="
+max-width:700px;
+margin:auto;
+font-size:18px;
+line-height:2;
+">
+
+<li>Property information is incorrect</li>
+
+<li>Images do not match the property</li>
+
+<li>Property has already been sold</li>
+
+<li>Scam or suspicious listing</li>
+
+<li>Technical bug on the website</li>
+
+<li>Suggestion for improving Gedarak.lk</li>
+
+</ul>
+
+    <footer>
+        <p>&copy; 2026 Gedarak.lk</p>
+    </footer>
+    <script>
+        function submitReport(){
+
+let name=
+document.getElementById("reportName").value.trim();
+
+let email=
+document.getElementById("reportEmail").value.trim();
+
+let emailPattern =
+
+/^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+if(!emailPattern.test(email)){
+
+    alert("Please enter a valid email address.");
+
+    return;
+
+}
+
+
+let type=
+document.getElementById("reportType").value;
+
+let priority =
+document.getElementById("reportPriority").value;
+
+let property=
+document.getElementById("propertyID").value.trim();
+
+let message=
+document.getElementById("reportMessage").value.trim();
+
+let phone =
+document.getElementById("reportPhone")
+.value
+.trim();
+
+let phonePattern = /^[0-9]{9}$/;
+
+if(!phonePattern.test(phone)){
+
+alert(
+"Please enter a valid Sri Lankan mobile number."
+);
+
+return;
+
+}
+
+if(
+name==""||
+email==""||
+type==""||
+message==""
+){
+
+alert("Please complete all required fields.");
+
+return;
+
+}
+let reportNumber =
+parseInt(
+localStorage.getItem("lastReportNumber") || "0"
+) + 1;
+
+localStorage.setItem(
+"lastReportNumber",
+reportNumber
+);
+
+let reportID =
+"REP-" +
+String(reportNumber).padStart(6,"0");
+
+
+let report={
+
+id:reportID,
+
+name:name,
+
+email:email,
+
+phone:"+94"+phone,
+
+image:
+document.getElementById("reportPreview").src,
+
+type:type,
+
+priority:priority,
+
+property:property,
+
+message:message,
+
+status:"Pending",
+
+date:new Date().toLocaleString()
+
+
+};
+
+let reports=
+JSON.parse(
+localStorage.getItem("reports")||"[]"
+);
+
+reports.push(report);
+
+localStorage.setItem(
+"reports",
+JSON.stringify(reports)
+);
+
+
+showNotification(
+
+"✅ Thank you for helping improve Gedarak.lk.\n\n" +
+
+"Your report has been received.\n" +
+
+"Reference: " + reportID
+
+);
+
+document.getElementById("reportForm").reset();
+
+removeReportImage();
+
+}
+function showNotification(message){
+
+let box =
+document.getElementById("notification");
+
+box.innerHTML = message;
+
+box.style.opacity="1";
+
+setTimeout(function(){
+
+box.style.opacity="0";
+
+},2500);
+
+}
+
+function previewReportImage(){
+
+let file =
+document.getElementById("reportImage").files[0];
+
+if(!file){
+    return;
+}
+
+let reader = new FileReader();
+
+reader.onload = function(e){
+
+document.getElementById("reportPreview").src =
+e.target.result;
+
+document.getElementById(
+"reportPreviewContainer"
+).style.display="block";
+
+};
+
+reader.readAsDataURL(file);
+
+}
+
+function removeReportImage(){
+
+document.getElementById("reportImage").value="";
+
+document.getElementById(
+"reportPreviewContainer"
+).style.display="none";
+
+document.getElementById(
+"reportPreview"
+).src="";
+
+}
+    </script>
+   <div id="notification"
+
+style="
+
+position:fixed;
+
+top:30px;
+
+left:50%;
+
+transform:translateX(-50%);
+
+background:#111;
+
+color:white;
+
+padding:16px 26px;
+
+border-radius:12px;
+
+font-size:17px;
+
+font-weight:600;
+
+line-height:1.5;
+
+text-align:center;
+
+white-space:pre-line;
+
+box-shadow:0 8px 24px rgba(0,0,0,.25);
+
+opacity:0;
+
+transition:opacity .35s ease;
+
+pointer-events:none;
+
+z-index:9999;
+
+max-width:420px;
+
+">
+
+</div>
+    </body>
+</html>

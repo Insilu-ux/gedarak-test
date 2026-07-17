@@ -1,0 +1,631 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <style>
+           body{
+
+max-width:900px;
+
+margin:auto;
+
+padding:25px;
+
+font-family:Arial,sans-serif;
+
+background:#f7f7f7;
+
+}
+
+.aboutCard{
+
+background:white;
+
+padding:22px;
+
+margin-bottom:25px;
+
+border-radius:14px;
+
+box-shadow:0 3px 10px rgba(0,0,0,.12);
+
+}
+
+.aboutCard h2{
+
+margin-top:0;
+
+margin-bottom:18px;
+
+font-size:28px;
+
+}
+
+.aboutCard p{
+
+font-size:18px;
+
+line-height:1.8;
+
+margin:10px 0;
+
+}
+
+.bigTitle{
+
+font-size:40px;
+
+font-weight:bold;
+
+text-align:center;
+
+color:#007bff;
+
+margin-top:20px;
+
+margin-bottom:10px;
+
+}
+
+.subtitle{
+
+font-size:20px;
+
+text-align:center;
+
+line-height:1.8;
+
+max-width:850px;
+
+margin:auto;
+
+margin-bottom:35px;
+
+color:#555;
+
+}
+
+.categoryGrid{
+
+display:grid;
+
+grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+
+gap:15px;
+
+margin-top:15px;
+
+}
+
+.categoryItem{
+
+background:#f3f3f3;
+
+padding:15px;
+
+border-radius:10px;
+
+font-size:18px;
+
+font-weight:bold;
+
+text-align:center;
+
+}
+
+.stats{
+
+display:flex;
+
+justify-content:center;
+
+gap:20px;
+
+flex-wrap:wrap;
+
+margin-top:20px;
+
+}
+
+.stat-box{
+
+width:170px;
+
+background:white;
+
+padding:20px;
+
+border-radius:12px;
+
+text-align:center;
+
+box-shadow:0 3px 10px rgba(0,0,0,.12);
+
+}
+
+.stat-box h2{
+
+font-size:34px;
+
+margin-bottom:10px;
+
+}
+
+.stat-box h3{
+
+font-size:30px;
+
+color:#007bff;
+
+margin:0;
+
+}
+
+.stat-box p{
+
+font-size:17px;
+
+font-weight:bold;
+
+margin-top:12px;
+
+}
+
+.info{
+
+font-size:18px;
+
+line-height:2;
+
+}
+
+footer{
+
+text-align:center;
+
+margin-top:40px;
+
+color:#666;
+
+}
+
+@media(max-width:600px){
+
+body{
+
+padding:15px;
+
+}
+
+.bigTitle{
+
+font-size:30px;
+
+}
+
+.subtitle{
+
+font-size:17px;
+
+}
+
+.aboutCard{
+
+padding:18px;
+
+}
+
+.aboutCard h2{
+
+font-size:24px;
+
+}
+
+.aboutCard p{
+
+font-size:16px;
+
+}
+
+.categoryItem{
+
+font-size:16px;
+
+}
+
+.stat-box{
+
+width:140px;
+
+padding:15px;
+
+}
+
+.stat-box h2{
+
+font-size:28px;
+
+}
+
+.stat-box h3{
+
+font-size:24px;
+
+}
+
+.info{
+
+font-size:16px;
+
+}
+
+}
+.pageHeader{
+
+display:flex;
+
+justify-content:center;
+
+align-items:center;
+
+margin-bottom:30px;
+
+padding-bottom:15px;
+
+border-bottom:1px solid #ddd;
+
+}
+
+.logoLink{
+
+display:flex;
+
+align-items:center;
+
+gap:12px;
+
+text-decoration:none;
+
+color:black;
+
+}
+
+.pageLogo{
+
+width:55px;
+
+height:55px;
+
+object-fit:contain;
+
+}
+
+.logoLink h2{
+
+margin:0;
+
+font-size:32px;
+
+font-weight:bold;
+
+color:#8b008b;
+
+}
+
+@media(max-width:600px){
+
+.pageLogo{
+
+width:42px;
+
+height:42px;
+
+}
+
+.logoLink h2{
+
+font-size:24px;
+
+}
+
+}
+.tagline{
+
+margin:0;
+
+font-size:14px;
+
+color:#666;
+
+}
+        </style>
+        <title>About Gedarak.lk</title>
+        <link rel="stylesheet" href="style.css">
+    </head>
+    <body>
+        <a href="index.html">
+            <button class="home-btn">
+                💒 Home
+            </button>
+        </a>
+        <header class="pageHeader">
+
+<a href="index.html" class="logoLink">
+
+<img
+src="Frame 1.png"
+class="pageLogo">
+
+<div>
+
+<h2>
+
+Gedarak.lk
+
+</h2>
+
+<p class="tagline">
+
+Sri Lanka's Property Marketplace
+
+</p>
+
+</div>
+
+</a>
+
+</header>
+ <h1 class="bigTitle">
+About Gedarak.lk
+</h1>
+
+<p class="subtitle">
+
+Gedarak.lk is a modern Sri Lankan property marketplace helping people buy, sell and rent properties through a fast, trusted and mobile-friendly experience.
+
+</p>
+
+
+<div class="aboutCard">
+
+<h2>
+🏦 Our Mission
+</h2>
+
+<p>
+
+To make buying, selling and renting property in Sri Lanka faster, safer and easier for everyone.
+
+</p>
+
+</div>
+<div class="aboutCard">
+<h2>🛕 Our Vision</h2>
+
+<p>
+To become Sri Lanka's most trusted digital property marketplace,
+connecting every buyer, seller, landlord and agent through one
+modern platform.
+</p>
+</div>
+<div class="aboutCard">
+
+<h2>
+⭐ Our Values
+</h2>
+
+<p>✔ Trust and transparency</p>
+
+<p>✔ Accurate property information</p>
+
+<p>✔ A simple experience for buyers and sellers</p>
+
+<p>✔ Continuous improvement based on user feedback</p>
+
+</div>
+<div class="aboutCard">
+
+<h2>
+
+🏘 Property Categories
+
+</h2>
+
+<div class="categoryGrid">
+
+<div class="categoryItem">🏠 Houses</div>
+
+<div class="categoryItem">🏢 Apartments</div>
+
+<div class="categoryItem">🏡 Villas</div>
+
+<div class="categoryItem">🏘 Annexes</div>
+
+<div class="categoryItem">🌿 Lands</div>
+
+<div class="categoryItem">🏬 Commercial</div>
+
+<div class="categoryItem">🏢 Offices</div>
+
+<div class="categoryItem">🛒 Shops</div>
+
+<div class="categoryItem">🏭 Warehouses</div>
+
+<div class="categoryItem">🏨 Hotels</div>
+
+<div class="categoryItem">🏛 Buildings</div>
+
+<div class="categoryItem">🏕 Bungalows</div>
+
+</div>
+
+</div>
+</div>
+<div class="aboutCard">
+
+<h2>
+
+✅ Why Choose Gedarak.lk?
+
+</h2>
+
+<p>✔ Smart property search</p>
+
+<p>✔ Powerful filters</p>
+
+<p>✔ Save favourite properties</p>
+
+<p>✔ Share listings instantly</p>
+
+<p>✔ Similar property recommendations</p>
+
+<p>✔ Mobile friendly experience</p>
+
+<p>✔ Direct WhatsApp contact</p>
+
+<p>✔ Built specifically for Sri Lanka</p>
+
+</div>
+
+<div class="aboutCard">
+
+<h2>🛡 Safety Tips</h2>
+
+<p>• Never pay money before inspecting a property.</p>
+
+<p>• Meet sellers in safe public locations whenever possible.</p>
+
+<p>• Report suspicious or fake listings immediately.</p>
+
+<p>• Always verify ownership before making payments.</p>
+
+</div>
+<div class="aboutCard">
+
+<h2>📊 Platform Statistics</h2>
+
+<div class="stats">
+
+<div class="stat-box">
+
+<h2>🏠</h2>
+
+<h3 id="totalProperties">0</h3>
+
+<p>Properties</p>
+
+</div>
+
+<div class="stat-box">
+
+<h2>📍</h2>
+
+<h3>25</h3>
+
+<p>Districts</p>
+
+</div>
+
+</div>
+</div>
+<div class="aboutCard">
+
+
+<h2>Contact Us</h2>
+
+<p>
+<a href="mailto:gedarak.lk@gmail.com">
+  gedarak.lk@gmail.com
+</a>
+</p>
+
+<p>
+📞 +94 771 234 567
+</p>
+
+<p>
+📍 Sri Lanka
+</p>
+
+</div>
+
+<p style="text-align:center;">
+
+Gedarak.lk Version 1.0
+
+</p>
+
+      <footer
+style="
+text-align:center;
+margin-top:50px;
+padding:20px;
+color:gray;
+">
+
+<p>
+
+© 2026 Gedarak.lk
+
+</p>
+
+<p>
+
+Helping Sri Lanka Find Home.
+
+</p>
+
+</footer>
+        <script>
+
+let totalProperties = 0;
+
+let totalViews = 0;
+
+let totalFavourites = 0;
+
+for(let i=0;i<localStorage.length;i++){
+
+let key = localStorage.key(i);
+
+try{
+
+let item = JSON.parse(localStorage.getItem(key));
+
+if(item && item.approved===true){
+
+totalProperties++;
+
+totalViews += item.views || 0;
+
+}
+
+}catch(e){}
+
+}
+
+for(let i=0;i<localStorage.length;i++){
+
+let key = localStorage.key(i);
+
+if(key.startsWith("favourites_")){
+
+let favs = JSON.parse(localStorage.getItem(key));
+
+totalFavourites += favs.length;
+
+}
+
+}
+
+document.getElementById("totalProperties").innerHTML = totalProperties;
+
+document.getElementById("totalViews").innerHTML = totalViews;
+
+document.getElementById("totalFavourites").innerHTML = totalFavourites;
+
+</script>
+    </body>
+</html>

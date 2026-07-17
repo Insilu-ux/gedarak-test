@@ -1,0 +1,616 @@
+<!DOCTYPE html>
+<html>
+    <head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport"
+
+content="width=device-width, initial-scale=1.0">
+
+<title>Login</title>
+
+<link rel="stylesheet" href="style.css">
+<style>
+body{
+
+margin:0;
+
+background:#f4f6f8;
+
+font-family:Arial,sans-serif;
+
+}
+
+.auth-container{
+
+max-width:430px;
+
+margin:30px auto;
+
+background:white;
+
+padding:35px;
+
+border-radius:14px;
+
+box-shadow:0 3px 18px rgba(0,0,0,.12);
+
+}
+
+.logo{
+
+width:90px;
+
+display:block;
+
+margin:auto;
+
+margin-bottom:20px;
+
+}
+
+.subtitle{
+
+text-align:center;
+
+color:#666;
+
+margin-bottom:25px;
+
+line-height:1.5;
+
+}
+
+input{
+
+width:100%;
+
+padding:14px;
+
+font-size:16px;
+
+border-radius:8px;
+
+border:1px solid #ccc;
+
+box-sizing:border-box;
+
+margin-bottom:15px;
+
+}
+.login-btn{
+
+width:100%;
+
+padding:14px;
+
+font-size:17px;
+
+font-weight:bold;
+
+background:#0d8ae8;
+
+color:white;
+
+border:none;
+
+border-radius:8px;
+
+cursor:pointer;
+
+transition:.25s;
+
+}
+
+.login-btn:hover{
+
+background:#0a6fbd;
+
+transform:translateY(-2px);
+
+}
+
+.login-btn:active{
+
+transform:scale(.98);
+
+}
+
+.login-btn:disabled{
+
+opacity:.6;
+
+cursor:not-allowed;
+
+}
+
+
+button:hover{
+
+background:#0a6fbd;
+
+}
+
+
+
+footer{
+
+text-align:center;
+
+margin-top:50px;
+
+padding:25px;
+
+font-size:15px;
+
+}
+
+h1{
+
+text-align:center;
+
+margin-bottom:10px;
+
+}
+
+.show-password{
+
+margin:5px 0 20px;
+
+}
+
+.show-password label{
+
+display:flex;
+
+align-items:center;
+
+gap:8px;
+
+cursor:pointer;
+
+font-size:15px;
+
+}
+
+.show-password input{
+
+width:auto;
+
+margin:0;
+
+}
+
+@media(max-width:600px){
+    h1{
+
+font-size:30px;
+
+}
+
+.subtitle{
+
+font-size:15px;
+
+}
+
+.auth-container{
+
+margin:10px;
+
+margin-top:15px;
+
+padding:22px;
+
+}
+input{
+
+padding:16px;
+
+font-size:17px;
+
+}
+
+
+
+}
+.auth-links{
+
+text-align:center;
+
+margin-top:25px;
+
+line-height:2;
+
+font-size:16px;
+
+}
+
+.auth-links a{
+
+font-weight:bold;
+
+text-decoration:none;
+
+color:#0d8ae8;
+
+}
+
+.auth-links a:hover{
+
+text-decoration:underline;
+
+}
+.pageHeader{
+
+display:flex;
+
+justify-content:center;
+
+align-items:center;
+
+margin-bottom:30px;
+
+padding-bottom:15px;
+
+border-bottom:1px solid #ddd;
+
+}
+
+.logoLink{
+
+display:flex;
+
+align-items:center;
+
+gap:12px;
+
+text-decoration:none;
+
+color:black;
+
+}
+
+.pageLogo{
+
+width:55px;
+
+height:55px;
+
+object-fit:contain;
+
+}
+
+.logoLink h2{
+
+margin:0;
+
+font-size:32px;
+
+font-weight:bold;
+
+color:#8b008b;
+
+}
+
+@media(max-width:600px){
+
+.pageLogo{
+
+width:42px;
+
+height:42px;
+
+}
+
+.logoLink h2{
+
+font-size:24px;
+
+}
+.logo{
+
+width:75px;
+
+}
+
+}
+.tagline{
+
+margin:0;
+
+font-size:14px;
+
+color:#666;
+
+}
+input:focus{
+
+outline:none;
+
+border:1px solid #0d8ae8;
+
+box-shadow:0 0 5px rgba(13,138,232,.3);
+
+}
+
+</style>
+
+</head>
+    <body>
+        <a href="index.html">
+        <button class="home-btn">
+        💒 Home
+        </button>
+    </a>
+          <header class="pageHeader">
+
+<a href="index.html" class="logoLink">
+
+<img
+src="Frame 1.png"
+class="pageLogo">
+
+<div>
+
+<h2>
+
+Gedarak.lk
+
+</h2>
+
+<p class="tagline">
+
+Sri Lanka's Property Marketplace
+
+</p>
+
+</div>
+
+</a>
+
+</header>
+<div class="auth-container">
+
+<img src="Frame 1.png" class="logo">
+
+<h1>Welcome Back</h1>
+
+<p class="subtitle">
+Login to save favourites, manage your listings and contact sellers.
+</p>
+       <input 
+       type="text"
+       id="username"
+       placeholder="Enter Username">
+    
+       <input 
+       type="password"
+       id="password"
+       placeholder="Enter Password">
+   
+       <div class="show-password">
+
+<label>
+
+<input
+
+type="checkbox"
+
+onclick="togglePassword()">
+
+Show Password
+
+</label>
+
+</div>
+       
+       <button
+
+id="loginButton"
+class="login-btn"
+onclick="login()">
+       Login
+    </button>
+   
+  
+   <div class="auth-links">
+
+Don't have an account?
+
+<a href="signup.html">
+
+Create Account
+
+</a>
+
+<br>
+
+<a href="forgotpassword.html">
+
+Forgot Password?
+
+</a>
+
+</div>
+</div>
+      <footer>
+        <h3>Gedarak.lk</h3>
+        <p>Find your dream property</p>
+       <p>
+
+Email:
+
+<a href="mailto:gedarak.lk@gmail.com">
+
+gedarak.lk@gmail.com
+
+</a>
+
+</p>
+        <p>Phone: +94 771 234 567</p>
+        <p>&copy; 2026 Gedarak.lk</p>
+      </footer>
+    <script>
+        function login(){
+            let btn=
+
+document.getElementById("loginButton");
+
+btn.disabled=true;
+
+btn.innerHTML="Logging you in...";
+           let username=
+
+document.getElementById(
+
+"username"
+
+).value
+
+.trim()
+
+.toLowerCase();
+             let password=
+            document.getElementById(
+                "password"
+            ).value;
+            if(
+                username==""
+                ||
+                password.trim()===""
+            ){
+            alert(
+                "Enter username and password"
+            );
+            btn.disabled=false;
+
+btn.innerHTML="Login";
+            return;
+            }
+            let data=
+           localStorage.getItem(
+"user_" + username
+);
+            if(data){
+                let user=
+                JSON.parse(data);
+                if(
+
+user.status=="Banned"
+
+){
+
+alert(
+
+"This account has been suspended."
+
+);
+btn.disabled=false;
+
+btn.innerHTML="Login";
+return;
+
+}
+                if(
+                    user.password===password
+                ){
+                    localStorage.setItem(
+                        "loggedIn",
+                        "true"
+                    );
+                    localStorage.setItem(
+
+"currentUser",
+
+username
+
+);
+
+localStorage.setItem(
+
+"loginTime",
+
+new Date().toISOString()
+
+);
+                    alert(
+                        "Login Successful"
+                    );
+                    window.location.href=
+                    "index.html";
+                }
+                    else{
+                        alert(
+                            "Wrong Password"
+                        );
+                        btn.disabled=false;
+btn.innerHTML="Login";
+                    }
+                }
+                else{
+                    alert(
+                        "No account found"
+                    );
+                    btn.disabled=false;
+btn.innerHTML="Login";
+                }
+            }
+            
+           function togglePassword(){
+
+let ids=[
+
+"password",
+
+"newPassword",
+
+"confirmPassword"
+
+];
+
+ids.forEach(function(id){
+
+let input=document.getElementById(id);
+
+if(input){
+
+input.type=
+
+input.type=="password"
+
+?
+
+"text"
+
+:
+
+"password";
+
+}
+
+});
+
+}
+document.addEventListener(
+
+"keydown",
+
+function(event){
+
+if(event.key==="Enter"){
+
+login();
+
+}
+
+});
+document.getElementById(
+
+"username"
+
+).focus();
+    </script>
+    </body>
+</html>

@@ -1,0 +1,550 @@
+<!DOCTYPE html>
+<html>
+        <head>
+            <meta charset="UTF-8">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <style>
+.dashboard{
+
+display:grid;
+
+grid-template-columns:
+repeat(auto-fit,minmax(250px,1fr));
+
+gap:20px;
+
+margin-top:30px;
+
+}
+.card{
+
+background:white;
+
+padding:20px;
+
+border-radius:12px;
+
+box-shadow:0 3px 12px rgba(0,0,0,.12);
+
+text-align:center;
+
+transition:.3s;
+
+}
+.card:hover{
+
+transform:translateY(-5px);
+
+}
+.card h1{
+
+font-size:42px;
+
+margin:12px 0 0 0;
+
+font-weight:700;
+
+color:#0077ff;
+
+}
+.card h3{
+
+margin:0;
+
+font-size:19px;
+
+font-weight:600;
+
+}
+body{
+
+max-width:1100px;
+
+margin:auto;
+
+padding:20px;
+
+font-family:Arial,sans-serif;
+
+}
+.quickActions{
+
+display:flex;
+
+flex-wrap:wrap;
+
+gap:15px;
+
+margin-top:20px;
+
+}
+           .pageHeader{
+
+display:flex;
+
+justify-content:center;
+
+align-items:center;
+
+margin-bottom:30px;
+
+padding-bottom:15px;
+
+border-bottom:1px solid #ddd;
+
+}
+
+.logoLink{
+
+display:flex;
+
+align-items:center;
+
+gap:12px;
+
+text-decoration:none;
+
+color:black;
+
+}
+
+.pageLogo{
+
+width:55px;
+
+height:55px;
+
+object-fit:contain;
+
+}
+
+.logoLink h2{
+
+margin:0;
+
+font-size:32px;
+
+font-weight:bold;
+
+color:#8b008b;
+
+}
+
+@media(max-width:600px){
+
+body{
+
+padding:12px;
+
+}
+
+.pageHeader{
+
+margin-bottom:20px;
+
+padding-bottom:12px;
+
+}
+
+.pageLogo{
+
+width:42px;
+
+height:42px;
+
+}
+
+.logoLink h2{
+
+font-size:23px;
+
+}
+
+.tagline{
+
+font-size:13px;
+
+}
+
+h1{
+
+font-size:28px;
+
+}
+
+h2{
+
+font-size:22px;
+
+}
+
+.dashboard{
+
+grid-template-columns:1fr;
+
+gap:15px;
+
+}
+
+.card{
+
+padding:18px;
+
+}
+
+.card h1{
+
+font-size:34px;
+
+}
+
+.card h3{
+
+font-size:18px;
+
+}
+
+.quickActions{
+
+flex-direction:column;
+
+}
+
+.quickActions a{
+
+width:100%;
+
+}
+
+.quickActions button{
+
+width:100%;
+
+font-size:17px;
+
+padding:14px;
+
+}
+
+footer{
+
+font-size:15px;
+
+line-height:1.8;
+
+}
+
+}
+.quickActions button{
+
+padding:13px 22px;
+
+font-size:17px;
+
+border:none;
+
+border-radius:10px;
+
+cursor:pointer;
+
+transition:.25s;
+
+}
+
+.quickActions button:hover{
+
+transform:translateY(-2px);
+
+}
+#joinedDate{
+
+font-size:18px;
+
+color:#666;
+
+margin-bottom:25px;
+
+}
+        </style>
+        <link rel="stylesheet" href="style.css">
+    </head>
+    <body>
+    <a href="index.html">
+    <button class="home-btn">
+        💒 Home
+    </button>
+</a>
+   <header class="pageHeader">
+
+<a href="index.html" class="logoLink">
+
+<img
+src="Frame 1.png"
+class="pageLogo">
+
+<div>
+
+<h2>
+
+Gedarak.lk
+
+</h2>
+
+<p class="tagline">
+
+Sri Lanka's Property Marketplace
+
+</p>
+
+</div>
+
+</a>
+
+</header>
+
+<h1>👤 My Profile</h1>
+
+<h2 id="userName"
+
+style="
+
+font-size:30px;
+
+font-weight:bold;
+
+line-height:1.4;
+
+margin-bottom:8px;
+
+">
+
+</h2>
+
+<p id="joinedDate"></p>
+
+<hr>
+
+<h2
+
+style="
+
+font-size:28px;
+
+margin-top:30px;
+
+">
+
+📊 My Dashboard
+
+</h2>
+
+<div class="dashboard">
+
+<div class="card">
+<h3>🏠 Active Listings</h3>
+<h1 id="listingCount">0</h1>
+</div>
+
+<div class="card">
+<h3>👁 Total Views</h3>
+<h1 id="totalViews">0</h1>
+</div>
+
+<div class="card">
+<h3>💗 Total Saves</h3>
+<h1 id="totalSaves">0</h1>
+</div>
+
+
+</div>
+
+<hr>
+
+<h2
+
+style="
+
+font-size:28px;
+
+margin-top:35px;
+
+">
+
+⚡ Quick Actions
+
+</h2>
+
+<div class="quickActions">
+
+<a href="mylistings.html">
+<button>🏠 My Properties</button>
+</a>
+
+<a href="postproperty.html">
+<button>➕ Post Property</button>
+</a>
+
+<a href="favourites.html">
+<button>💗 My Favourites</button>
+</a>
+
+<button onclick="logout()">
+🚪 Logout
+</button>
+</div>
+<footer
+
+style="
+
+text-align:center;
+
+margin-top:60px;
+
+padding-top:25px;
+
+border-top:1px solid #ddd;
+
+line-height:1.9;
+
+">
+        <h3>Gedarak.lk</h3>
+        <p>Find your dream property</p>
+       <p>
+
+Email:
+
+<a href="mailto:gedarak.lk@gmail.com">
+
+gedarak.lk@gmail.com
+
+</a>
+
+</p>
+        <p>Phone: +94 771 234 567</p>
+        <p>&copy; 2026 Gedarak.lk</p>
+      </footer>
+            <script>
+            let user=
+            localStorage.getItem(
+                "currentUser"
+            );
+            let listings=0;
+let totalViews=0;
+let totalSaves=0;
+let totalMessages=0;
+let enquiries =
+
+JSON.parse(
+
+localStorage.getItem("enquiries")
+
+|| "[]"
+
+);
+           document.getElementById("userName").innerHTML=
+
+"Welcome back,<br>"+user;
+           
+           for(let i=0;i<localStorage.length;i++){
+
+let key=localStorage.key(i);
+
+try{
+
+let property=
+JSON.parse(localStorage.getItem(key));
+
+if(
+property &&
+String(property.owner).trim().toLowerCase() ===
+String(user).trim().toLowerCase()
+){
+
+listings++;
+
+totalViews += property.views || 0;
+
+totalSaves += property.saves || 0;
+
+
+}
+
+}
+catch(e){}
+
+}
+enquiries.filter(function(item){
+
+return String(item.owner).trim().toLowerCase() ===
+String(user).trim().toLowerCase();
+
+}).length;
+
+            document.getElementById("listingCount").innerText=
+listings;
+
+document.getElementById("totalViews").innerText=
+totalViews.toLocaleString();
+
+document.getElementById("totalSaves").innerText=
+totalSaves.toLocaleString();
+
+
+
+let joined =
+
+localStorage.getItem(
+
+"joined_"+user
+
+);
+
+if(!joined){
+
+joined =
+
+new Date().toLocaleDateString();
+
+localStorage.setItem(
+
+"joined_"+user,
+
+joined
+
+);
+
+}
+
+document.getElementById("joinedDate").innerHTML =
+
+"📅 Member since " + joined;
+             function logout(){
+                if(
+
+!confirm(
+
+"You sure you want to Log Out?"
+
+)
+
+){
+
+return;
+
+}
+                localStorage.removeItem(
+                    "loggedIn"
+                );
+                localStorage.removeItem(
+                    "currentUser"
+                );
+                alert(
+                    "Logged out"
+                );
+              window.location.href=
+              "login.html";
+            }
+        </script>
+    </body>
+</html>

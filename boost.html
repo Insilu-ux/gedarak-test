@@ -1,0 +1,533 @@
+<!DOCTYPE html>
+<html>
+ 
+<head>
+  <meta charset="UTF-8">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+
+body{
+
+background:#f5f7fb;
+
+font-family:Arial,sans-serif;
+
+margin:0;
+
+}
+
+nav{
+
+background:#0099ff;
+
+color:white;
+
+padding:18px;
+
+text-align:center;
+
+}
+
+.boost-card{
+
+width:220px;
+
+min-height:360px;
+
+padding:22px;
+
+border-radius:18px;
+
+border:1px solid #ddd;
+
+transition:.25s;
+
+background:white;
+
+cursor:pointer;
+
+display:flex;
+
+flex-direction:column;
+
+}
+
+.boost-card:hover{
+
+transform:translateY(-6px);
+
+box-shadow:0 12px 25px rgba(0,0,0,.18);
+
+}
+
+.boost-card button{
+
+margin-top:auto;
+
+width:100%;
+
+padding:12px;
+
+border:none;
+
+border-radius:10px;
+
+background:#0099ff;
+
+color:white;
+
+font-size:15px;
+
+cursor:pointer;
+
+}
+
+.boost-card button:hover{
+
+background:#0078d4;
+
+}
+.pageHeader{
+
+display:flex;
+
+justify-content:center;
+
+align-items:center;
+
+margin-bottom:30px;
+
+padding-bottom:15px;
+
+border-bottom:1px solid #ddd;
+
+}
+
+.logoLink{
+
+display:flex;
+
+align-items:center;
+
+gap:12px;
+
+text-decoration:none;
+
+color:black;
+
+}
+
+.pageLogo{
+
+width:55px;
+
+height:55px;
+
+object-fit:contain;
+
+}
+
+.logoLink h2{
+
+margin:0;
+
+font-size:32px;
+
+font-weight:bold;
+
+color:#8b008b;
+
+}
+
+@media(max-width:600px){
+
+.pageLogo{
+
+width:42px;
+
+height:42px;
+
+}
+
+.logoLink h2{
+
+font-size:24px;
+
+}
+
+}
+.tagline{
+
+margin:0;
+
+font-size:14px;
+
+color:#666;
+
+}
+
+</style>
+<meta charset="UTF-8">
+
+<meta name="viewport"
+content="width=device-width, initial-scale=1.0">
+
+<title>
+Boost Listing | Gedarak.lk
+</title>
+
+<link rel="stylesheet"
+href="style.css">
+
+</head>
+
+<body>
+<a href="index.html">
+        <button class="home-btn">
+        💒 Home
+        </button>
+    </a>
+       <header class="pageHeader">
+
+<a href="index.html" class="logoLink">
+
+<img
+src="Frame 1.png"
+class="pageLogo">
+
+<div>
+
+<h2>
+
+Gedarak.lk
+
+</h2>
+
+<p class="tagline">
+
+Sri Lanka's Property Marketplace
+
+</p>
+
+</div>
+
+</a>
+
+</header>
+<nav>
+
+<h1>
+🚀 Boost Property
+</h1>
+
+</nav>
+
+<div
+id="boostContainer"
+style="
+max-width:900px;
+margin:40px auto;
+background:white;
+padding:30px;
+border-radius:20px;
+box-shadow:0 10px 30px rgba(0,0,0,.12);
+">
+
+<div id="propertyPreview">
+
+</div>
+
+<hr style="margin:35px 0;">
+
+<h2>
+Choose Your Boost Package
+</h2>
+
+<p style="color:#666;">
+Reach more buyers and appear higher in search results.
+</p>
+
+<div
+style="
+display:flex;
+gap:25px;
+flex-wrap:wrap;
+justify-content:center;
+margin-top:30px;
+">
+
+<div class="boost-card">
+
+<h2>
+⭐ Basic
+</h2>
+
+<p>
+7 Days
+</p>
+
+<p>
+Higher in search
+</p>
+
+<h3>
+Rs.300
+</h3>
+
+<button
+onclick="buyBoost('Basic',300,7)">
+Choose
+</button>
+
+</div>
+
+<div class="boost-card">
+
+<h2>
+⭐⭐ Premium
+</h2>
+
+<p>
+14 Days
+</p>
+
+<p>
+Homepage Featured
+</p>
+
+<p>
+Priority Search
+</p>
+
+<h3>
+Rs.700
+</h3>
+
+<button
+onclick="buyBoost('Premium',700,14)">
+Choose
+</button>
+
+</div>
+
+<div class="boost-card">
+
+<h2>
+👑 Platinum
+</h2>
+
+<p>
+30 Days
+</p>
+
+<p>
+Maximum Visibility
+</p>
+
+<p>
+Homepage Featured
+</p>
+
+<p>
+Top Search Position
+</p>
+
+<h3>
+Rs.1500
+</h3>
+
+<button
+onclick="buyBoost('Platinum',1500,30)">
+Choose
+</button>
+
+</div>
+
+</div>
+
+</div>
+
+<script>
+    function getBoostInfo(property){
+
+if(!property.boost){
+
+return null;
+
+}
+
+if(
+
+Date.now()>
+
+property.boost.endDate
+
+){
+
+delete property.boost;
+
+localStorage.setItem(
+
+propertyKey,
+
+JSON.stringify(property)
+
+);
+
+return null;
+
+}
+
+return property.boost;
+
+}
+   function buyBoost(packageName,price,days){
+
+property.boost = {
+
+package: packageName,
+
+price: price,
+
+days: days,
+
+status: "Active",
+
+startDate: Date.now(),
+
+endDate:
+
+Date.now() +
+
+(days*24*60*60*1000)
+
+};
+
+localStorage.setItem(
+
+propertyKey,
+
+JSON.stringify(property)
+
+);
+
+alert(
+
+packageName+
+
+" Boost Activated."
+
+);
+
+window.location.href="profile.html";
+
+}
+let propertyKey = "";
+
+let property = null;
+let propertyId =
+localStorage.getItem("selectedBoostProperty");
+
+for(let i=0;i<localStorage.length;i++){
+
+let key =
+localStorage.key(i);
+
+try{
+
+let data =
+JSON.parse(localStorage.getItem(key));
+
+if(data && data.id == propertyId){
+
+property = data;
+
+propertyKey = key;
+
+break;
+
+}
+
+}
+
+catch{}
+
+}
+if(!property){
+
+alert("Property not found.");
+
+window.location.href="profile.html";
+
+}
+let boostInfo =
+getBoostInfo(property);
+
+let boostText =
+"No Active Boost";
+
+if(boostInfo){
+
+boostText =
+boostInfo.package +
+" until " +
+new Date(boostInfo.endDate).toLocaleDateString();
+
+}
+document.getElementById(
+"propertyPreview"
+).innerHTML = `
+
+<img
+src="${property.images[0]}"
+style="
+width:100%;
+height:320px;
+object-fit:cover;
+border-radius:15px;
+">
+
+<h2>
+
+${property.name}
+
+</h2>
+
+<p>
+
+📍 ${property.city},
+${property.district}
+
+</p>
+
+  <p>${
+property.negotiable
+?
+"💬 Price Negotiable"
+:
+"💸 Rs. "+Number(property.price).toLocaleString()
+}</p>
+
+<p>
+
+👁
+${property.views || 0}
+Views
+
+</p>
+<p>
+
+⭐
+
+${boostText}
+
+</p>
+
+`;
+
+</script>
+
+</body>
+
+</html>

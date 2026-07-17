@@ -1,0 +1,1741 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <style>
+                       .pageHeader{
+
+display:flex;
+
+justify-content:center;
+
+align-items:center;
+
+margin-bottom:30px;
+
+padding-bottom:15px;
+
+border-bottom:1px solid #ddd;
+
+}
+
+.logoLink{
+
+display:flex;
+
+align-items:center;
+
+gap:12px;
+
+text-decoration:none;
+
+color:black;
+
+}
+
+.pageLogo{
+
+width:55px;
+
+height:55px;
+
+object-fit:contain;
+
+}
+
+.logoLink h2{
+
+margin:0;
+
+font-size:32px;
+
+font-weight:bold;
+
+color:#8b008b;
+
+}
+
+@media(max-width:600px){
+
+.pageLogo{
+
+width:42px;
+
+height:42px;
+
+}
+
+.logoLink h2{
+
+font-size:24px;
+
+}
+
+}
+.tagline{
+
+margin:0;
+
+font-size:14px;
+
+color:#666;
+
+}
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
+
+body{
+    background:#f5f7fa;
+    font-family:Arial,Helvetica,sans-serif;
+    color:#222;
+    line-height:1.5;
+    padding:15px;
+}
+
+.property-page{
+    max-width:1100px;
+    margin:auto;
+}
+
+.section-card{
+    background:white;
+    border-radius:16px;
+    padding:20px;
+    margin-top:20px;
+    box-shadow:0 3px 12px rgba(0,0,0,.08);
+}
+
+h1{
+    font-size:30px;
+    margin-bottom:10px;
+}
+
+h2{
+    font-size:26px;
+}
+
+h3{
+    font-size:21px;
+    margin-bottom:12px;
+}
+
+p{
+    margin:8px 0;
+    font-size:16px;
+}
+
+@media(max-width:768px){
+
+body{
+padding:10px;
+}
+
+.section-card{
+padding:16px;
+border-radius:14px;
+}
+
+h1{
+font-size:24px;
+}
+
+h2{
+font-size:22px;
+}
+
+}
+.facts-grid{
+
+display:grid;
+
+grid-template-columns:repeat(2,1fr);
+
+gap:15px;
+
+margin-top:20px;
+
+}
+
+.fact-box{
+
+background:#f8f8f8;
+
+padding:18px;
+
+border-radius:12px;
+
+text-align:center;
+
+font-size:17px;
+
+font-weight:bold;
+
+}
+.chips{
+
+display:flex;
+
+flex-wrap:wrap;
+
+gap:10px;
+
+margin-top:15px;
+
+}
+
+.chip{
+
+background:#eef7ef;
+
+padding:10px 15px;
+
+border-radius:25px;
+
+font-size:15px;
+
+font-weight:bold;
+
+}
+.button-grid{
+
+display:grid;
+
+grid-template-columns:1fr 1fr;
+
+gap:12px;
+
+margin-top:20px;
+
+}
+.action-btn{
+
+width:100%;
+padding:15px;
+border:none;
+border-radius:14px;
+font-size:16px;
+font-weight:bold;
+cursor:pointer;
+color:white;
+transition:.25s;
+box-shadow:0 5px 15px rgba(0,0,0,.15);
+
+}
+
+.action-btn:hover{
+
+transform:translateY(-2px);
+
+}
+
+/* Individual colors */
+
+.map-btn{
+background:#2563eb;
+}
+
+.share-btn{
+background:#7c3aed;
+}
+
+.contact-btn{
+background:#16a34a;
+}
+
+.report-btn{
+background:#ef4444;
+}
+     </style>
+    </head>
+    <body>
+        <a href="index.html">
+        <button class="home-btn">
+        💒 Home
+        </button>
+    </a>
+       <header class="pageHeader">
+
+<a href="index.html" class="logoLink">
+
+<img
+src="Frame 1.png"
+class="pageLogo">
+
+<div>
+
+<h2>
+
+Gedarak.lk
+
+</h2>
+
+<p class="tagline">
+
+Sri Lanka's Property Marketplace
+
+</p>
+
+</div>
+
+</a>
+</header>
+<h2 style="text-align: center;">Property Details</h2>
+<br>
+       <div id="propertyDetails"></div>
+<script>
+    let currentProperty = null;
+     let property =null;
+     let allProperties=[];
+
+for(let i=0;i<localStorage.length;i++){
+
+    let key=localStorage.key(i);
+
+    try{
+
+        let item=
+        JSON.parse(localStorage.getItem(key));
+
+        if(item && item.hidden!==true){
+
+            allProperties.push(item);
+
+        }
+
+    }catch(e){}
+
+}
+    let propertyId=
+    localStorage.getItem(
+        "selectedProperty"
+    );
+ for(
+    let i = 0;
+    i < localStorage.length;
+    i++
+ ){
+    let key = 
+    localStorage.key(i);
+    let data = 
+    localStorage.getItem(key);
+    try{
+        let p = 
+        JSON.parse(data);
+        if(
+            p &&
+            String(p.id) === propertyId
+        ){
+            property = p;
+            break;
+        }
+    }catch(error){}
+ }
+    if(property){
+        property.views = 
+        (property.views || 0) + 1;
+        localStorage.setItem(
+            property.name,
+            JSON.stringify(property)
+        );
+          let galleryHTML ="";
+ if(property.images &&
+    property.images.length > 0) {
+        
+        galleryHTML=`
+           <div class="section-card"
+style="
+max-width:900px;
+margin:auto;
+text-align:center;
+position:relative;
+padding:15px;">
+
+            <div 
+            onclick="shareCurrentProperty()"
+            style="
+            position:absolute;
+            top:10px;
+            left:10px;
+            width:42px;
+            height:42px;
+            border-radius:50%;
+            background:rgba(0,0,0,.45);
+            display:flex;
+            justify-content:center;
+            align-items:center;
+            cursor:pointer;
+            font-size:24px;
+            color:white;
+            z-index:50;
+            ">
+            🔗
+            </div>
+
+            <div 
+            id="propertyHeart"
+            onclick="togglePropertyFavourite()"
+            style="
+            position:absolute;
+            top:10px;
+            right:10px;
+            width:42px;
+            height:42px;
+            border-radius:50%;
+            background:rgba(0,0,0,.45);
+            display:flex;
+            justify-content:center;
+            align-items:center;
+            cursor:pointer;
+            font-size:24px;
+            color:white;
+            z-index:50;
+            ">
+            🤍
+            </div>
+            
+                  <img
+id="mainImage"
+src="${property.images[0]}"
+onclick="openImageViewer(currentImage)"
+style="
+width:100%;
+height:320px;
+object-fit:cover;
+border-radius:14px;
+display:block;
+margin:auto;
+@media(min-width:768px){
+
+#mainImage{
+
+height:520px;
+
+}
+
+}
+display:block;
+margin:auto;
+cursor:zoom-in;
+">
+                    <div
+                    style="
+                    margin-top:15px;
+                    display:flex;
+                    justify-content:center;
+                    align-items:center;
+                    gap:20px;">
+                     <button onclick="previousImage()"
+                     style="
+                     padding:10px 20px;
+                     cursor:pointer;
+                     ">
+                    ⬅ Previous
+                    </button>
+                    <span id="imageCounter"
+                    style="
+                    font-weight:bold;
+                    font-size:18px;
+                    ">
+                        1 / ${property.images.length}
+                        </span>
+                     <button onclick="nextImage()"
+                     style="
+                     padding:10px 20px;
+                     cursor:pointer;
+                     ">
+                    Next ➡
+                    </button>
+                    </div>
+                <div id="thumbnailContainer"
+                style="
+                display:flex;
+                justify-content:center;
+                gap:10px;
+                margin-top:20px;
+                flex-wrap:wrap;
+                ">
+                ${property.images.slice(0,6).map((img,index)=>`
+                <img
+                id="thumb${index}"
+                src="${img}"
+                onclick="changeImage(${index})"
+                style="
+               width:75px;
+height:65px;
+border-radius:10px;
+transition:.25s;
+                object-fit: cover;
+                border-radius:8px;
+                cursor: pointer;
+                border:3px solid transparent;
+                box-sizing:border-box;
+                 ">
+                `).join("")}
+                ${property.images.length>6 ? `
+                <div
+                onclick="showAllImages()"
+                style="
+                width:90px;
+                height:70px;
+                display:flex;
+                justify-content:center;
+                 align-items:center;
+                background:#ddd;
+                border-radius:8px;
+                font-weight:bold;
+                font-size:18px;
+                ">
+                +${property.images.length-6} More
+                </div>
+                ` : ""}
+                </div>
+                </div>
+                </div>
+                `;
+    }
+        document.getElementById(
+            "propertyDetails"
+        ).innerHTML =`
+        <div class="property-page">
+               ${galleryHTML}
+               <div class="section-card">
+               <h1 style="text-align:center;">${property.name}</h1>
+             <h2>
+${
+property.negotiable
+?
+"💬 Price Negotiable"
+:
+"💸 Rs. "+Number(property.price).toLocaleString()
+}
+</h2>      
+            <p>
+                Property Type: ${property.propertyType}
+            </p>
+            <div
+style="
+display:inline-block;
+padding:7px 16px;
+background:#16a34a;
+color:white;
+border-radius:999px;
+font-weight:bold;
+font-size:15px;
+margin:10px 0;
+">
+
+${property.status}
+
+</div>
+            <p>
+                District: ${property.district}</p>
+           <p>
+                City: ${property.city}
+            </p>
+            
+           <p>
+                Address: ${property.address}
+            </p>
+            
+            </div>
+           <div class="facts-grid">
+
+<div class="fact-box">
+
+🛏<br><br>
+
+${property.bedrooms}
+
+Bedrooms
+
+</div>
+
+<div class="fact-box">
+
+🛁<br><br>
+
+${property.bathrooms}
+
+Bathrooms
+
+</div>
+
+<div class="fact-box">
+
+📐<br><br>
+
+${property.squareFeet}
+
+sqft
+
+</div>
+
+<div class="fact-box">
+
+🌳<br><br>
+
+${property.perches}
+
+Perches
+
+</div>
+
+</div>
+               <div class="section-card">
+
+<h3>
+
+Amenities
+
+</h3>
+
+<div class="chips">
+
+${(property.amenities||[]).map(function(a){
+
+return `<div class="chip">✓ ${a}</div>`;
+
+}).join("")}
+
+</div>
+
+</div>
+            <div class="section-card">
+
+<h3>
+
+Property Viewings
+
+</h3>
+
+<div class="chips">
+
+${(property.propertyView||[]).map(function(a){
+
+return `<div class="chip">✓ ${a}</div>`;
+
+}).join("")}
+
+</div>
+
+</div>
+            
+              <div
+style="
+display:flex;
+justify-content:space-between;
+margin-top:18px;
+padding-top:15px;
+border-top:1px solid #eee;
+font-size:15px;
+color:#666;
+">
+<span>
+
+📅 Posted:
+                    ${new Date(property.createdAt).toLocaleDateString()}
+
+</span>
+<span>
+
+👁 ${property.views || 0} Views
+
+</span>
+
+
+
+</div>  <p>
+                    
+                
+                   <div class="section-card">
+
+<h3>
+
+About this property
+
+</h3>
+
+<p>
+
+${property.description}
+
+</p>
+
+</div>
+                     <br>
+                     <div class="button-grid">
+                        <a
+href="${property.map}"
+target="_blank"
+class="action-btn map-btn"
+style="
+text-decoration:none;
+display:flex;
+justify-content:center;
+align-items:center;
+">
+📍 View on Map
+</a>
+                        <button onclick="shareCurrentProperty()"
+                       class="action-btn share-btn">
+                           🔗 Share Property
+                            </button>
+        
+                             <button  class="action-btn contact-btn"
+                             onclick="openContactPopup(
+'${property.owner}',
+'${property.phone}',
+'${property.name}',
+${property.price},
+${property.negotiable}
+)">
+                      📞 Contact Seller
+                    </button>
+       
+
+<button
+class="action-btn report-btn"
+onclick="reportProperty()">
+
+🚩 Report Property
+
+</button>
+</div>
+                       <div style="
+width:100%;
+margin-top:35px;
+">
+
+<hr>
+
+<h3 style="text-align:center"id="similarHeading"></h3>
+
+<div
+id="similarProperties"
+style="
+display:flex;
+gap:20px;
+overflow-x:auto;
+padding:15px 0;
+scroll-behavior:smooth;
+">
+</div>
+
+</div>
+                                </div>
+                                  `;
+                                  currentProperty = property;
+                    
+                                 updatePropertyHeart();
+                                  loadSimilarProperties(property);
+                               
+                                  }
+                                  
+     function loadSimilarProperties(currentProperty){
+        document.getElementById("similarHeading").innerHTML =
+"More " +
+currentProperty.propertyType.toLowerCase() +
+"s in " +
+currentProperty.city;
+        let container= 
+        document.getElementById("similarProperties")
+        container.innerHTML="";
+       let similar = allProperties
+       .filter(function(p){
+        return p.id !== currentProperty.id &&
+        p.propertyType === currentProperty.propertyType;
+       })
+.map(function(p){
+
+   let score = 100;
+
+// Same City
+if(p.city === currentProperty.city){
+
+    score += 60;
+
+}
+else if(p.district === currentProperty.district){
+
+    score += 30;
+
+}
+
+// Same Status
+if(p.status === currentProperty.status){
+
+    score += 20;
+
+}
+
+// Bedrooms
+
+let bedroomDifference =
+Math.abs(
+Number(p.bedrooms)-
+Number(currentProperty.bedrooms)
+);
+
+if(bedroomDifference===0){
+
+    score+=15;
+
+}
+else if(bedroomDifference===1){
+
+    score+=8;
+
+}
+else if(bedroomDifference===2){
+
+    score+=3;
+
+}
+
+// Bathrooms
+
+let bathroomDifference =
+Math.abs(
+Number(p.bathrooms)-
+Number(currentProperty.bathrooms)
+);
+
+if(bathroomDifference===0){
+
+    score+=12;
+
+}
+else if(bathroomDifference===1){
+
+    score+=6;
+
+}
+
+// Price
+
+let difference =
+Math.abs(
+p.price-currentProperty.price
+);
+
+let percent =
+difference/currentProperty.price;
+
+if(percent<=0.10){
+
+    score+=30;
+
+}
+else if(percent<=0.20){
+
+    score+=15;
+
+}
+else if(percent<=0.35){
+
+    score+=5;
+
+}
+
+// Land
+
+let perchesDifference =
+Math.abs(
+p.perches-currentProperty.perches
+);
+
+if(perchesDifference<=2){
+
+    score+=8;
+
+}
+else if(perchesDifference<=5){
+
+    score+=4;
+
+}
+
+// Building
+
+let sqftDifference =
+Math.abs(
+p.squareFeet-currentProperty.squareFeet
+);
+
+if(sqftDifference<=200){
+
+    score+=8;
+
+}
+else if(sqftDifference<=500){
+
+    score+=4;
+
+}
+
+// Amenities
+
+let amenityMatches =
+(p.amenities||[]).filter(function(a){
+
+    return (currentProperty.amenities||[])
+    .includes(a);
+
+}).length;
+
+score += amenityMatches*2;
+
+// Views
+
+let propertyViewMatches =
+(p.propertyView||[]).filter(function(v){
+
+return (currentProperty.propertyView||[])
+.includes(v);
+
+}).length;
+
+score += propertyViewMatches*2;
+
+return{
+
+property:p,
+
+score:score
+
+};
+})
+.sort(function(a,b){
+
+    return b.score-a.score;
+
+})
+.filter(function(item){
+    return item.score >= 130;
+})
+.slice(0,5)
+.map(function(item){
+
+    return item.property;
+
+});
+if(similar.length<5){
+
+let remaining =
+allProperties
+
+.filter(function(p){
+
+return p.id!==currentProperty.id &&
+
+p.propertyType===currentProperty.propertyType &&
+
+!similar.some(function(x){
+
+return x.id===p.id;
+
+});
+
+})
+
+.sort(function(a,b){
+
+return (b.views||0)-(a.views||0);
+
+});
+
+for(
+
+let i=0;
+
+i<remaining.length &&
+
+similar.length<5;
+
+i++
+
+){
+
+similar.push(remaining[i]);
+
+}
+
+}
+        if(similar.length===0){
+            container.innerHTML= 
+            "No Similar Properties Found.";
+            return;
+        }
+        similar.forEach(property=>{
+            container.innerHTML +=`
+            <div
+            style="
+            position:relative;
+            width:260px;
+            cursor:pointer;
+            border:1px solid #ddd;
+            border-radius:12px;
+            overflow:hidden;
+            box-shadow:0 2px 8px rgba(0,0,0,.15);
+            transition:.2s;
+            ">
+            ${(Date.now()-property.createdAt)<604800000?`
+<div
+style="
+position:absolute;
+top:10px;
+left:10px;
+background:#16a34a;
+color:white;
+padding:5px 10px;
+border-radius:20px;
+font-size:12px;
+font-weight:bold;
+z-index:5;
+">
+NEW
+</div>
+`:""}
+            <img
+            src="${property.images[0]}"
+            onclick="openProperty(${property.id})"
+            style="
+            width:100%;
+            height:200px;
+            object-fit:cover;
+            ">
+            <div 
+            style="
+            padding:15px;">
+            <div
+             onclick="
+             event.stopPropagation();
+             toggleFavourite(
+            ${property.id},
+            this
+             );
+             "
+            style="
+            position:absolute;
+            top:10px;
+            right:10px;
+            width:38px;
+            height:38px;
+            border-radius:50%;
+            background:rgba(0,0,0,.45);
+            display:flex;
+            justify-content:center;
+            align-items:center;
+            font-size:22px;
+            cursor:pointer;
+            color:white;
+            ">
+            ${isFavourite(property.id) ? "💗" : "🤍"}
+            </div>
+            
+            <h4>${property.status}</h4>
+            <p
+style="
+font-size:13px;
+color:#666;
+margin:4px 0 8px 0;
+">
+📅 Posted:
+${timeAgo(property.createdAt)}
+</p>
+            <h3
+            style="cursor:pointer;"
+            onclick="openProperty(${property.id})">${property.name}</h3>
+            <p>Property Type: ${property.propertyType}</p>
+            <p>${property.city}, ${property.district}</p>
+            <p>🛏${property.bedrooms}  🛁${property.bathrooms}</p>
+           ${
+property.negotiable
+?
+"💬 Price Negotiable"
+:
+"💸 Rs. "+Number(property.price).toLocaleString()
+}
+            <p
+style="
+color:#666;
+font-size:14px;
+margin-top:6px;
+">
+👁 ${property.views || 0} Views
+</p>
+            <button
+            onclick="
+            event.stopPropagation();openProperty(${property.id});"
+         style="
+         padding:10px 18px;
+         cursor:pointer;
+        border:none;
+        border-radius:8px;
+        font-weight:bold;
+        ">
+        View Property
+        </button>
+            </div>
+            </div>
+            `;
+        });
+    }
+    function togglePropertyFavourite(){
+        toggleFavourite(
+            currentProperty.id,
+            document.getElementById("propertyHeart")
+        );
+        updatePropertyHeart();
+    }
+    function toggleFavourite(id, heart){
+            let currentUser = 
+            localStorage.getItem("currentUser");
+            let property = 
+            allProperties.find(p => String(p.id) === String(id));
+            if(!currentUser){
+                alert("Please log in first");
+                window.location.href="login.html";
+                return;
+            }
+            let favourites = 
+            JSON.parse(
+                localStorage.getItem(
+                    "favourites_" + currentUser
+                ) || "[]"
+            );
+            if(favourites.includes(String(id))){
+                favourites = 
+                favourites.filter(
+                    x => x !== String(id)
+                );
+                heart.innerHTML = "🤍";
+                heart.style.color = "white";
+               showNotification(
+                "✔ Removed: " + property.name
+               )
+            }
+            else{
+                favourites.push(String(id));
+                heart.innerHTML = "💗";
+                heart.style.color = "red";
+                showNotification(
+                "✔ Saved: " + property.name
+               )
+            }
+            localStorage.setItem("favourites_" + currentUser,JSON.stringify(favourites));
+            if(favourites.includes(String(id))){
+
+property.saves = Math.max(
+0,
+(property.saves || 0)-1
+);
+
+}
+else{
+
+property.saves =
+(property.saves || 0)+1;
+
+}
+
+localStorage.setItem(
+property.name,
+JSON.stringify(property)
+);
+        }
+        function isFavourite(id){
+            let currentUser = 
+            localStorage.getItem("currentUser");
+            if(!currentUser){
+                return false;
+            }
+            let favourites = 
+            JSON.parse(
+                localStorage.getItem(
+                    "favourites_" + currentUser
+                ) || "[]"
+            );
+            return favourites.includes(String(id));
+        }
+        function updatePropertyHeart(){
+
+    let heart = document.getElementById("propertyHeart");
+
+    if(!heart || !currentProperty){
+        return;
+    }
+
+    if(isFavourite(currentProperty.id)){
+        heart.innerHTML = "💗";
+        heart.style.color = "red";
+    }else{
+        heart.innerHTML = "🤍";
+        heart.style.color = "white";
+    }
+}
+    function shareCurrentProperty(){
+        shareProperty(currentProperty.id);
+    }
+    let currentImage = 0;
+   function changeImage(index){
+    currentImage = index;
+    document.getElementById("mainImage").src=
+property.images[currentImage]; 
+document.getElementById("imageCounter").innerHTML=
+(currentImage+1)+" /"+property.images.length;
+   for(let i=0;i<property.images.length;i++){
+    let 
+    thumb=document.getElementById("thumb"+i);
+    if(thumb){
+        thumb.style.border="2px solid transparent";
+    }
+   }
+   let 
+   activeThumb=document.getElementById("thumb"+currentImage);
+   if(activeThumb){
+    activeThumb.style.border="3px solid #007bff";
+   }
+   }
+   function nextImage(){
+    currentImage++;
+    if(currentImage >= property.images.length){
+        currentImage = 0;
+    }
+   changeImage(currentImage);
+   }
+    function previousImage(){
+    currentImage--;
+    if(currentImage < 0){
+        currentImage = 
+        property.images.length - 1;
+    }
+   changeImage(currentImage);
+   }
+   function openImageViewer(index){
+
+currentImage = index;
+
+updateViewerImage();
+
+document.getElementById("imageViewer").style.display="flex";
+
+document.body.style.overflow="hidden";
+
+}
+
+function closeImageViewer(){
+
+document.getElementById("imageViewer").style.display="none";
+
+document.body.style.overflow="auto";
+
+}
+
+function updateViewerImage(){
+
+document.getElementById("viewerImage").src =
+property.images[currentImage];
+
+document.getElementById("viewerCounter").innerHTML =
+(currentImage+1)+" / "+property.images.length;
+
+}
+
+function nextViewerImage(){
+
+currentImage++;
+
+if(currentImage>=property.images.length){
+
+currentImage=0;
+
+}
+
+changeImage(currentImage);
+
+updateViewerImage();
+
+}
+
+function previousViewerImage(){
+
+currentImage--;
+
+if(currentImage<0){
+
+currentImage=property.images.length-1;
+
+}
+
+changeImage(currentImage);
+
+updateViewerImage();
+
+}
+    function shareProperty(id){
+      if(navigator.share){
+
+    navigator.share({
+        title:document.title,
+        url:window.location.href
+    });
+   }
+    else{
+         navigator.clipboard.writeText(window.location.href);
+         alert("Property link copied!");
+        }
+    }
+    function showAllImages(){
+        let html="";
+        property.images.forEach(function(img,index){
+            html +=`
+            <img
+            src="${img}"
+            onclick="changeImage(${index});closeGallery();"
+            style="
+            width:220px;
+            height:170px;
+            object-fit:cover;
+            margin:10px;
+            border-radius:10px;
+            cursor:pointer;
+            ">
+            `;
+        });
+        document.getElementById("galleryPopup").style.display="flex";
+         document.getElementById("galleryPopupContent").innerHTML=html;
+         document.body.style.overflow = "hidden";
+    }
+    function closeGallery(){
+
+    document.getElementById("galleryPopup").style.display="none";
+
+    document.body.style.overflow="auto";
+
+}
+     function showNotification(message){
+            let box =
+            document.getElementById("notification");
+            box.innerHTML = message;
+            box.style.opacity = "1";
+            setTimeout(function(){
+                box.style.opacity = "0";
+            },2000);
+        }
+      function openProperty(id){
+        localStorage.setItem(
+            "selectedProperty",
+            String(id)
+      );
+      window.location.href="property.html";
+      }
+      function timeAgo(date){
+
+    let now = new Date();
+
+    let posted = new Date(date);
+
+    let diff = now - posted;
+
+    let days = Math.floor(diff / (1000*60*60*24));
+
+    if(days === 0){
+        return "Today";
+    }
+
+    if(days === 1){
+        return "Yesterday";
+    }
+
+    if(days < 7){
+        return days + " days ago";
+    }
+
+    if(days < 30){
+        return Math.floor(days/7) + " week(s) ago";
+    }
+
+    return posted.toLocaleDateString();
+
+      }
+      
+      function openContactPopup(owner, phone, property, price, negotiable){
+
+document.getElementById("contactPopup").style.display="flex";
+
+document.getElementById("popupOwner").innerHTML=owner;
+
+document.getElementById("popupCall").onclick=function(){
+
+    window.location.href="tel:"+phone;
+
+};
+
+document.getElementById("popupPhone").innerHTML =
+phone.replace("94","0");
+
+document.getElementById("popupProperty").innerHTML=property;
+document.getElementById("popupPrice").innerHTML =
+negotiable
+?
+"💬 Price Negotiable"
+:
+"💸 Rs. " + Number(price).toLocaleString();
+document.getElementById("popupMessage").value =
+"Hello, I'm interested in " + property + ". Is it still available?";
+
+document.getElementById("popupWhatsapp").onclick=function(){
+
+let message =
+document.getElementById("popupMessage").value.trim();
+
+if(message==""){
+
+message =
+"Hello, I'm interested in " + property + ". Is it still available?";
+
+}
+
+window.open(
+
+"https://wa.me/"+phone+
+
+"?text="+encodeURIComponent(message)
+
+);
+
+};
+}
+
+function closeContactPopup(){
+
+document.getElementById("contactPopup").style.display="none";
+
+}
+window.onclick = function(event){
+
+let popup =
+document.getElementById("contactPopup");
+
+if(event.target === popup){
+
+closeContactPopup();
+
+}
+
+}
+document.addEventListener("keydown",function(e){
+
+if(e.key==="Escape"){
+
+closeContactPopup();
+
+closeGallery();
+
+closeImageViewer();
+
+}
+
+});
+window.addEventListener("click",function(event){
+
+let viewer =
+document.getElementById("imageViewer");
+
+if(event.target===viewer){
+
+closeImageViewer();
+
+}
+
+let gallery =
+document.getElementById("galleryPopup");
+
+if(event.target===gallery){
+
+closeGallery();
+
+}
+
+});
+function reportProperty(){
+    window.location.href="report.html";
+}
+</script>
+<div id="notification"
+      style="
+      position: fixed;
+      top: 30px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #000000;
+      color: rgb(255, 255, 255);
+      padding: 14px 22px;
+      border-radius: 10px;
+      font-size: 16px;
+      opacity: 0;
+      transition: 0.4s;
+      pointer-events: none;
+      z-index: 9999;">
+      </div>
+<div
+id="galleryPopup"
+style="
+display: none;
+position: fixed;
+top: 0;
+left: 0;
+width: 100%;
+height: 100%;
+background: rgba(0, 0, 0, .85);
+justify-content: center;
+align-items: center;
+z-index: 9999;">
+<div 
+style=" 
+background: white;
+padding: 20px;
+border-radius: 10px;
+max-width: 90%;
+max-height: 90%;
+overflow: auto;">
+<div
+style="
+text-align: right;
+margin-bottom: 15px;">
+<button onclick="closeGallery()">
+    Close
+</button>
+</div>
+<div 
+id="galleryPopupContent"
+style="
+display: flex;
+flex-wrap: wrap;
+justify-content: center;
+gap: 10px;
+">
+</div>
+</div>
+</div>
+  <div
+id="contactPopup"
+
+style="
+
+display:none;
+
+position:fixed;
+
+top:0;
+
+left:0;
+
+width:100%;
+
+height:100%;
+
+background:rgba(0,0,0,.45);
+
+backdrop-filter:blur(4px);
+
+justify-content:center;
+
+align-items:center;
+
+z-index:9999;
+
+">
+
+<div
+
+style="
+
+background:white;
+
+padding:30px;
+
+border-radius:15px;
+
+width:350px;
+
+text-align:center;
+
+">
+
+<h2>
+
+Interested?
+
+</h2>
+
+<p>
+
+Choose how you'd like to contact the seller.
+
+</p>
+
+<h3 id="popupProperty"></h3>
+<p
+style="
+font-size:22px;
+font-weight:bold;
+color:#0a8d48;"
+id="popupPrice">
+</p>
+
+<p>
+
+👤
+
+<span id="popupOwner"></span>
+
+</p>
+
+<p>
+
+📞
+
+<span id="popupPhone"></span>
+
+</p>
+
+<br>
+<h4>Your Message</h4>
+
+<textarea
+
+id="popupMessage"
+
+placeholder="Hi, I'm interested in this property. Is it still available?"
+
+style="
+
+width:100%;
+
+height:90px;
+
+padding:10px;
+
+border-radius:10px;
+
+resize:none;
+
+font-size:15px;
+
+"></textarea>
+
+<br><br>
+
+<button id="popupWhatsapp">
+
+💬 Send via WhatsApp
+
+</button>
+
+<br><br>
+
+<button id="popupCall">
+
+📞 Call Seller
+
+</button>
+<br><br>
+
+<button
+
+onclick="closeContactPopup()">
+
+Close
+
+</button>
+
+</div>
+
+</div>
+<div
+id="imageViewer"
+style="
+display:none;
+position:fixed;
+top:0;
+left:0;
+width:100%;
+height:100%;
+background:rgba(0,0,0,.95);
+justify-content:center;
+align-items:center;
+z-index:99999;
+">
+
+<button
+onclick="previousViewerImage()"
+style="
+position:absolute;
+left:30px;
+font-size:55px;
+background:none;
+border:none;
+color:white;
+cursor:pointer;
+">
+❮
+</button>
+
+<img
+id="viewerImage"
+style="
+width:96vw;
+height:96vh;
+max-width:100%;
+max-height:100%;
+object-fit:cover;
+user-select:none;
+">
+<button
+onclick="nextViewerImage()"
+style="
+position:absolute;
+right:30px;
+font-size:55px;
+background:none;
+border:none;
+color:white;
+cursor:pointer;
+">
+❯
+</button>
+
+<div
+id="viewerCounter"
+style="
+position:absolute;
+bottom:25px;
+color:white;
+font-size:20px;
+font-weight:bold;
+">
+</div>
+
+<div
+onclick="closeImageViewer()"
+style="
+position:absolute;
+top:20px;
+right:30px;
+font-size:50px;
+color:white;
+cursor:pointer;
+">
+✕
+</div>
+
+</div>
+</body>
+</html>

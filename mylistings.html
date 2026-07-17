@@ -1,0 +1,698 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <style>
+                    .pageHeader{
+
+display:flex;
+
+justify-content:center;
+
+align-items:center;
+
+margin-bottom:30px;
+
+padding-bottom:15px;
+
+border-bottom:1px solid #ddd;
+
+}
+
+.logoLink{
+
+display:flex;
+
+align-items:center;
+
+gap:12px;
+
+text-decoration:none;
+
+color:black;
+
+}
+
+.pageLogo{
+
+width:55px;
+
+height:55px;
+
+object-fit:contain;
+
+}
+
+.logoLink h2{
+
+margin:0;
+
+font-size:32px;
+
+font-weight:bold;
+
+color:#8b008b;
+
+}
+
+@media(max-width:600px){
+
+.pageLogo{
+
+width:42px;
+
+height:42px;
+
+}
+
+.logoLink h2{
+
+font-size:24px;
+
+}
+
+}
+.tagline{
+
+margin:0;
+
+font-size:14px;
+
+color:#666;
+
+}
+   
+@media(max-width:700px){
+
+#myProperties{
+
+padding:10px;
+
+}
+
+#myProperties button{
+
+width:auto;
+
+padding:12px 22px;
+
+font-size:16px;
+
+font-weight:600;
+
+border-radius:10px;
+
+}
+}
+footer{
+
+margin-top:70px;
+
+padding:40px 20px;
+
+background:#f8f8f8;
+
+border-top:1px solid #ddd;
+
+text-align:center;
+
+}
+</style>
+    </head>
+    <body>
+        <a href="index.html">
+        <button class="home-btn">
+        💒 Home
+        </button>
+    </a>
+       <header class="pageHeader">
+
+<a href="index.html" class="logoLink">
+
+<img
+src="Frame 1.png"
+class="pageLogo">
+
+<div>
+
+<h2>
+
+Gedarak.lk
+
+</h2>
+
+<p class="tagline">
+
+Sri Lanka's Property Marketplace
+
+</p>
+
+</div>
+
+</a>
+
+</header>
+       <h1
+style="
+font-size:38px;
+font-weight:700;
+margin-top:30px;
+margin-bottom:8px;
+text-align:center;
+">
+My Listings
+</h1>
+        <h3
+id="listingCount"
+style="
+text-align:center;
+color:#666;
+font-size:18px;
+margin-bottom:35px;
+font-weight:500;
+">
+</h3>
+        <div id="myProperties"></div>
+          <footer>
+        <h3>Gedarak.lk</h3>
+        <p>Find your dream property</p>
+         <p>Email: <a href="mailto:gedarak.lk@gmail.com">
+gedarak.lk@gmail.com
+</a></p>
+        <p>Phone: +94 771 234 567</p>
+        <p>&copy; 2026 Gedarak.lk</p>
+      </footer>
+        <script>
+            let user= 
+            localStorage.getItem(
+                "currentUser"
+            );
+            let container= 
+             document.getElementById(
+                "myProperties"
+            );
+            let totalListings = 0;
+            for(
+                let i=0;
+                i<localStorage.length;
+                i++
+            ){
+                let key= 
+                localStorage.key(i);
+                let data=
+                localStorage.getItem(
+                    key
+                );
+                try{
+                    let property= 
+                    JSON.parse(data);
+                    let boostStatus = "";
+
+if(property.boost){
+
+let expiry =
+new Date(property.boost.endDate);
+boostStatus =
+
+`
+<p style="color:#f59e0b;font-weight:bold;">
+⭐ ${property.boost.package}
+</p>
+
+<p style="color:#666;">
+Expires:
+${expiry.toLocaleDateString()}
+</p>
+`;
+
+}
+else{
+
+boostStatus =
+
+`
+<p style="color:#888;">
+No Active Boost
+</p>
+`;
+
+}
+                    if(
+                        property &&
+                        property.owner===user
+                    ){totalListings++;
+                        container.innerHTML += `
+
+<div
+style="
+background:white;
+border-radius:18px;
+overflow:hidden;
+box-shadow:0 8px 25px rgba(0,0,0,.12);
+margin:35px auto;
+max-width:700px;
+">
+
+<img
+src="${property.images[0]}"
+style="
+width:100%;
+height:320px;
+display:block;
+object-fit:cover;
+">
+
+<div style="padding:20px;">
+
+<div
+style="
+display:flex;
+justify-content:space-between;
+align-items:center;
+margin-bottom:10px;
+">
+
+${property.boost ?
+
+`
+<span
+style="
+background:#f59e0b;
+color:white;
+padding:6px 14px;
+border-radius:20px;
+font-size:14px;
+font-weight:bold;
+">
+⭐ Boosted
+</span>
+`
+
+:
+
+`
+<span
+style="
+background:#e5e7eb;
+color:#555;
+padding:6px 14px;
+border-radius:20px;
+font-size:14px;
+">
+Normal Listing
+</span>
+`
+}
+
+<span
+style="
+font-size:15px;
+color:#666;
+">
+👁 ${property.views || 0}
+</span>
+
+</div>
+
+<h2
+style="
+font-size:30px;
+font-weight:700;
+margin-bottom:15px;
+">
+${property.name}
+</h2>
+
+<h2
+style="
+font-size:32px;
+font-weight:bold;
+color:#0f766e;
+margin:0;
+">
+${
+property.negotiable
+?
+"💬 Price Negotiable"
+:
+"💸 Rs. "+Number(property.price).toLocaleString()
+}
+</h2>
+
+<p>
+🏠 ${property.propertyType}
+</p>
+
+<p>
+📍 ${property.city}, ${property.district}
+</p>
+
+<p>
+📅 ${timeAgo(property.createdAt)}
+</p>
+
+<p>
+
+${property.status=="For Sale"
+
+?
+
+"🟢 For Sale"
+
+:
+
+property.status=="For Rent"
+
+?
+
+"🔵 For Rent"
+
+:
+
+"🟣 For Sale / Rent"
+
+}
+
+</p>
+
+<div
+style="
+display:grid;
+
+grid-template-columns:repeat(2,1fr);
+
+gap:14px;
+
+margin-top:28px;
+gap:12px;
+margin-top:20px;
+">
+
+<button
+style="
+padding:15px 0;
+
+font-size:17px;
+
+font-weight:600;
+
+border:none;
+
+border-radius:12px;
+
+cursor:pointer;
+
+transition:.25s;
+
+height:52px;
+background:#2563eb;
+
+color:white;"
+onclick="viewProperty('${property.id}')">
+👁 View
+</button>
+
+<button
+style="
+padding:15px 0;
+
+font-size:17px;
+
+font-weight:600;
+
+border:none;
+
+border-radius:12px;
+
+cursor:pointer;
+
+transition:.25s;
+
+height:52px;
+background:#16a34a;
+
+color:white;"
+onclick="editProperty('${property.id}')">
+✏ Edit
+</button>
+
+<button
+style="
+padding:15px 0;
+
+font-size:17px;
+
+font-weight:600;
+
+border:none;
+
+border-radius:12px;
+
+cursor:pointer;
+
+transition:.25s;
+
+height:52px;
+background:#f59e0b;
+
+color:white;"
+onclick="openBoost('${property.id}')">
+🚀 ${property.boost ? "Boost Again" : "Boost"}
+</button>
+
+<button
+style="
+padding:15px 0;
+
+font-size:17px;
+
+font-weight:600;
+
+border:none;
+
+border-radius:12px;
+
+cursor:pointer;
+
+transition:.25s;
+
+height:52px;
+background:#dc2626;
+
+color:white;
+"
+onclick="deleteProperty('${key}')">
+🗑 Delete
+</button>
+
+</div>
+
+</div>
+
+</div>
+
+`;
+                            }
+                        }
+                        catch(error){
+
+                        }
+     function deleteProperty(key){
+
+if(
+
+!confirm(
+
+"Delete this property permanently?"
+
+)
+
+){
+
+return;
+
+}
+
+localStorage.removeItem(key);
+
+alert("Property Deleted.");
+
+location.reload();
+
+}
+                         function editProperty(id){
+                            localStorage.setItem(
+                                "editPropertyId",
+                                id
+                            );
+                            window.location.href = 
+                            "editproperty.html";
+                        }
+                        function viewProperty(id){
+
+localStorage.setItem(
+
+"selectedProperty",
+
+id
+
+);
+
+window.location.href="property.html";
+
+}
+                    }
+                        if(totalListings===0){
+
+container.innerHTML = `
+
+<div
+style="
+max-width:700px;
+margin:50px auto;
+padding:35px;
+background:white;
+border-radius:18px;
+box-shadow:0 8px 25px rgba(0,0,0,.12);
+text-align:center;
+">
+
+<div
+style="
+font-size:70px;
+margin-bottom:15px;
+">
+🏡
+</div>
+
+<h2>
+No Listings Yet
+</h2>
+
+<p
+style="
+font-size:18px;
+color:#666;
+line-height:1.8;
+">
+
+You haven't posted any properties yet.
+
+Create your first listing and start reaching buyers across Sri Lanka.
+
+</p>
+
+<button
+onclick="openPostProperty()"
+style="
+padding:14px 28px;
+font-size:18px;
+margin-top:20px;
+cursor:pointer;
+border:none;
+border-radius:10px;
+">
+
+➕ Post Your First Property
+
+</button>
+
+</div>
+
+`;
+
+}
+                        function openPostProperty(){
+             if(
+            localStorage.getItem(
+                "loggedIn"
+            )!="true"
+        ){
+            alert(
+                "Please login first"
+            );
+            window.location.href= 
+            "login.html";
+            return;
+        }
+        window.location.href="postproperty.html";
+        } 
+                    function openBoost(id){
+
+localStorage.setItem(
+"selectedBoostProperty",
+id
+);
+
+window.location.href="boost.html";
+
+}
+function timeAgo(date){
+
+let diff =
+Date.now()-date;
+
+let days =
+Math.floor(diff/86400000);
+
+if(days==0){
+
+return "Today";
+
+}
+
+if(days==1){
+
+return "Yesterday";
+
+}
+
+if(days<30){
+
+return days+" days ago";
+
+}
+
+let months=
+Math.floor(days/30);
+
+if(months<12){
+
+return months+" month"+
+
+(months>1?"s":"")+
+
+" ago";
+
+}
+
+let years=
+Math.floor(months/12);
+
+return years+
+
+" year"+
+
+(years>1?"s":"")+
+
+" ago";
+
+}
+document.getElementById("listingCount").innerHTML =
+
+totalListings +
+
+(totalListings==1
+
+?
+
+" Active Listing"
+
+:
+
+" Active Listings");
+        </script>
+    </body>
+</html>

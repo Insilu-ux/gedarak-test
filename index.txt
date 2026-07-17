@@ -1,0 +1,4298 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <link rel="stylesheet"
+      href="style.css">
+    <meta charset="UTF-8">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+.property-card{
+
+display:flex;
+width:100%;
+background:white;
+border-radius:12px;
+overflow:hidden;
+box-shadow:0 2px 8px rgba(0,0,0,.15);
+margin:18px 0;
+min-height:230px;
+
+}
+
+.property-image{
+
+width:40%;
+position:relative;
+flex-shrink:0;
+height:260px;
+
+}
+
+.property-image img{
+
+width:100%;
+height:100%;
+object-fit:cover;
+display:block;
+
+}
+
+.property-details{
+
+width:60%;
+padding:12px;
+display:flex;
+flex-direction:column;
+justify-content:space-between;
+
+}
+
+.property-details h3{
+
+margin:0;
+font-size:18px;
+font-weight:bold;
+
+overflow:hidden;
+white-space:nowrap;
+text-overflow:ellipsis;
+
+}
+
+.property-type{
+
+font-size:14px;
+color:#666;
+margin:5px 0;
+
+}
+
+.property-location{
+
+font-size:14px;
+margin:6px 0;
+
+}
+
+.property-info{
+
+font-size:14px;
+margin:5px 0;
+
+}
+
+.property-price{
+
+font-size:20px;
+font-weight:bold;
+color:#118a1f;
+margin:8px 0;
+
+}
+
+.property-buttons{
+
+display:flex;
+gap:8px;
+margin-top:10px;
+
+}
+
+.property-buttons button{
+
+flex:1;
+padding:10px;
+border:none;
+border-radius:8px;
+cursor:pointer;
+font-weight:bold;
+
+}
+.property-details{
+
+display:flex;
+flex-direction:column;
+
+}
+
+.property-buttons{
+
+margin-top:auto;
+
+}
+.menu-icon{
+
+font-size:30px;
+cursor:pointer;
+padding:12px;
+border: black;
+
+}
+.sidebar{
+
+position:fixed;
+
+top:0;
+
+left:-85%;
+
+width:85%;
+max-width:340px;
+
+height:100%;
+
+background:white;
+
+border-radius:0 20px 20px 0;
+
+box-shadow:0 10px 40px rgba(0,0,0,.25);
+
+transition:.3s;
+
+z-index:9999;
+
+overflow-y:auto;
+
+padding:25px;
+
+}
+.sidebar.active{
+
+left:0;
+
+}
+.menu-header{
+
+text-align:center;
+
+margin-bottom:20px;
+
+}
+.menu-header h2{
+
+margin:0;
+
+font-size:28px;
+
+}
+.menu-header p{
+
+color:#666;
+
+font-size:15px;
+
+margin-top:6px;
+
+}
+.menu-post{
+
+width:100%;
+
+padding:14px;
+
+font-size:18px;
+
+font-weight:bold;
+
+background:#16a34a;
+
+color:white;
+
+border:none;
+
+border-radius:12px;
+
+cursor:pointer;
+
+margin-bottom:20px;
+
+}
+.sidebar a{
+
+display:block;
+
+padding:16px;
+
+font-size:19px;
+
+font-weight:bold;
+
+color:#333;
+
+text-decoration:none;
+
+border-radius:10px;
+
+margin-bottom:6px;
+
+}
+.sidebar a:hover{
+
+background:#f3f4f6;
+
+}
+.menu-footer{
+
+margin-top:40px;
+
+text-align:center;
+
+color:#777;
+
+font-size:14px;
+
+}
+    </style>
+    <title>Gedarak.lk</title>
+    
+</head>
+
+<body>
+  <div
+style="
+display:flex;
+align-items:center;
+justify-content:center;
+gap:10px;
+width:100%;
+margin-top:15px;
+">
+<img
+src="Frame 1.png"
+style="
+width:120px;
+height:120px;
+object-fit:contain;
+">
+
+<h1
+style="
+margin:0;
+font-size:40px;
+">
+Gedarak.lk
+</h1>
+
+</div>
+   <nav
+style="
+margin-top:8px;
+margin-bottom:18px;
+padding-left:12px;
+">
+    <div
+    class="menu-icon"
+    onclick="openMenu()">
+        ☰
+    </div>
+</nav>
+    <!--SIDEBAR-->
+   <div class="sidebar" id="sidebar">
+
+<div class="menu-header">
+
+<div style="
+display:flex;
+align-items:center;
+justify-content:center;
+gap:10px;
+">
+
+<img
+src="Frame 1.png"
+style="
+width:80px;
+height:80px;
+object-fit:contain;
+">
+
+<h2 style="
+margin:0;
+font-size:28px;
+">
+Gedarak.lk
+</h2>
+
+</div>
+
+<p>Sri Lanka's Property Marketplace</p>
+
+</div>
+
+<button
+class="menu-post"
+onclick="openPostProperty()">
+
+➕ Post Property
+
+</button>
+
+<hr>
+
+<a href="profile.html">
+
+👤 My Account
+
+</a>
+
+<a href="favourites.html">
+
+💗 Favourites
+
+</a>
+
+<a href="help.html">
+
+❓ Help Center
+
+</a>
+
+<a href="about.html">
+
+ℹ  About Gedarak.lk
+
+</a>
+
+<a href="report.html">
+
+🚩 Report Problem
+
+</a>
+
+<div id="adminLink"></div>
+
+<div class="menu-footer">
+
+Version 1.0
+
+<br>
+
+© Gedarak.lk 2026
+
+</div>
+
+</div>
+    <section class="hero" style="text-align: center;">
+        <h2>Find Your Perfect Property</h2>
+
+       <input
+type="text"
+id="searchInput"
+placeholder="Search by City, District, Address, Property Type..."
+oninput="
+intelligentSearch();
+updateSuggestions();
+">
+<div id="searchSuggestions"
+style="
+display:none;
+background:white;
+border:1px solid #ddd;
+max-height:250px;
+overflow-y:auto;
+width:100%;
+max-width:500px;
+margin:auto;
+text-align:left;
+box-shadow:0 4px 12px rgba(0,0,0,.15);
+position:relative;
+z-index:999;
+">
+</div>
+        <button onclick="applyAndCloseFilters()">
+            🔍Search
+        </button>
+        <button onclick="toggleFilters()">
+            Filters
+        </button>
+       <select id="sortFilter" onchange="sortProperties()">
+        <option value="sortby">
+Sort By
+</option>
+
+<option value="newest">Newest First</option>
+
+<option value="priceLow">Price: Low → High</option>
+
+<option value="priceHigh">Price: High → Low</option>
+
+<option value="views">Most Viewed</option>
+
+
+</select>
+        <div id="filterBox"
+        style="display: none; padding: 20px; border: 1px solid #08aaeb; margin-top: 10px;">
+        <h3>Filters</h3>
+        <label>District</label>
+        <select id="districtFilter"
+        onchange="
+        updateFilterCities();
+        searchProperty();
+        ">
+               <option value="">All Districts</option>
+            <option value="Colombo">Colombo</option>
+             <option value="Gampaha">Gampaha</option>
+              <option value="Kalutara">Kalutara</option>
+              <option value="Kandy">Kandy</option>
+                   <option value="Matale">Matale</option>
+                    <option value="Nuwara Eliya">Nuwara Eliya</option>
+               <option value="Matara">Matara</option>
+                <option value="Hambantota">Hambantota</option>
+                 <option value="Galle">Galle</option>
+                   <option value="Kurunegala">Kurunegala</option>
+                            <option value="Puttalama">Puttalama</option>
+                              <option value="Anuradhapura">Anuradhapura</option>
+                        <option value="Polonnaruwa">Polonnaruwa</option>
+                         <option value="Badulla">Badulla</option>
+                                 <option value="Monaragala">Monaragala</option> 
+                                    <option value="Kegalle">Kegalle</option>
+                               <option value="Ratnapura">Ratnapura</option>
+                     <option value="Ampara">Ampara</option>
+                      <option value="Batticaloa">Batticaloa</option>
+                        <option value="Trincomalee">Trincomalee</option>
+                          <option value="Jaffna">Jaffna</option>
+                          <option value="Kilinochchi">Kilinochchi</option>
+                           <option value="Mannar">Mannar</option>
+                            <option value="Mullaitivu">Mullaitivu</option>
+                             <option value="Vavuniya">Vavuniya</option>
+                                 
+        </select>
+        <br><br>
+        <label>City</label>
+        <select id="cityFilter"
+        onchange="searchProperty()">
+            <option value="Any City"></option>
+        </select>
+        <br><br>
+        <label>Address (Optional)</label>
+        <br>
+        <input
+        type="text"
+        id="addressFilter"
+        placeholder="Enter Address"
+        oninput="searchProperty()">
+        <br><br>
+        <label>Minimum Price</label>
+        <br>
+       <input
+type="number"
+id="minPrice"
+placeholder="Minimum Price"
+oninput="searchProperty()">
+        <br><br>
+        <label>Maximum Price</label>
+        <br>
+         <input
+        type="number"
+        id="maxPrice"
+        placeholder="Maximum Price"
+        oninput="searchProperty()">
+        <br><br>
+        <h3>Bedrooms</h3>
+        <button class="bedroom-btn" onclick="setBedroomFilter('')">Any</button>
+         <button class="bedroom-btn" onclick="setBedroomFilter('1')">1</button>
+          <button class="bedroom-btn" onclick="setBedroomFilter('2')">2</button>
+           <button class="bedroom-btn" onclick="setBedroomFilter('3')">3</button>
+            <button class="bedroom-btn" onclick="setBedroomFilter('4')">4</button>
+             <button class="bedroom-btn" onclick="setBedroomFilter('5')">5</button>
+             <button class="bedroom-btn" onclick="setBedroomFilter('5+')">5+</button>
+              <br><br>
+               <h3>Bathrooms</h3>
+        <button class="bathroom-btn" onclick="setBathroomFilter('')">Any</button>
+         <button class="bathroom-btn" onclick="setBathroomFilter('1')">1</button>
+          <button class="bathroom-btn" onclick="setBathroomFilter('2')">2</button>
+           <button class="bathroom-btn" onclick="setBathroomFilter('3')">3</button>
+            <button class="bathroom-btn" onclick="setBathroomFilter('4')">4</button>
+             <button class="bathroom-btn" onclick="setBathroomFilter('5')">5</button>
+               <button class="bathroom-btn" onclick="setBathroomFilter('5+')">5+</button>
+              <br><br>
+              <h3>Land Size(Perches)</h3>
+              <input
+              type="number"
+              id="minPerches"
+              placeholder="Minimum Perches"
+              oninput="searchProperty()">
+              <input
+              type="number"
+              id="maxPerches"
+              placeholder="Maximum Perches"
+              oninput="searchProperty()">
+               <h3>Building Size(Sqft)</h3>
+              <input
+              type="number"
+              id="minSqft"
+              placeholder="Minimum Sqft"
+              oninput="searchProperty()">
+              <input
+              type="number"
+              id="maxSqft"
+              placeholder="Maximum Sqft"
+              oninput="searchProperty()">
+              <h3>Property Type</h3>
+               <select
+               id="typeFilter"
+               onchange="searchProperty()">
+               <option value="">Any Type</option>
+               <option value="House">House</option>
+             <option value="Apartment">Apartment</option>
+               <option value="Villa">Villa</option>
+               <option value="Annex">Annex</option>
+               <option value="Land">Land</option>
+               <option value="Commercial">Commercial</option>
+               <option value="Office">Office</option>
+               <option value="Shop">Shop</option>
+               <option value="Warehouse">Warehouse</option>
+               <option value="Building">Building</option>
+               <option value="Hotel">Hotel</option>
+               <option value="Bungalow">Bungalow</option>
+               </select>
+               <br><br>
+               <label>
+                <input type="checkbox"
+                id="rentOnlyFilter"
+                onchange="searchProperty()">
+                For Rent
+               </label>
+                    <h3>Amenities</h3>
+                    <select
+                    id="amenityFilter"
+                    onchange="searchProperty()">
+                <option value="">
+                    Any Amenity
+                </option>
+                <option value="Parking">
+                    Parking
+                </option>
+                <option value="Garage">
+                    Garage
+                </option>
+                <option value="Pool">
+                    Swimming Pool
+                </option>
+                <option value="Garden">
+                    Garden
+                </option>
+                <option value="Gym">
+                    Gym
+                </option>
+                <option value="Elevator">
+                    Elevator
+                </option>
+                <option value="Furnished">
+                    Furnished
+                </option>
+                <option value="Basement">
+                    Basement
+                </option>
+                <option value="Outdoor Space">
+                    Outdoor Space
+                </option>
+                </select>
+
+                <h3>Property Viewings</h3>
+                    <select
+                    id="propertyViewFilter"
+                    onchange="searchProperty()">
+                <option value="">
+                    Any View
+                </option>
+                <option value="City View">
+                    City View
+                </option>
+                <option value="Ocean View">
+                    Ocean View
+                </option>
+                 <option value="River View">
+                    River View
+                </option>
+                 <option value="Lake View">
+                    Lake View
+                </option>
+                 <option value="Mountain View">
+                    Mountain View
+                </option>
+               <option value="Forest View">
+                    Forest View
+                </option>
+                </select>
+                    <br><br>
+         <button onclick="applyAndCloseFilters()">
+            Apply Filters
+         </button>
+         <button
+         onclick="resetFilters()">
+            Reset Filters
+         </button>
+
+        </div>
+        <div class="categories">
+            <button onclick="filterProperty('all')"
+            onmouseover="
+            this.style.transform='translateY(-3px)';
+            this.style.opacity='0.9';
+            "
+             onmouseout="
+            this.style.transform='translateY(0)';
+            this.style.opacity='1';
+            "
+            style="
+            padding: 10px 18px;
+            border: 2px solid #0a5caf;
+            border-radius: 25px;
+            background-color: rgb(50, 134, 230);
+            color: aliceblue;
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+            font-weight: bold;
+            cursor: pointer;
+            margin: 5px;
+            font-size: 15px;
+            transition: 0.3s;">All</button>
+            <button onclick="filterProperty('Apartment')"  
+             onmouseover="
+            this.style.transform='translateY(-3px)';
+            this.style.opacity='0.9';
+            "
+             onmouseout="
+            this.style.transform='translateY(0)';
+            this.style.opacity='1';
+            "
+            style="
+            padding: 10px 18px;
+            border: 2px solid #0a5caf;
+            border-radius: 25px;
+            background-color: rgb(50, 134, 230);
+            color: aliceblue;
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+            font-weight: bold;
+            cursor: pointer;
+            margin: 5px;
+            font-size: 15px;
+             transition: 0.3s;">Apartments</button>
+            <button onclick="filterProperty('House')"
+             onmouseover="
+            this.style.transform='translateY(-3px)';
+            this.style.opacity='0.9';
+            "
+             onmouseout="
+            this.style.transform='translateY(0)';
+            this.style.opacity='1';
+            "
+             style="
+            padding: 10px 18px;
+            border: 2px solid #0a5caf;
+            border-radius: 25px;
+            background-color: rgb(50, 134, 230);
+            color: aliceblue;
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+            font-weight: bold;
+            cursor: pointer;
+            margin: 5px;
+            font-size: 15px;
+             transition: 0.3s;">Homes</button>
+            <button onclick="filterProperty('Land')"
+             onmouseover="
+            this.style.transform='translateY(-3px)';
+            this.style.opacity='0.9';
+            "
+             onmouseout="
+            this.style.transform='translateY(0)';
+            this.style.opacity='1';
+            "
+             style="
+            padding: 10px 18px;
+            border: 2px solid #0a5caf;
+            border-radius: 25px;
+            background-color: rgb(50, 134, 230);
+            color: aliceblue;
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+            font-weight: bold;
+            cursor: pointer;
+            margin: 5px;
+            font-size: 15px;
+             transition: 0.3s;">Lands</button>
+            <button onclick="toggleOtherTags()"
+             onmouseover="
+            this.style.transform='translateY(-3px)';
+            this.style.opacity='0.9';
+            "
+             onmouseout="
+            this.style.transform='translateY(0)';
+            this.style.opacity='1';
+            "
+             style="
+            padding: 10px 18px;
+            border: 2px solid #0a5caf;
+            border-radius: 25px;
+            background-color: rgb(50, 134, 230);
+            color: aliceblue;
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+            font-weight: bold;
+            cursor: pointer;
+            margin: 5px;
+            font-size: 15px;
+             transition: 0.3s;">Others</button>
+              <div id="otherTags" style="display: none; margin-top: 10px;">
+                <button  onclick="filterOthertype('Villa')"
+                 onmouseover="
+            this.style.transform='translateY(-3px)';
+            this.style.opacity='0.9';
+            "
+             onmouseout="
+            this.style.transform='translateY(0)';
+            this.style.opacity='1';
+            "
+                 style="
+            padding: 8px 14px;
+            border: 2px solid rgb(0, 0, 0);
+            border-radius: 20px;
+            background-color: rgb(14, 88, 30);
+            color: aliceblue;
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+            font-weight: bold;
+            cursor: pointer;
+            margin: 4px;
+             font-size: 14px;
+             transition: 0.3s;">Villa</button>
+                <button  onclick="filterOthertype('Annex')"
+                 onmouseover="
+            this.style.transform='translateY(-3px)';
+            this.style.opacity='0.9';
+            "
+             onmouseout="
+            this.style.transform='translateY(0)';
+            this.style.opacity='1';
+            "
+                 style="
+            padding: 8px 14px;
+            border: 2px solid rgb(0, 0, 0);
+            border-radius: 20px;
+            background-color: rgb(14, 88, 30);
+            color: aliceblue;
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+            font-weight: bold;
+            cursor: pointer;
+            margin: 4px; 
+            font-size: 14px;
+             transition: 0.3s;">Annex</button>
+                <button  onclick="filterOthertype('Commercial')"
+                 onmouseover="
+            this.style.transform='translateY(-3px)';
+            this.style.opacity='0.9';
+            "
+             onmouseout="
+            this.style.transform='translateY(0)';
+            this.style.opacity='1';
+            "
+                style="
+            padding: 8px 14px;
+            border: 2px solid rgb(0, 0, 0);
+            border-radius: 20px;
+            background-color: rgb(14, 88, 30);
+            color: aliceblue;
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+            font-weight: bold;
+            cursor: pointer;
+            margin: 4px;
+             font-size: 14px;
+             transition: 0.3s;" >Commercial</button>
+                <button  onclick="filterOthertype('Office')"
+                 onmouseover="
+            this.style.transform='translateY(-3px)';
+            this.style.opacity='0.9';
+            "
+             onmouseout="
+            this.style.transform='translateY(0)';
+            this.style.opacity='1';
+            "
+                 style="
+            padding: 8px 14px;
+            border: 2px solid rgb(0, 0, 0);
+            border-radius: 20px;
+            background-color: rgb(14, 88, 30);
+            color: aliceblue;
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+            font-weight: bold;
+            cursor: pointer;
+            margin: 4px;
+             font-size: 14px;
+             transition: 0.3s;">Office</button>
+                <button  onclick="filterOthertype('Shop')"
+                 onmouseover="
+            this.style.transform='translateY(-3px)';
+            this.style.opacity='0.9';
+            "
+             onmouseout="
+            this.style.transform='translateY(0)';
+            this.style.opacity='1';
+            "
+                 style="
+            padding: 8px 14px;
+            border: 2px solid rgb(0, 0, 0);
+            border-radius: 20px;
+            background-color: rgb(14, 88, 30);
+            color: aliceblue;
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+            font-weight: bold;
+            cursor: pointer;
+            margin: 4px;
+             font-size: 14px;
+             transition: 0.3s;">Shop</button>
+                <button  onclick="filterOthertype('Warehouse')"
+                 onmouseover="
+            this.style.transform='translateY(-3px)';
+            this.style.opacity='0.9';
+            "
+             onmouseout="
+            this.style.transform='translateY(0)';
+            this.style.opacity='1';
+            "
+                 style="
+            padding: 8px 14px;
+            border: 2px solid rgb(0, 0, 0);
+            border-radius: 20px;
+            background-color: rgb(14, 88, 30);
+            color: aliceblue;
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+            font-weight: bold;
+            cursor: pointer;
+            margin: 4px;
+             font-size: 14px;
+             transition: 0.3s;">Warehouse</button>
+                <button  onclick="filterOthertype('Bungalow')"
+                 onmouseover="
+            this.style.transform='translateY(-3px)';
+            this.style.opacity='0.9';
+            "
+             onmouseout="
+            this.style.transform='translateY(0)';
+            this.style.opacity='1';
+            "
+                 style="
+            padding: 8px 14px;
+            border: 2px solid rgb(0, 0, 0);
+            border-radius: 20px;
+             background-color: rgb(14, 88, 30);
+            color: aliceblue;
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+            font-weight: bold;
+            cursor: pointer;
+            margin: 4px;
+             font-size: 14px;
+             transition: 0.3s;">Bungalow</button>
+                <button  onclick="filterOthertype('Hotel')"
+                 onmouseover="
+            this.style.transform='translateY(-3px)';
+            this.style.opacity='0.9';
+            "
+             onmouseout="
+            this.style.transform='translateY(0)';
+            this.style.opacity='1';
+            "
+                 style="
+            padding: 8px 14px;
+            border: 2px solid rgb(0, 0, 0);
+            border-radius: 20px;
+            background-color: rgb(14, 88, 30);
+            color: aliceblue;
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+            font-weight: bold;
+            cursor: pointer;
+            margin: 4px;
+             font-size: 14px;
+             transition: 0.3s;">Hotel</button>
+             <button  onclick="filterOthertype('Building')"
+                 onmouseover="
+            this.style.transform='translateY(-3px)';
+            this.style.opacity='0.9';
+            "
+             onmouseout="
+            this.style.transform='translateY(0)';
+            this.style.opacity='1';
+            "
+                 style="
+            padding: 8px 14px;
+            border: 2px solid rgb(0, 0, 0);
+            border-radius: 20px;
+            background-color: rgb(14, 88, 30);
+            color: aliceblue;
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+            font-weight: bold;
+            cursor: pointer;
+            margin: 4px; 
+            font-size: 14px;
+             transition: 0.3s;">Building</button>
+            </div>
+            <button onclick="toggleRentalTags()"
+             onmouseover="
+            this.style.transform='translateY(-3px)';
+            this.style.opacity='0.9';
+            "
+             onmouseout="
+            this.style.transform='translateY(0)';
+            this.style.opacity='1';
+            "
+             style="
+            padding: 10px 18px;
+            border: 2px solid rgb(62, 9, 255);
+            border-radius: 25px;
+            background-color: rgb(21, 24, 230);
+            color: aliceblue;
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+            font-weight: bold;
+            cursor: pointer;
+            margin: 5px;
+            font-size: 15px;
+             transition: 0.3s;">Rentals</button>
+            <div id="rentalTags" style="display: none; margin-top: 10px;">
+                <button class="rental-tag" onclick="filterRentalType('Apartment')"
+                 onmouseover="
+            this.style.transform='translateY(-3px)';
+            this.style.opacity='0.9';
+            "
+             onmouseout="
+            this.style.transform='translateY(0)';
+            this.style.opacity='1';
+            "
+            style="
+            padding: 8px 14px;
+            border: 2px solid rgb(0, 0, 0);
+            border-radius: 20px;
+            background-color: rgb(25, 61, 224);
+            color: aliceblue;
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+            font-weight: bold;
+            cursor: pointer;
+            margin: 4px;
+             font-size: 14px;
+             transition: 0.3s;">Apartment</button>
+                <button class="rental-tag" onclick="filterRentalType('House')"
+                 onmouseover="
+            this.style.transform='translateY(-3px)';
+            this.style.opacity='0.9';
+            "
+             onmouseout="
+            this.style.transform='translateY(0)';
+            this.style.opacity='1';
+            "
+                 style="
+            padding: 8px 14px;
+            border: 2px solid rgb(0, 0, 0);
+            border-radius: 20px;
+           background-color: rgb(25, 61, 224);
+            color: aliceblue;
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+            font-weight: bold;
+            cursor: pointer;
+            margin: 4px;
+             font-size: 14px;
+             transition: 0.3s;">House</button>
+                <button class="rental-tag" onclick="filterRentalType('Villa')"
+                 onmouseover="
+            this.style.transform='translateY(-3px)';
+            this.style.opacity='0.9';
+            "
+             onmouseout="
+            this.style.transform='translateY(0)';
+            this.style.opacity='1';
+            "
+                style="
+            padding: 8px 14px;
+            border: 2px solid rgb(0, 0, 0);
+            border-radius: 20px;
+            background-color: rgb(25, 61, 224);
+            color: aliceblue;
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+            font-weight: bold;
+            cursor: pointer;
+            margin: 4px;
+             font-size: 14px;
+             transition: 0.3s;">Villa</button>
+                <button class="rental-tag" onclick="filterRentalType('Annex')"
+                 onmouseover="
+            this.style.transform='translateY(-3px)';
+            this.style.opacity='0.9';
+            "
+             onmouseout="
+            this.style.transform='translateY(0)';
+            this.style.opacity='1';
+            "
+                  style="
+            padding: 8px 14px;
+            border: 2px solid rgb(0, 0, 0);
+            border-radius: 20px;
+           background-color: rgb(25, 61, 224);
+            color: aliceblue;
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+            font-weight: bold;
+            cursor: pointer;
+            margin: 4px;
+             font-size: 14px;
+             transition: 0.3s;">Annex</button>
+                <button class="rental-tag" onclick="filterRentalType('Land')"
+                 onmouseover="
+            this.style.transform='translateY(-3px)';
+            this.style.opacity='0.9';
+            "
+             onmouseout="
+            this.style.transform='translateY(0)';
+            this.style.opacity='1';
+            "
+                style="
+            padding: 8px 14px;
+            border: 2px solid rgb(0, 0, 0);
+            border-radius: 20px;
+            background-color: rgb(25, 61, 224);
+            color: aliceblue;
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+            font-weight: bold;
+            cursor: pointer;
+            margin: 4px;
+             font-size: 14px;
+             transition: 0.3s;">Land</button>
+                <button class="rental-tag" onclick="filterRentalType('Commercial')"
+                 onmouseover="
+            this.style.transform='translateY(-3px)';
+            this.style.opacity='0.9';
+            "
+             onmouseout="
+            this.style.transform='translateY(0)';
+            this.style.opacity='1';
+            "
+                  style="
+            padding: 8px 14px;
+            border: 2px solid rgb(0, 0, 0);
+            border-radius: 20px;
+             background-color: rgb(25, 61, 224);
+            color: aliceblue;
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+            font-weight: bold;
+            cursor: pointer;
+            margin: 4px;
+             font-size: 14px;
+             transition: 0.3s;">Commercial</button>
+                <button class="rental-tag" onclick="filterRentalType('Office')"
+                 onmouseover="
+            this.style.transform='translateY(-3px)';
+            this.style.opacity='0.9';
+            "
+             onmouseout="
+            this.style.transform='translateY(0)';
+            this.style.opacity='1';
+            "
+                  style="
+            padding: 8px 14px;
+            border: 2px solid rgb(0, 0, 0);
+            border-radius: 20px;
+           background-color: rgb(25, 61, 224);
+            color: aliceblue;
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+            font-weight: bold;
+            cursor: pointer;
+            margin: 4px;
+             font-size: 14px;
+             transition: 0.3s;">Office</button>
+                <button class="rental-tag" onclick="filterRentalType('Shop')"
+                 onmouseover="
+            this.style.transform='translateY(-3px)';
+            this.style.opacity='0.9';
+            "
+             onmouseout="
+            this.style.transform='translateY(0)';
+            this.style.opacity='1';
+            "
+                 style="
+            padding: 8px 14px;
+            border: 2px solid rgb(0, 0, 0);
+            border-radius: 20px;
+          background-color: rgb(25, 61, 224);
+            color: aliceblue;
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+            font-weight: bold;
+            cursor: pointer;
+            margin: 4px;
+             font-size: 14px;
+             transition: 0.3s;">Shop</button>
+                <button class="rental-tag" onclick="filterRentalType('Warehouse')"
+                 onmouseover="
+            this.style.transform='translateY(-3px)';
+            this.style.opacity='0.9';
+            "
+             onmouseout="
+            this.style.transform='translateY(0)';
+            this.style.opacity='1';
+            "
+                style="
+            padding: 8px 14px;
+            border: 2px solid rgb(0, 0, 0);
+            border-radius: 20px;
+           background-color: rgb(25, 61, 224);
+            color: aliceblue;
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+            font-weight: bold;
+            cursor: pointer;
+            margin: 4px;
+             font-size: 14px;
+             transition: 0.3s;">Warehouse</button>
+                <button class="rental-tag" onclick="filterRentalType('Bungalow')"
+                 onmouseover="
+            this.style.transform='translateY(-3px)';
+            this.style.opacity='0.9';
+            "
+             onmouseout="
+            this.style.transform='translateY(0)';
+            this.style.opacity='1';
+            "
+                 style="
+            padding: 8px 14px;
+            border: 2px solid rgb(0, 0, 0);
+            border-radius: 20px;
+            background-color: rgb(25, 61, 224);
+            color: aliceblue;
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+            font-weight: bold;
+            cursor: pointer;
+            margin: 4px;
+             font-size: 14px;
+             transition: 0.3s;">Bungalow</button>
+                <button class="rental-tag" onclick="filterRentalType('Hotel')"
+                 onmouseover="
+            this.style.transform='translateY(-3px)';
+            this.style.opacity='0.9';
+            "
+             onmouseout="
+            this.style.transform='translateY(0)';
+            this.style.opacity='1';
+            "
+                 style="
+            padding: 8px 14px;
+            border: 2px solid rgb(0, 0, 0);
+            border-radius: 20px;
+           background-color: rgb(25, 61, 224);
+            color: aliceblue;
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+            font-weight: bold;
+            cursor: pointer;
+            margin: 4px;
+             font-size: 14px;
+             transition: 0.3s;">Hotel</button>
+             <button class="rental-tag" onclick="filterRentalType('Building')"
+                 onmouseover="
+            this.style.transform='translateY(-3px)';
+            this.style.opacity='0.9';
+            "
+             onmouseout="
+            this.style.transform='translateY(0)';
+            this.style.opacity='1';
+            "
+                 style="
+            padding: 8px 14px;
+            border: 2px solid rgb(0, 0, 0);
+            border-radius: 20px;
+           background-color: rgb(25, 61, 224);
+            color: aliceblue;
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+            font-weight: bold;
+            cursor: pointer;
+            margin: 4px;
+             font-size: 14px;
+             transition: 0.3s;">Building</button>
+            </div>
+        </div>
+    </section>
+     <div id="newProperties">
+     </div>
+    <footer
+
+style="
+
+text-align:center;
+
+margin-top:60px;
+
+padding-top:25px;
+
+border-top:1px solid #ddd;
+
+line-height:1.9;
+
+">
+        <h3>Gedarak.lk</h3>
+        <p>Find your dream property</p>
+       <p>
+
+Email:
+
+<a href="mailto:gedarak.lk@gmail.com">
+
+gedarak.lk@gmail.com
+
+</a>
+
+</p>
+        <p>Phone: +94 771 234 567</p>
+        <p>&copy; 2026 Gedarak.lk</p>
+      </footer>
+    <script>
+        let selectedOtherType ="";
+        let homepageImageIndex = {};
+        let viewerProperty = null;
+let viewerIndex = 0;
+      function toggleOtherTags(){
+
+document.getElementById("rentalTags").style.display="none";
+selectedRentalType = "";
+
+let tags = document.getElementById("otherTags");
+
+if(tags.style.display==="none" || tags.style.display===""){
+
+    tags.style.display="block";
+
+}
+else{
+
+    tags.style.display="none";
+
+}
+
+}
+       function filterOthertype(type){
+
+document.getElementById("typeFilter").value = "";
+
+selectedRentalType = "";
+selectedOtherType = type;
+
+searchProperty();
+
+}
+        function applyAndCloseFilters(){
+            closeFilters();
+            searchProperty();
+        }
+        function closeFilters(){
+            document.getElementById("filterBox").style.display = "none";
+        }
+        function updateFilterCities(){
+             let district= 
+        document.getElementById(
+            "districtFilter"
+        ).value;
+        let cityDropdown = 
+        document.getElementById(
+            "cityFilter"
+        );
+        cityDropdown.innerHTML = 
+        '<option value="">Any City</option>';
+        if(districtCities[district]){
+        districtCities[district]
+        .forEach(function(city){
+            let option = 
+            document.createElement("option");
+            option.value = city;
+            option.textContent = city;
+            cityDropdown.appendChild(
+                option
+            );
+        });
+        }
+       }
+       function resetFilters(){
+        document.getElementById("districtFilter").value= "";
+         document.getElementById("cityFilter").innerHTML= '<option value="">Any City</option>';
+          document.getElementById("addressFilter").value= "";
+           document.getElementById("typeFilter").value= "";
+           document.getElementById("rentOnlyFilter").checked = false;
+            document.getElementById("searchInput").value= "";
+             document.getElementById("minPrice").value= "";
+              document.getElementById("maxPrice").value= "";
+               document.getElementById("minPerches").value= "";
+                document.getElementById("maxPerches").value= "";
+                 document.getElementById("minSqft").value= "";
+                  document.getElementById("maxSqft").value= "";
+                     document.getElementById("amenityFilter").value= "";
+                        document.getElementById("propertyViewFilter").value= "";
+                  selectedBedroom = "";
+                  selectedBathroom = "";
+                  selectedOtherType = "";
+                  searchProperty();
+       }
+        function toggleFilters(){
+            let box = 
+            document.getElementById(
+                "filterBox"
+            );
+            if(box.style.display=="none"){
+                box.style.display="block";
+            }else{
+                box.style.display="none";
+            }
+        }
+        function toggleRentalTags(){
+
+document.getElementById("otherTags").style.display="none";
+selectedOtherType = "";
+
+let tags = document.getElementById("rentalTags");
+
+if(tags.style.display==="none" || tags.style.display===""){
+
+    tags.style.display="flex";
+
+}
+else{
+
+    tags.style.display="none";
+
+}
+
+}
+       let rentalMode = "";
+       let selectedRentalType = "";
+       
+     function filterRentalType(type){
+
+document.getElementById("typeFilter").value = "";
+
+selectedOtherType = "";
+selectedRentalType = type;
+
+searchProperty();
+
+}
+       function filterProperty(type){
+
+selectedOtherType = "";
+selectedRentalType = "";
+
+document.getElementById("otherTags").style.display="none";
+document.getElementById("rentalTags").style.display="none";
+
+document.getElementById("typeFilter").value =
+type==="all" ? "" : type;
+
+searchProperty();
+
+}
+        function openPostProperty(){
+             if(
+            localStorage.getItem(
+                "loggedIn"
+            )!="true"
+        ){
+            alert(
+                "Please login first"
+            );
+            window.location.href= 
+            "login.html";
+            return;
+        }
+        window.location.href="postproperty.html";
+        }
+        function viewProperty(id){
+            localStorage.setItem(
+                "selectedProperty",
+                id
+            );
+            window.location.href=
+            "property.html";
+        }
+        window.addEventListener("load",function(){
+
+    resetFilters();
+
+});
+
+        function openMenu(){
+
+document
+.getElementById("sidebar")
+.classList.add("active");
+
+}
+function closeMenu(){
+
+document
+.getElementById("sidebar")
+.classList.remove("active");
+
+}
+document.addEventListener("click",function(e){
+
+let sidebar=
+document.getElementById("sidebar");
+
+let menu=
+document.querySelector(".menu-icon");
+
+if(
+
+!sidebar.contains(e.target)
+
+&&
+
+!menu.contains(e.target)
+
+){
+
+sidebar.classList.remove("active");
+
+}
+
+});
+        let selectedBedroom = "";
+        let selectedBathroom = "";
+        function setBedroomFilter(value){
+            selectedBedroom = value;
+            searchProperty();
+        }
+        function setBathroomFilter(value){
+            selectedBathroom = value;
+            searchProperty();
+        }
+         const districtCities= {
+               Colombo: [
+"Angoda",
+"Athurugiriya",
+"Avissawella",
+"Battaramulla",
+"Boralesgamuwa",
+"Colombo 01 - Fort",
+"Colombo 02 - Slave Island",
+"Colombo 03 - Kollupitiya",
+"Colombo 04 - Bambalapitiya",
+"Colombo 05 - Havelock Town",
+"Colombo 06 - Wellawatte",
+"Colombo 07 - Cinnamon Gardens",
+"Colombo 08 - Borella",
+"Colombo 09 - Dematagoda",
+"Colombo 10 - Maradana",
+"Colombo 11 - Pettah",
+"Colombo 12 - Hulftsdorp",
+"Colombo 13 - Kotahena",
+"Colombo 14 - Grandpass",
+"Colombo 15 - Modara",
+"Dehiwala",
+"Hanwella",
+"Hokandara",
+"Homagama",
+"Kaduwela",
+"Kesbewa",
+"Kolonnawa",
+"Koswatta",
+"Kotikawatta",
+"Kotte",
+"Kottawa",
+"Malabe",
+"Maharagama",
+"Moratuwa",
+"Mount Lavinia",
+"Mulleriyawa",
+"Nawala",
+"Nugegoda",
+"Padukka",
+"Pannipitiya",
+"Piliyandala",
+"Rajagiriya",
+"Ratmalana",
+"Talawatugoda",
+"Wellampitiya"
+],
+Gampaha: [
+
+"Attanagalla",
+"Biyagama",
+"Delgoda",
+"Divulapitiya",
+"Dompe",
+"Ekala",
+"Gampaha",
+"Ganemulla",
+"Ja-Ela",
+"Kadawatha",
+"Kandana",
+"Katana",
+"Katunayake",
+"Kelaniya",
+"Kiribathgoda",
+"Kochchikade",
+"Mabole",
+"Mahara",
+"Minuwangoda",
+"Mirigama",
+"Negombo",
+"Nittambuwa",
+"Peliyagoda",
+"Ragama",
+"Raddolugama",
+"Seeduwa",
+"Udugampola",
+"Urapola",
+"Veyangoda",
+"Wattala",
+"Weliweriya",
+"Yakkala"
+
+],
+         Kalutara: [
+"Agalawatta",
+"Alubomulla",
+"Aluthgama",
+"Bandaragama",
+"Beruwala",
+"Bulathsinhala",
+"Dharga Town",
+"Dodangoda",
+"Gonapola",
+"Horana",
+"Ingiriya",
+"Kalutara",
+"Kalutara North",
+"Kalutara South",
+"Katukurunda",
+"Maggona",
+"Matugama",
+"Millaniya",
+"Neboda",
+"Panadura",
+"Payagala",
+"Wadduwa",
+"Waskaduwa"
+],
+Kandy: [
+"Akurana",
+"Alawatugoda",
+"Ampitiya",
+"Delthota",
+"Digana",
+"Doluwa",
+"Galagedara",
+"Galaha",
+"Gampola",
+"Gelioya",
+"Gurudeniya",
+"Haragama",
+"Hasalaka",
+"Hindagala",
+"Hunnasgiriya",
+"Kadugannawa",
+"Kandy",
+"Katugastota",
+"Kundasale",
+"Madawala",
+"Menikhinna",
+"Nawalapitiya",
+"Pallekele",
+"Panwila",
+"Pathadumbara",
+"Pathahewaheta",
+"Peradeniya",
+"Pilimathalawa",
+"Poojapitiya",
+"Teldeniya",
+"Udadumbara",
+"Udapalatha",
+"Wattegama",
+"Yatinuwara"
+],
+Matale: [
+"Akuramboda",
+"Aluvihare",
+"Ambanganga",
+"Dambulla",
+"Galewela",
+"Inamaluwa",
+"Kandalama",
+"Laggala",
+"Lenadora",
+"Madipola",
+"Matale",
+"Moragolla",
+"Nalanda",
+"Naula",
+"Opalgala",
+"Palapathwela",
+"Pallepola",
+"Rattota",
+"Sigiriya",
+"Ukuwela",
+"Wahacotte",
+"Wilgamuwa",
+"Yatawatta"
+], 
+             Galle: [
+"Ahangama",
+"Akmeemana",
+"Ambalangoda",
+"Baddegama",
+"Balapitiya",
+"Bentota",
+"Boossa",
+"Elpitiya",
+"Galle",
+"Habaraduwa",
+"Hikkaduwa",
+"Imaduwa",
+"Karandeniya",
+"Karapitiya",
+"Koggala",
+"Nagoda",
+"Neluwa",
+"Pitigala",
+"Rathgama",
+"Tawalama",
+"Unawatuna",
+"Wanduramba",
+"Yakkalamulla"
+],
+           Matara: [
+"Akuressa",
+"Athuraliya",
+"Deniyaya",
+"Devinuwara",
+"Dikwella",
+"Godagama",
+"Hakmana",
+"Kamburupitiya",
+"Kananke",
+"Kirinda Puhulwella",
+"Kotapola",
+"Makandura",
+"Madiha",
+"Malimbada",
+"Matara",
+"Mirissa",
+"Morawaka",
+"Mulatiyana",
+"Nadugala",
+"Pasgoda",
+"Pitabeddara",
+"Polhena",
+"Thihagoda",
+"Urubokka",
+"Weligama"
+],
+          Hambantota: [
+"Ambalantota",
+"Angunakolapelessa",
+"Beliatta",
+"Debarawewa",
+"Hambantota",
+"Hungama",
+"Kataragama",
+"Katuwana",
+"Kirinda",
+"Lunugamvehera",
+"Middeniya",
+"Netolpitiya",
+"Okewela",
+"Ranna",
+"Sooriyawewa",
+"Tangalle",
+"Tissamaharama",
+"Walasmulla",
+"Weeraketiya"
+],
+
+"Nuwara Eliya": [
+"Agarapathana",
+"Ambewela",
+"Bogawantalawa",
+"Dayagama",
+"Dickoya",
+"Ginigathhena",
+"Haggala",
+"Hanguranketha",
+"Hatton",
+"Kandapola",
+"Kotagala",
+"Labukele",
+"Lindula",
+"Madulla",
+"Maskeliya",
+"Nanu Oya",
+"Nuwara Eliya",
+"Ohiya",
+"Pattipola",
+"Pedro",
+"Pundaluoya",
+"Ragala",
+"Rikillagaskada",
+"Seetha Eliya",
+"Talawakelle",
+"Walapane"
+],
+      Kurunegala: [
+"Alawwa",
+"Bamunakotuwa",
+"Bingiriya",
+"Dambadeniya",
+"Dodangaslanda",
+"Galgamuwa",
+"Giriulla",
+"Hettipola",
+"Hindagolla",
+"Hiripitiya",
+"Ibbagamuwa",
+"Kobeigane",
+"Kuliyapitiya",
+"Kurunegala",
+"Mahawa",
+"Makandura",
+"Maspotha",
+"Mawathagama",
+"Melsiripura",
+"Narammala",
+"Nikaweratiya",
+"Pannala",
+"Polgahawela",
+"Polpithigama",
+"Rideegama",
+"Wariyapola",
+"Weerambugedara",
+"Wellawa",
+"Yapahuwa"
+],
+Puttalam: [
+"Anamaduwa",
+"Arachchikattuwa",
+"Chilaw",
+"Dankotuwa",
+"Kalpitiya",
+"Madampe",
+"Mahawewa",
+"Marawila",
+"Mundel",
+"Nattandiya",
+"Nawagattegama",
+"Norochcholai",
+"Pallama",
+"Puttalam",
+"Wennappuwa"
+],
+Anuradhapura: [
+"Anuradhapura",
+"Eppawala",
+"Galenbindunuwewa",
+"Galnewa",
+"Galkulama",
+"Habarana",
+"Horowpothana",
+"Ipalogama",
+"Kahatagasdigiliya",
+"Kekirawa",
+"Kebithigollewa",
+"Madatugama",
+"Medawachchiya",
+"Mihintale",
+"Nochchiyagama",
+"Padaviya",
+"Palagala",
+"Palugaswewa",
+"Rajanganaya",
+"Rambewa",
+"Talawa",
+"Tambuttegama",
+"Thirappane"
+],
+Polonnaruwa: [
+"Aralaganwila",
+"Bakamuna",
+"Dimbulagala",
+"Elahera",
+"Galamuna",
+"Giritale",
+"Hingurakgoda",
+"Kaduruwela",
+"Lankapura",
+"Manampitiya",
+"Medirigiriya",
+"Minneriya",
+"Palugasdamana",
+"Polonnaruwa",
+"Sewanapitiya",
+"Thamankaduwa",
+"Welikanda"
+],
+Badulla: [
+"Badulla",
+"Bandarawela",
+"Beragala",
+"Dambagalla",
+"Diyatalawa",
+"Ella",
+"Haldummulla",
+"Hali-Ela",
+"Haputale",
+"Kandaketiya",
+"Koslanda",
+"Lunugala",
+"Mahiyanganaya",
+"Meegahakivula",
+"Passara",
+"Rideemaliyadda",
+"Soranathota",
+"Uva Paranagama",
+"Welimada"
+],
+Monaragala: [
+"Bibile",
+"Buttala",
+"Kataragama",
+"Madulla",
+"Medagama",
+"Monaragala",
+"Okkampitiya",
+"Siyambalanduwa",
+"Thanamalwila",
+"Wellawaya"
+],
+Kegalle: [
+"Aranayake",
+"Bulathkohupitiya",
+"Dehiowita",
+"Deraniyagala",
+"Galigamuwa",
+"Kegalle",
+"Kitulgala",
+"Mawanella",
+"Rambukkana",
+"Ruwanwella",
+"Warakapola",
+"Yatiyantota"
+],
+Ratnapura: [
+"Balangoda",
+"Eheliyagoda",
+"Elapatha",
+"Embilipitiya",
+"Godakawela",
+"Imbulpe",
+"Kahawatta",
+"Kalawana",
+"Kolonna",
+"Kuruwita",
+"Nivithigala",
+"Opanayaka",
+"Pelmadulla",
+"Rakwana",
+"Ratnapura",
+"Weligepola"
+],
+Ampara: [
+"Akkaraipattu",
+"Alayadivembu",
+"Ampara",
+"Damana",
+"Dehiattakandiya",
+"Irakkamam",
+"Kalmunaikudi",
+"Kalmunai",
+"Karaitivu",
+"Lahugala",
+"Maha Oya",
+"Nintavur",
+"Padiyathalawa",
+"Pottuvil",
+"Sainthamaruthu",
+"Sammanthurai",
+"Thirukkovil",
+"Uhana"
+],
+Batticaloa: [
+"Arayampathy",
+"Batticaloa",
+"Chenkalady",
+"Eravur",
+"Kaluwanchikudy",
+"Kattankudy",
+"Kiran",
+"Kalkudah",
+"Karadiyanaru",
+"Mandur",
+"Navatkadu",
+"Oddamavadi",
+"Paddiruppu",
+"Pasikudah",
+"Sittandy",
+"Valachchenai",
+"Vakarai"
+],
+Trincomalee: [
+"China Bay",
+"Gomarankadawala",
+"Jinnapuram",
+"Kantalai",
+"Kinniya",
+"Kuchchaveli",
+"Morawewa",
+"Muttur",
+"Nilaveli",
+"Seruvila",
+"Somapura",
+"Trincomalee",
+"Uppuveli"
+],
+Jaffna: [
+"Achchuveli",
+"Ariyalai",
+"Chankanai",
+"Chavakachcheri",
+"Chunnakam",
+"Elalai",
+"Jaffna",
+"Kankesanthurai",
+"Karainagar",
+"Kayts",
+"Kodikamam",
+"Manipay",
+"Nallur",
+"Navaly",
+"Point Pedro",
+"Punnalaikattuwan",
+"Sandilipay",
+"Tellippalai",
+"Valvettithurai",
+"Velanai"
+],
+Kilinochchi: [
+"Iranamadu",
+"Kandavalai",
+"Karachchi",
+"Kilinochchi",
+"Pachchilaipalli",
+"Pallai",
+"Paranthan",
+"Poonakary",
+"Ramanathapuram",
+"Uruthirapuram"
+],
+Mannar: [
+"Adampan",
+"Erukkalampiddy",
+"Mannar",
+"Mannar Town",
+"Madhu",
+"Murunkan",
+"Nanattan",
+"Pesalai",
+"Silavathurai",
+"Thalaimannar",
+"Tharapuram",
+"Uyilankulam"
+],
+Mullaitivu: [
+"Alampil",
+"Kokkilai",
+"Kokuthuduwai",
+"Keppapilavu",
+"Manthai East",
+"Maritimepattu",
+"Maruthankerny",
+"Mathalan",
+"Mullaitivu",
+"Mulliyawalai",
+"Oddusuddan",
+"Oddupeli",
+"Puthukkudiyiruppu",
+"Thunukkai",
+"Welioya"
+],
+Vavuniya: [
+"Cheddikulam",
+"Kebithigollewa",
+"Madukanda",
+"Maruthodai",
+"Nedunkeni",
+"Omanthai",
+"Poovarasankulam",
+"Puliyankulam",
+"Settikulam",
+"Thandikulam",
+"Vavuniya",
+"Vavuniya North",
+"Vavuniya South",
+"Vavuniya Town"
+]
+        };
+    function intelligentSearch(){
+
+let text =
+document.getElementById("searchInput")
+.value
+.toLowerCase();
+text = text 
+.replace(/\bhouses\b/g,"house")
+.replace(/\bvillas\b/g,"villa")
+.replace(/\bapartments\b/g,"apartment")
+.replace(/\boffices\b/g,"office")
+.replace(/\bhotels\b/g,"hotel")
+.replace(/\bshops\b/g,"shop")
+.replace(/\bwarehouses\b/g,"warehouse")
+.replace(/\bbuildings\b/g,"building")
+.replace(/\bbungalows\b/g,"bungalow")
+.replace(/\bannexes\b/g,"annex")
+.replace(/\blands\b/g,"land");
+
+// Reset all automatic filters
+
+selectedBedroom = "";
+
+selectedBathroom = "";
+
+document.getElementById("typeFilter").value = "";
+
+document.getElementById("cityFilter").value = "";
+
+document.getElementById("rentOnlyFilter").checked = false;
+
+document.getElementById("maxPrice").value = "";
+document.getElementById("amenityFilter").value = "";
+document.getElementById("propertyViewFilter").value = "";
+document.getElementById("districtFilter").value = "";
+document.getElementById("minPrice").value = "";
+if(text.trim()==""){
+
+    searchProperty();
+
+    return;
+
+}
+let bedroomMatch =
+text.match(/([1-9])\s*(bed|bedroom|bedrooms)/);
+
+if(bedroomMatch){
+
+selectedBedroom =
+bedroomMatch[1];
+
+}
+let bathroomMatch =
+text.match(/([1-9])\s*(bath|bathroom|bathrooms)/);
+
+if(bathroomMatch){
+
+selectedBathroom =
+bathroomMatch[1];
+
+}
+
+const propertyMap = {
+
+house:"House", 
+villa:"Villa",
+apartment:"Apartment",
+office:"Office",
+hotel:"Hotel",
+land:"Land",
+warehouse:"Warehouse",
+shop:"Shop",
+building:"Building",
+annex:"Annex",
+commercial:"Commercial",
+bungalow:"Bungalow"
+
+};
+
+const words = text
+.replace(/[^\w\s]/g,"")
+.split(/\s+/);
+
+for(let word of words){
+
+    if(word.endsWith("s")){
+
+        word = word.slice(0,-1);
+
+    }
+
+    if(propertyMap[word]){
+
+        document.getElementById("typeFilter").value =
+        propertyMap[word];
+
+        break;
+
+    }
+
+}
+
+const cities =[
+"Angoda",
+"Athurugiriya",
+"Avissawella",
+"Battaramulla",
+"Boralesgamuwa",
+"Colombo 01 - Fort",
+"Colombo 02 - Slave Island",
+"Colombo 03 - Kollupitiya",
+"Colombo 04 - Bambalapitiya",
+"Colombo 05 - Havelock Town",
+"Colombo 06 - Wellawatte",
+"Colombo 07 - Cinnamon Gardens",
+"Colombo 08 - Borella",
+"Colombo 09 - Dematagoda",
+"Colombo 10 - Maradana",
+"Colombo 11 - Pettah",
+"Colombo 12 - Hulftsdorp",
+"Colombo 13 - Kotahena",
+"Colombo 14 - Grandpass",
+"Colombo 15 - Modara",
+"Dehiwala",
+"Hanwella",
+"Hokandara",
+"Homagama",
+"Kaduwela",
+"Kesbewa",
+"Kolonnawa",
+"Koswatta",
+"Kotikawatta",
+"Kotte",
+"Kottawa",
+"Malabe",
+"Maharagama",
+"Moratuwa",
+"Mount Lavinia",
+"Mulleriyawa",
+"Nawala",
+"Nugegoda",
+"Padukka",
+"Pannipitiya",
+"Piliyandala",
+"Rajagiriya",
+"Ratmalana",
+"Talawatugoda",
+"Wellampitiya",
+"Attanagalla",
+"Biyagama",
+"Delgoda",
+"Divulapitiya",
+"Dompe",
+"Ekala",
+"Gampaha",
+"Ganemulla",
+"Ja-Ela",
+"Kadawatha",
+"Kandana",
+"Katana",
+"Katunayake",
+"Kelaniya",
+"Kiribathgoda",
+"Kochchikade",
+"Mabole",
+"Mahara",
+"Minuwangoda",
+"Mirigama",
+"Negombo",
+"Nittambuwa",
+"Peliyagoda",
+"Ragama",
+"Raddolugama",
+"Seeduwa",
+"Udugampola",
+"Urapola",
+"Veyangoda",
+"Wattala",
+"Weliweriya",
+"Yakkala",
+"Agalawatta",
+"Alubomulla",
+"Aluthgama",
+"Bandaragama",
+"Beruwala",
+"Bulathsinhala",
+"Dharga Town",
+"Dodangoda",
+"Gonapola",
+"Horana",
+"Ingiriya",
+"Kalutara",
+"Kalutara North",
+"Kalutara South",
+"Katukurunda",
+"Maggona",
+"Matugama",
+"Millaniya",
+"Neboda",
+"Panadura",
+"Payagala",
+"Wadduwa",
+"Waskaduwa",
+"Akurana",
+"Alawatugoda",
+"Ampitiya",
+"Delthota",
+"Digana",
+"Doluwa",
+"Galagedara",
+"Galaha",
+"Gampola",
+"Gelioya",
+"Gurudeniya",
+"Haragama",
+"Hasalaka",
+"Hindagala",
+"Hunnasgiriya",
+"Kadugannawa",
+"Kandy",
+"Katugastota",
+"Kundasale",
+"Madawala",
+"Menikhinna",
+"Nawalapitiya",
+"Pallekele",
+"Panwila",
+"Pathadumbara",
+"Pathahewaheta",
+"Peradeniya",
+"Pilimathalawa",
+"Poojapitiya",
+"Teldeniya",
+"Udadumbara",
+"Udapalatha",
+"Wattegama",
+"Yatinuwara",
+"Akuramboda",
+"Aluvihare",
+"Ambanganga",
+"Dambulla",
+"Galewela",
+"Inamaluwa",
+"Kandalama",
+"Laggala",
+"Lenadora",
+"Madipola",
+"Matale",
+"Moragolla",
+"Nalanda",
+"Naula",
+"Opalgala",
+"Palapathwela",
+"Pallepola",
+"Rattota",
+"Sigiriya",
+"Ukuwela",
+"Wahacotte",
+"Wilgamuwa",
+"Yatawatta",
+"Ahangama",
+"Akmeemana",
+"Ambalangoda",
+"Baddegama",
+"Balapitiya",
+"Bentota",
+"Boossa",
+"Elpitiya",
+"Galle",
+"Habaraduwa",
+"Hikkaduwa",
+"Imaduwa",
+"Karandeniya",
+"Karapitiya",
+"Koggala",
+"Nagoda",
+"Neluwa",
+"Pitigala",
+"Rathgama",
+"Tawalama",
+"Unawatuna",
+"Wanduramba",
+"Yakkalamulla",
+"Akuressa",
+"Athuraliya",
+"Deniyaya",
+"Devinuwara",
+"Dikwella",
+"Godagama",
+"Hakmana",
+"Kamburupitiya",
+"Kananke",
+"Kirinda Puhulwella",
+"Kotapola",
+"Makandura",
+"Madiha",
+"Malimbada",
+"Matara",
+"Mirissa",
+"Morawaka",
+"Mulatiyana",
+"Nadugala",
+"Pasgoda",
+"Pitabeddara",
+"Polhena",
+"Thihagoda",
+"Urubokka",
+"Weligama",
+"Ambalantota",
+"Angunakolapelessa",
+"Beliatta",
+"Debarawewa",
+"Hambantota",
+"Hungama",
+"Kataragama",
+"Katuwana",
+"Kirinda",
+"Lunugamvehera",
+"Middeniya",
+"Netolpitiya",
+"Okewela",
+"Ranna",
+"Sooriyawewa",
+"Tangalle",
+"Tissamaharama",
+"Walasmulla",
+"Weeraketiya",
+"Agarapathana",
+"Ambewela",
+"Bogawantalawa",
+"Dayagama",
+"Dickoya",
+"Ginigathhena",
+"Haggala",
+"Hanguranketha",
+"Hatton",
+"Kandapola",
+"Kotagala",
+"Labukele",
+"Lindula",
+"Madulla",
+"Maskeliya",
+"Nanu Oya",
+"Nuwara Eliya",
+"Ohiya",
+"Pattipola",
+"Pedro",
+"Pundaluoya",
+"Ragala",
+"Rikillagaskada",
+"Seetha Eliya",
+"Talawakelle",
+"Walapane",
+"Alawwa",
+"Bamunakotuwa",
+"Bingiriya",
+"Dambadeniya",
+"Dodangaslanda",
+"Galgamuwa",
+"Giriulla",
+"Hettipola",
+"Hindagolla",
+"Hiripitiya",
+"Ibbagamuwa",
+"Kobeigane",
+"Kuliyapitiya",
+"Kurunegala",
+"Mahawa",
+"Makandura",
+"Maspotha",
+"Mawathagama",
+"Melsiripura",
+"Narammala",
+"Nikaweratiya",
+"Pannala",
+"Polgahawela",
+"Polpithigama",
+"Rideegama",
+"Wariyapola",
+"Weerambugedara",
+"Wellawa",
+"Yapahuwa",
+"Anamaduwa",
+"Arachchikattuwa",
+"Chilaw",
+"Dankotuwa",
+"Kalpitiya",
+"Madampe",
+"Mahawewa",
+"Marawila",
+"Mundel",
+"Nattandiya",
+"Nawagattegama",
+"Norochcholai",
+"Pallama",
+"Puttalam",
+"Wennappuwa",
+"Anuradhapura",
+"Eppawala",
+"Galenbindunuwewa",
+"Galnewa",
+"Galkulama",
+"Habarana",
+"Horowpothana",
+"Ipalogama",
+"Kahatagasdigiliya",
+"Kekirawa",
+"Kebithigollewa",
+"Madatugama",
+"Medawachchiya",
+"Mihintale",
+"Nochchiyagama",
+"Padaviya",
+"Palagala",
+"Palugaswewa",
+"Rajanganaya",
+"Rambewa",
+"Talawa",
+"Tambuttegama",
+"Thirappane",
+"Aralaganwila",
+"Bakamuna",
+"Dimbulagala",
+"Elahera",
+"Galamuna",
+"Giritale",
+"Hingurakgoda",
+"Kaduruwela",
+"Lankapura",
+"Manampitiya",
+"Medirigiriya",
+"Minneriya",
+"Palugasdamana",
+"Polonnaruwa",
+"Sewanapitiya",
+"Thamankaduwa",
+"Welikanda",
+"Badulla",
+"Bandarawela",
+"Beragala",
+"Dambagalla",
+"Diyatalawa",
+"Ella",
+"Haldummulla",
+"Hali-Ela",
+"Haputale",
+"Kandaketiya",
+"Koslanda",
+"Lunugala",
+"Mahiyanganaya",
+"Meegahakivula",
+"Passara",
+"Rideemaliyadda",
+"Soranathota",
+"Uva Paranagama",
+"Welimada",
+"Bibile",
+"Buttala",
+"Kataragama",
+"Madulla",
+"Medagama",
+"Monaragala",
+"Okkampitiya",
+"Siyambalanduwa",
+"Thanamalwila",
+"Wellawaya",
+"Aranayake",
+"Bulathkohupitiya",
+"Dehiowita",
+"Deraniyagala",
+"Galigamuwa",
+"Kegalle",
+"Kitulgala",
+"Mawanella",
+"Rambukkana",
+"Ruwanwella",
+"Warakapola",
+"Yatiyantota",
+"Balangoda",
+"Eheliyagoda",
+"Elapatha",
+"Embilipitiya",
+"Godakawela",
+"Imbulpe",
+"Kahawatta",
+"Kalawana",
+"Kolonna",
+"Kuruwita",
+"Nivithigala",
+"Opanayaka",
+"Pelmadulla",
+"Rakwana",
+"Ratnapura",
+"Weligepola",
+"Akkaraipattu",
+"Alayadivembu",
+"Ampara",
+"Damana",
+"Dehiattakandiya",
+"Irakkamam",
+"Kalmunaikudi",
+"Kalmunai",
+"Karaitivu",
+"Lahugala",
+"Maha Oya",
+"Nintavur",
+"Padiyathalawa",
+"Pottuvil",
+"Sainthamaruthu",
+"Sammanthurai",
+"Thirukkovil",
+"Uhana",
+"Arayampathy",
+"Batticaloa",
+"Chenkalady",
+"Eravur",
+"Kaluwanchikudy",
+"Kattankudy",
+"Kiran",
+"Kalkudah",
+"Karadiyanaru",
+"Mandur",
+"Navatkadu",
+"Oddamavadi",
+"Paddiruppu",
+"Pasikudah",
+"Sittandy",
+"Valachchenai",
+"Vakarai",
+"China Bay",
+"Gomarankadawala",
+"Jinnapuram",
+"Kantalai",
+"Kinniya",
+"Kuchchaveli",
+"Morawewa",
+"Muttur",
+"Nilaveli",
+"Seruvila",
+"Somapura",
+"Trincomalee",
+"Uppuveli",
+"Achchuveli",
+"Ariyalai",
+"Chankanai",
+"Chavakachcheri",
+"Chunnakam",
+"Elalai",
+"Jaffna",
+"Kankesanthurai",
+"Karainagar",
+"Kayts",
+"Kodikamam",
+"Manipay",
+"Nallur",
+"Navaly",
+"Point Pedro",
+"Punnalaikattuwan",
+"Sandilipay",
+"Tellippalai",
+"Valvettithurai",
+"Velanai",
+"Iranamadu",
+"Kandavalai",
+"Karachchi",
+"Kilinochchi",
+"Pachchilaipalli",
+"Pallai",
+"Paranthan",
+"Poonakary",
+"Ramanathapuram",
+"Uruthirapuram",
+"Adampan",
+"Erukkalampiddy",
+"Mannar",
+"Mannar Town",
+"Madhu",
+"Murunkan",
+"Nanattan",
+"Pesalai",
+"Silavathurai",
+"Thalaimannar",
+"Tharapuram",
+"Uyilankulam",
+"Alampil",
+"Kokkilai",
+"Kokuthuduwai",
+"Keppapilavu",
+"Manthai East",
+"Maritimepattu",
+"Maruthankerny",
+"Mathalan",
+"Mullaitivu",
+"Mulliyawalai",
+"Oddusuddan",
+"Oddupeli",
+"Puthukkudiyiruppu",
+"Thunukkai",
+"Welioya",
+"Cheddikulam",
+"Kebithigollewa",
+"Madukanda",
+"Maruthodai",
+"Nedunkeni",
+"Omanthai",
+"Poovarasankulam",
+"Puliyankulam",
+"Settikulam",
+"Thandikulam",
+"Vavuniya",
+"Vavuniya North",
+"Vavuniya South",
+"Vavuniya Town"
+];
+const districts = [
+
+"colombo",
+"gampaha",
+"kalutara",
+"galle",
+"matara",
+"hambantota",
+"kandy",
+"matale",
+"nuwara eliya",
+"kurunegala",
+"puttalam",
+"anuradhapura",
+"polonnaruwa",
+"badulla",
+"monaragala",
+"ratnapura",
+"kegalle",
+"ampara",
+"batticaloa",
+"trincomalee",
+"jaffna",
+"kilinochchi",
+"mannar",
+"mullaitivu",
+"vavuniya"
+
+];
+cities.forEach(function(city){
+
+if(text.includes(city)){
+
+document.getElementById("cityFilter").value=
+
+city.charAt(0).toUpperCase()+
+
+city.slice(1);
+
+}
+
+});
+districts.forEach(function(district){
+
+if(text.includes(district)){
+
+document.getElementById("districtFilter").value =
+
+district.charAt(0).toUpperCase() +
+
+district.slice(1);
+
+}
+
+});
+const amenities=[
+
+"parking",
+
+"garage",
+
+"pool",
+
+"garden",
+
+"gym",
+
+"furnished",
+
+"elevator",
+
+"basement",
+
+"outdoor space"
+
+];
+
+amenities.forEach(function(item){
+
+if(text.includes(item)){
+
+document.getElementById("amenityFilter").value=item;
+
+}
+
+});
+const views=[
+
+"ocean view",
+
+"lake view",
+
+"river view",
+
+"mountain view",
+
+"city view",
+
+"forest view"
+
+];
+
+views.forEach(function(view){
+
+if(text.includes(view)){
+
+document.getElementById("propertyViewFilter").value=view;
+
+}
+
+});
+let underMatch =
+text.match(/(under|below|less than)\s*(\d+)\s*(crore|crores|million|millions|lakh|lakhs)?/);
+
+if(underMatch){
+
+let amount =
+parseFloat(underMatch[2]);
+
+let unit =
+underMatch[3] || "";
+
+if(unit=="crore" || unit=="crores"){
+
+amount *= 10000000;
+
+}
+
+else if(unit=="million" || unit=="millions"){
+
+amount *= 1000000;
+
+}
+
+else if(unit=="lakh" || unit=="lakhs"){
+
+amount *= 100000;
+
+}
+
+document.getElementById("maxPrice").value =
+Math.round(amount);
+
+}
+searchProperty();
+
+}
+
+        function searchProperty(){
+            let minPerches= 
+            parseFloat(document.getElementById("minPerches").value) || 0;
+              let maxPerches= 
+            parseFloat(document.getElementById("maxPerches").value) || 999999;
+              let minSqft= 
+            parseInt(document.getElementById("minSqft").value) || 0;
+              let maxSqft= 
+            parseInt(document.getElementById("maxSqft").value) || 9999999999;
+             let minPrice= 
+            parseInt(document.getElementById("minPrice").value) || 0;
+            let maxPrice= 
+            parseInt(document.getElementById("maxPrice").value) || 999999999999;
+            let searchText =
+document.getElementById("searchInput")
+.value
+.toLowerCase()
+.trim();
+
+searchText = searchText
+.replace(/\bhouses\b/g,"house")
+.replace(/\bvillas\b/g,"villa")
+.replace(/\bapartments\b/g,"apartment")
+.replace(/\boffices\b/g,"office")
+.replace(/\bhotels\b/g,"hotel")
+.replace(/\bshops\b/g,"shop")
+.replace(/\bwarehouses\b/g,"warehouse")
+.replace(/\bbuildings\b/g,"building")
+.replace(/\bbungalows\b/g,"bungalow")
+.replace(/\bannexes\b/g,"annex")
+.replace(/\blands\b/g,"land");
+             
+            let district=
+            document.getElementById(
+                "districtFilter"
+            ).value.toLowerCase();
+            let city= 
+            document.getElementById(
+                "cityFilter"
+            ).value.toLowerCase();
+           let propertyType =
+document.getElementById("typeFilter").value.toLowerCase();
+                let rentOnly= 
+                document.getElementById("rentOnlyFilter").checked;
+                let selectedAmenity= 
+                document.getElementById(
+                    "amenityFilter"
+                ).value;
+                let selectedpropertyView= 
+                document.getElementById(
+                    "propertyViewFilter"
+                ).value;
+            let cards=
+            document.querySelectorAll(
+                ".property-card"
+            );
+            cards.forEach(function(card){
+                let cardText=
+                card.innerText.toLowerCase();
+                let cardType =
+(card.getAttribute("data-type") || "")
+.toLowerCase();
+                let cardStatus = 
+                card.getAttribute("data-status") || "";
+                let cardDistrict= 
+                card.getAttribute("data-district") || "";
+                let cardCity= 
+                card.getAttribute("data-city") || "";
+                let cardAmenities= 
+                card.getAttribute(
+                    "data-amenities"
+                ) ||"";
+                let cardpropertyView= 
+                card.getAttribute(
+                    "data-propertyView"
+                ) ||"";
+                let cardPerches= 
+                parseFloat(card.getAttribute("data-perches")) || 0;
+                  let cardSqft= 
+                parseInt(card.getAttribute("data-sqft")) || 0;
+               let searchableText = [
+
+card.innerText,
+
+cardDistrict,
+
+cardCity,
+
+cardType,
+
+cardAmenities,
+
+cardpropertyView,
+
+cardStatus,
+
+card.getAttribute("data-address") || "",
+
+card.getAttribute("data-description") || ""
+
+].join(" ").toLowerCase();
+
+let ignoredWords = [
+"in",
+"at",
+"of",
+"near",
+"with",
+"for",
+"to",
+"the",
+"a",
+"an",
+"on",
+"is",
+"are",
+"me",
+"want",
+"looking",
+"lookingfor",
+"find",
+"show",
+"please"
+];
+
+let words = searchText
+.split(/\s+/)
+.filter(function(word){
+
+return word !== "" &&
+!ignoredWords.includes(word);
+
+});
+
+let matchedWords = words.filter(function(word){
+    return searchableText.includes(word);
+});
+
+let matchesSearch =
+words.length === 0 ||
+matchedWords.length >= Math.ceil(words.length * 0.6);
+
+                let matchesDistrict = 
+                district === "" ||
+                cardDistrict.toLowerCase() === district;
+                let matchesCity = 
+                city === "" ||
+                cardCity.toLowerCase() === city;
+                let matchesBedroom= true;
+               let matchesBathroom= true;
+               let matchesType = 
+                propertyType === "" ||
+                cardType === propertyType;
+              let propertyPrice= 
+              parseInt(
+                card.getAttribute("data-price")
+              ) || 0;
+             let negotiable =
+card.getAttribute("data-negotiable") === "true";
+
+let matchesPrice =
+negotiable ||
+
+(
+propertyPrice >= minPrice &&
+propertyPrice <= maxPrice
+);
+
+               if(
+                selectedBedroom !==""){
+                   let bedrooms= 
+                   card.getAttribute("data-bedrooms");
+                   if(selectedBedroom === "5+"){
+                    matchesBedroom = 
+                    parseInt(bedrooms) >= 5;
+                   }
+                   else
+                   {matchesBedroom= 
+                   selectedBedroom=== ""||
+                   bedrooms===selectedBedroom;
+                   }
+                }
+                 if(
+                selectedBathroom !==""){
+                     let bathrooms= 
+                   card.getAttribute("data-bathrooms");
+                   if(selectedBathroom === "5+"){
+                    matchesBathroom = 
+                    parseInt(bathrooms) >= 5;
+                   }
+                   else
+                    {matchesBathroom= 
+                   selectedBathroom=== ""||
+                   bathrooms===selectedBathroom;
+                    }
+                }
+                let matchesAmenity= 
+                selectedAmenity===""||
+                cardAmenities.toLowerCase()
+                .includes(
+                    selectedAmenity.toLowerCase()
+                );
+                let matchespropertyView= 
+                selectedpropertyView===""||
+                cardpropertyView.toLowerCase().includes(
+                    selectedpropertyView.toLowerCase()
+                );
+                let matchesPerches= 
+                cardPerches >= minPerches &&
+                cardPerches <= maxPerches;
+                 let matchesSqft= 
+                cardSqft >= minSqft &&
+                cardSqft <= maxSqft;
+                let matchesRentalType = 
+                selectedRentalType === "" ||
+                (
+                  cardType === selectedRentalType.toLowerCase()
+                    &&
+                    (
+                        cardStatus === "For Rent"
+                        ||
+                        cardStatus === "For Sale/Rent"
+                    )
+                );
+                let matchesRentOnly = true;
+                if(rentOnly){
+                    matchesRentOnly = 
+                       cardStatus === "For Rent"
+                        ||
+                       cardStatus === "For Sale/Rent"
+                     }
+                     let matchesOtherType =
+                     selectedOtherType === "" ||
+                    cardType === selectedOtherType.toLowerCase();
+                if(
+                    matchesSearch &&
+                    matchesDistrict &&
+                    matchesCity &&
+                    matchesBedroom &&
+                    matchesBathroom &&
+                    matchesPrice &&
+                    matchesType &&
+                    matchesAmenity &&
+                    matchespropertyView &&
+                    matchesPerches &&
+                    matchesSqft &&
+                    matchesRentalType &&
+                    matchesRentOnly &&
+                    matchesOtherType
+                ){
+                    card.style.display="";
+                }
+                else{
+                    card.style.display="none";
+                }
+            });
+            let visibleCards = 
+Array.from(document.querySelectorAll(".property-card"))
+.filter(card => card.style.display !== "none");
+
+let noResult = document.getElementById("noResults");
+
+if(visibleCards.length === 0){
+
+if(!noResult){
+
+newContainer.innerHTML += `
+<div id="noResults" style="
+text-align:center;
+padding:50px 20px;
+background:white;
+border-radius:15px;
+box-shadow:0 4px 12px rgba(0,0,0,.12);
+margin:20px;
+">
+
+<div style="font-size:60px;">🏡</div>
+
+<h2 style="margin:15px 0;color:#333;">
+No Properties Found
+</h2>
+
+<p style="color:#666;font-size:17px;">
+Try changing your filters or search terms.
+</p>
+
+</div>
+`;
+}
+
+}
+else{
+
+let old = document.getElementById("noResults");
+
+if(old){
+old.remove();
+}
+
+}
+            sortBoostedProperties();
+            sortProperties();
+        }
+    
+        function updateSuggestions(){
+
+let input =
+document.getElementById("searchInput")
+.value
+.toLowerCase()
+.trim();
+
+let box =
+document.getElementById("searchSuggestions");
+
+if(input==""){
+
+box.style.display="none";
+
+return;
+
+}
+
+let suggestions=[];
+
+document.querySelectorAll(".property-card")
+.forEach(function(card){
+
+[
+card.getAttribute("data-city"),
+
+card.getAttribute("data-district"),
+
+card.getAttribute("data-type"),
+
+card.getAttribute("data-address"),
+
+card.getAttribute("data-status"),
+
+card.getAttribute("data-amenities"),
+
+card.getAttribute("data-propertyView")
+
+].forEach(function(text){
+
+if(text){
+
+text.split(",")
+
+.forEach(function(item){
+
+item=item.trim();
+
+if(
+
+item.toLowerCase().startsWith(input)
+
+&&
+
+!suggestions.includes(item)
+
+){
+
+suggestions.push(item);
+
+}
+
+});
+
+}
+
+});
+
+});
+
+box.innerHTML="";
+
+suggestions
+.slice(0,8)
+.forEach(function(item){
+
+box.innerHTML+=`
+
+<div
+
+onclick="chooseSuggestion('${item}')"
+
+style="
+
+padding:12px;
+
+cursor:pointer;
+
+border-bottom:1px solid #eee;
+
+">
+
+🔍 ${item}
+
+</div>
+
+`;
+
+});
+
+if(suggestions.length>0){
+
+box.style.display="block";
+
+}
+
+else{
+
+box.style.display="none";
+
+}
+
+}
+function chooseSuggestion(text){
+
+document.getElementById("searchInput").value=text;
+
+document.getElementById("searchSuggestions").style.display="none";
+searchProperty();
+
+}
+document.addEventListener("click",function(e){
+
+if(
+
+!document.getElementById("searchInput").contains(e.target)
+
+&&
+
+!document.getElementById("searchSuggestions").contains(e.target)
+
+){
+
+document.getElementById("searchSuggestions").style.display="none";
+
+}
+
+});
+
+        function toggleFavourite(id,heart){
+            let currentUser = 
+            localStorage.getItem("currentUser");
+            let property = 
+            allProperties.find(p => p.id === id);
+            if(!currentUser){
+                alert("Please log in first");
+                window.location.href="login.html";
+                return;
+            }
+            let favourites = 
+            JSON.parse(
+                localStorage.getItem(
+                    "favourites_" + currentUser
+                ) || "[]"
+            );
+          if(favourites.includes(String(id))){
+
+    favourites =
+    favourites.filter(x => x !== String(id));
+
+    heart.innerHTML="🤍";
+    heart.style.color="white";
+
+    property.saves =
+    Math.max(0,(property.saves || 0)-1);
+
+    showNotification(
+    "✔ Removed: "+property.name);
+
+}
+else{
+
+    favourites.push(String(id));
+
+    heart.innerHTML="💗";
+    heart.style.color="red";
+
+    property.saves =
+    (property.saves || 0)+1;
+
+    showNotification(
+    "✔ Saved: "+property.name);
+
+}
+
+localStorage.setItem(
+"favourites_"+currentUser,
+JSON.stringify(favourites)
+);
+
+localStorage.setItem(
+property.name,
+JSON.stringify(property)
+);
+    }
+      
+        function isFavourite(id){
+            let currentUser = 
+            localStorage.getItem("currentUser");
+            if(!currentUser){
+                return false;
+            }
+            let favourites = 
+            JSON.parse(
+                localStorage.getItem(
+                    "favourites_" + currentUser
+                ) || "[]"
+            );
+            return favourites.includes(String(id));
+        }
+        function shareProperty(id){
+            let property = 
+            allProperties.find(p =>p.id == id);
+            let shareLink = 
+            window.location.origin +
+            "/property.html?id=" + id;
+            if(navigator.share){
+                navigator.share({
+                    title:property.name,
+                    text:
+                    "Check out this property!",
+                    url:shareLink
+                });
+            }
+            else{
+                navigator.clipboard.writeText(
+                    shareLink
+                );
+                showNotification(
+                    "🔗 Link Copied"
+                );
+            }
+        }
+
+        let newContainer=
+        document.getElementById(
+            "newProperties"
+        );
+        let allProperties=[];
+        for(let i=0;i<localStorage.length;i++){
+            let key=
+            localStorage.key(i);
+            let data=
+            localStorage.getItem(key);
+            try{
+            let property=
+            JSON.parse(data);
+            if(
+property &&
+property.hidden !== true &&
+property.name
+){
+            allProperties.push(
+                property
+            );
+            }
+        }
+        catch{}
+    }
+          allProperties.sort(function(a,b){
+
+function boostScore(property){
+
+if(
+!property.boost ||
+property.boost.status !== "Active" ||
+property.boost.endDate < Date.now()
+){
+return 0;
+}
+
+if(property.boost.package==="Platinum") return 3;
+
+if(property.boost.package==="Premium") return 2;
+
+if(property.boost.package==="Basic") return 1;
+
+return 0;
+
+}
+
+let scoreA = boostScore(a);
+
+let scoreB = boostScore(b);
+
+if(scoreA !== scoreB){
+
+return scoreB-scoreA;
+
+}
+
+// same boost level → newest first
+
+return b.createdAt-a.createdAt;
+
+});
+   sortProperties();
+
+            allProperties.forEach(
+                property=>{
+            
+                
+            newContainer.innerHTML += `
+            <div class="property-card"
+            data-type="${property.propertyType}"
+             data-status="${property.status}"
+             data-district="${property.district}"
+            data-city="${property.city}"
+            data-views="${property.views}"
+            data-created="${property.createdAt}"
+            data-updated="${property.updatedAt}"
+             data-price="${property.price}"
+             data-negotiable="${property.negotiable}"
+            data-bedrooms="${property.bedrooms}"
+            data-bathrooms="${property.bathrooms}"
+            data-amenities="${property.amenities.join(", ")}"
+             data-propertyView="${property.propertyView.join(", ")}"
+             data-perches="${property.perches}"
+              data-sqft="${property.squareFeet}"
+              data-address="${property.address}"
+            data-description="${property.description}"
+            data-boost="${property.boost ? JSON.stringify(property.boost) : ''}">
+                <div class="property-image">
+
+<div
+id="counter${property.id}"
+style="
+position:absolute;
+bottom:10px;
+right:10px;
+background:rgba(0,0,0,.6);
+color:white;
+padding:4px 10px;
+border-radius:20px;
+font-size:13px;
+font-weight:bold;
+z-index:15;
+">
+1 / ${property.images.length}
+</div>           <button
+                    onclick="previousHomepageImage(${property.id})"
+                    style="
+                    position:absolute;
+                    left:10px;
+                    top:50%;
+                    transform:translateY(-50%);
+                    width:40px;
+                    height:40px;
+                    border:none;
+                    border-radius:50%;
+                    background:rgba(0,0,0,0.5);
+                    color:white;
+                    font-size:22px;
+                    cursor:pointer;
+                    z-index:10;
+                    ">
+                    ❮
+                    </button>
+                     <div 
+                id="heart${property.id}"
+                onclick="toggleFavourite(${property.id},this)"
+                style="
+                position:absolute;
+                top:10px;
+                right:10px;
+                font-size:30px;
+                cursor:pointer;
+                z-index:20;
+                user-select:none;
+                ">
+                ${isFavourite(property.id) ? "💗" : "🤍"}
+                </div>
+                <div
+                onclick="shareProperty(${property.id})"
+                style="
+                position:absolute;
+                top:10px;
+                left:10px;
+                font-size:30px;
+                cursor:pointer;
+                z-index:20;
+                user-select:none;
+                background:rgba(0,0,0,.45);
+                color:white;
+                width:40px;
+                height:40px;
+                display:flex;
+                align-items:center;
+                justify-content:center;
+                border-radius:50%;
+                ">
+                🔗
+                </div>
+                ${(Date.now()-property.createdAt)<604800000?`
+
+<div
+style="
+position:absolute;
+top:54px;
+left:12px;
+background:#16a34a;
+color:white;
+padding:6px 12px;
+border-radius:20px;
+font-size:12px;
+font-weight:bold;
+z-index:20;
+">
+NEW
+</div>
+
+`:""}
+
+               <img
+id="images${property.id}"
+src="${property.images[0]}"
+onclick="openImageViewer(${property.id})">
+                 <button
+                    onclick="nextHomepageImage(${property.id})"
+                    style="
+                    position:absolute;
+                    right:10px;
+                    top:50%;
+                    transform:translateY(-50%);
+                    width:40px;
+                    height:40px;
+                    border:none;
+                    border-radius:50%;
+                    background:rgba(0,0,0,0.5);
+                    color:white;
+                    font-size:22px;
+                    cursor:pointer;
+                    z-index:10;
+                    ">
+                    ❯
+                    </button>
+                    ${(() => {
+
+let boostInfo = getBoostInfo(property);
+
+if(!boostInfo) return "";
+
+let bg="#64748b";
+let icon="⭐";
+
+if(boostInfo.package==="Premium"){
+bg="#f59e0b";
+icon="⭐⭐";
+}
+
+if(boostInfo.package==="Platinum"){
+bg="#7c3aed";
+icon="👑";
+}
+
+return `
+
+<div
+style="
+position:absolute;
+bottom:-40px;
+right:12px;
+background:${bg};
+color:white;
+padding:8px 18px;
+border-radius:999px;
+font-size:13px;
+font-weight:bold;
+box-shadow:0 8px 18px rgba(0,0,0,.25);
+z-index:50;
+">
+${icon} ${boostInfo.package}
+</div>
+
+`;
+
+})()}
+                    </div>
+                  <div class="property-details">
+
+<h3
+style="
+font-size:22px;
+font-weight:bold;
+text-align:center;
+margin:0 0 10px 0;
+overflow:hidden;
+white-space:nowrap;
+text-overflow:ellipsis;
+">
+${property.name}
+</h3>
+
+<p
+style="
+font-size:17px;
+font-weight:600;
+text-align:center;
+color:#555;
+margin:8px 0;
+">
+🏠 ${property.propertyType} • ${property.status}
+</p>
+
+<p
+style="
+font-size:17px;
+font-weight:600;
+text-align:center;
+margin:8px 0 12px 0;
+">
+📍 ${property.city}, ${property.district}
+</p>
+
+<p
+style="
+font-size:16px;
+font-weight:600;
+text-align:center;
+margin:10px 0;
+">
+🛁 ${property.bathrooms} Bathrooms
+&nbsp;&nbsp;
+🛏 ${property.bedrooms} Bedrooms
+</p>
+
+<p
+style="
+font-size:16px;
+font-weight:600;
+text-align:center;
+margin:10px 0;
+">
+📐 ${property.squareFeet} sqft
+&nbsp;&nbsp;
+🌳 ${property.perches} Perches
+</p>
+
+<p
+style="
+font-size:24px;
+font-weight:bold;
+color:#118a1f;
+text-align:center;
+margin:14px 0;
+">
+${
+property.negotiable
+?
+"💬 Price Negotiable"
+:
+"💸 Rs. "+Number(property.price).toLocaleString()
+}
+</p>
+
+<div
+style="
+display:flex;
+gap:10px;
+margin-top:15px;
+">
+
+<button
+onclick="viewProperty('${property.id}')"
+style="
+flex:1;
+padding:12px;
+font-size:16px;
+font-weight:bold;
+border:none;
+border-radius:10px;
+background:#0d6efd;
+color:white;
+cursor:pointer;
+">
+
+View Property
+
+</button>
+
+<button
+onclick="openContactPopup(
+'${property.owner}',
+'${property.phone}',
+'${property.name}',
+${property.price},
+${property.negotiable}
+)"
+style="
+flex:1;
+padding:12px;
+font-size:16px;
+font-weight:bold;
+border:none;
+border-radius:10px;
+background:#16a34a;
+color:white;
+cursor:pointer;
+">
+
+📞 Contact
+
+</button>
+
+</div>
+
+</div>
+                    `;
+                    }
+                    
+            );
+
+         
+        function nextHomepageImage(id){
+            let property = allProperties.find(p => p.id === id);
+            if(homepageImageIndex[id] == null){
+                homepageImageIndex[id] = 0;
+            }
+            homepageImageIndex[id]++;
+            if(homepageImageIndex[id] >= property.images.length){
+                homepageImageIndex[id] = 0;
+            }
+            document.getElementById("images"+id).src = property.images[homepageImageIndex[id]];
+            document.getElementById("counter"+id).innerHTML = 
+            (homepageImageIndex[id]+1)+" /"+property.images.length;
+        }
+         function previousHomepageImage(id){
+            let property = allProperties.find(p => p.id === id);
+            if(homepageImageIndex[id] == null){
+                homepageImageIndex[id] = 0;
+            }
+            homepageImageIndex[id]--;
+
+            if(homepageImageIndex[id]< 0){
+                homepageImageIndex[id] =property.images.length-1;
+            }
+            document.getElementById("images"+id).src = property.images[homepageImageIndex[id]];
+            document.getElementById("counter"+id).innerHTML = 
+            (homepageImageIndex[id]+1)+" /"+property.images.length;
+        }
+
+        function openImageViewer(id){
+
+viewerProperty = allProperties.find(p=>p.id===id);
+
+viewerIndex = homepageImageIndex[id] || 0;
+
+document.getElementById("viewerImage").src =
+viewerProperty.images[viewerIndex];
+
+document.getElementById("viewerCounter").innerHTML =
+(viewerIndex+1)+" / "+viewerProperty.images.length;
+
+document.getElementById("imageViewer").style.display="flex";
+
+}
+
+function closeImageViewer(){
+
+document.getElementById("imageViewer").style.display="none";
+
+}
+
+function nextViewerImage(){
+
+viewerIndex++;
+
+if(viewerIndex>=viewerProperty.images.length){
+
+viewerIndex=0;
+
+}
+
+document.getElementById("viewerImage").src=
+viewerProperty.images[viewerIndex];
+
+document.getElementById("viewerCounter").innerHTML=
+(viewerIndex+1)+" / "+viewerProperty.images.length;
+
+}
+
+function previousViewerImage(){
+
+viewerIndex--;
+
+if(viewerIndex<0){
+
+viewerIndex=
+viewerProperty.images.length-1;
+
+}
+
+document.getElementById("viewerImage").src=
+viewerProperty.images[viewerIndex];
+
+document.getElementById("viewerCounter").innerHTML=
+(viewerIndex+1)+" / "+viewerProperty.images.length;
+
+}
+document.addEventListener("keydown",function(e){
+
+if(document.getElementById("imageViewer").style.display!="flex") return;
+
+if(e.key=="ArrowRight"){
+
+nextViewerImage();
+
+}
+
+if(e.key=="ArrowLeft"){
+
+previousViewerImage();
+
+}
+
+if(e.key=="Escape"){
+
+closeImageViewer();
+
+}
+
+});
+document.getElementById("imageViewer").onclick=function(e){
+
+if(e.target.id=="imageViewer"){
+
+closeImageViewer();
+
+}
+
+}
+        
+        function showNotification(message){
+            let box =
+            document.getElementById("notification");
+            box.innerHTML = message;
+            box.style.opacity = "1";
+            setTimeout(function(){
+                box.style.opacity = "0";
+            },2000);
+        }
+        function timeAgo(date){
+
+    let now = new Date();
+
+    let posted = new Date(date);
+
+    let diff = now - posted;
+
+    let days = Math.floor(diff/(1000*60*60*24));
+
+    if(days===0){
+        return "Today";
+    }
+
+    if(days===1){
+        return "Yesterday";
+    }
+
+    if(days<7){
+        return days + " days ago";
+    }
+
+    if(days<30){
+        return Math.floor(days/7) + " week(s) ago";
+    }
+
+    return posted.toLocaleDateString();
+
+}
+
+ function openContactPopup(owner, phone, property, price, negotiable){
+    
+document.getElementById("contactPopup").style.display="flex";
+
+document.getElementById("popupOwner").innerHTML=owner;
+
+document.getElementById("popupCall").onclick=function(){
+
+ window.location.href="tel:"+phone;
+
+};
+
+document.getElementById("popupPhone").innerHTML =
+phone.replace("94","0");
+
+document.getElementById("popupProperty").innerHTML=property;
+document.getElementById("popupPrice").innerHTML =
+negotiable
+?
+"💬 Price Negotiable"
+:
+"💸 Rs. " + Number(price).toLocaleString();
+document.getElementById("popupMessage").value =
+"Hello, I'm interested in " + property + ". Is it still available?";
+
+document.getElementById("popupWhatsapp").onclick=function(){
+
+let message =
+document.getElementById("popupMessage").value.trim();
+
+if(message==""){
+
+message =
+"Hello, I'm interested in " + property + ". Is it still available?";
+
+}
+
+window.open(
+
+"https://wa.me/"+phone+
+
+"?text="+encodeURIComponent(message)
+
+);
+
+};
+}
+
+
+function closeContactPopup(){
+
+document.getElementById("contactPopup").style.display="none";
+
+}
+window.onclick = function(event){
+
+let popup =
+document.getElementById("contactPopup");
+
+if(event.target === popup){
+
+closeContactPopup();
+
+}
+
+}
+document.addEventListener("keydown",function(e){
+
+if(e.key==="Escape"){
+
+closeContactPopup();
+
+}
+
+});
+
+function sortBoostedProperties(){
+
+let container =
+document.getElementById("newProperties");
+
+let cards =
+Array.from(container.querySelectorAll(".property-card"));
+
+cards.sort(function(a,b){
+
+let boostA =
+a.dataset.boost
+?
+JSON.parse(a.dataset.boost)
+:
+null;
+
+let boostB =
+b.dataset.boost
+?
+JSON.parse(b.dataset.boost)
+:
+null;
+
+function score(boost){
+
+if(!boost) return 0;
+
+if(boost.status !== "Active") return 0;
+
+if(boost.endDate < Date.now()) return 0;
+
+if(boost.package === "Platinum") return 3;
+
+if(boost.package === "Premium") return 2;
+
+if(boost.package === "Basic") return 1;
+
+return 0;
+
+}
+
+return score(boostB) - score(boostA);
+
+});
+
+cards.forEach(function(card){
+
+container.appendChild(card);
+
+});
+
+}
+function getBoostInfo(property){
+
+if(
+!property.boost ||
+property.boost.status !== "Active"
+){
+return null;
+}
+
+let remainingMs =
+property.boost.endDate - Date.now();
+
+if(remainingMs <= 0){
+return null;
+}
+
+let daysLeft =
+Math.ceil(remainingMs / (1000 * 60 * 60 * 24));
+
+return {
+package: property.boost.package,
+daysLeft: daysLeft
+};
+}
+function sortProperties(){
+
+let container =
+document.getElementById("newProperties");
+
+let cards =
+Array.from(container.getElementsByClassName("property-card"));
+
+let sort =
+document.getElementById("sortFilter").value;
+
+if(sort=="priceLow"){
+
+cards.sort(function(a,b){
+
+return Number(a.dataset.price)-Number(b.dataset.price);
+
+});
+
+}
+if(sort=="priceHigh"){
+
+cards.sort(function(a,b){
+
+return Number(b.dataset.price)-Number(a.dataset.price);
+
+});
+
+}
+if(sort=="views"){
+
+cards.sort(function(a,b){
+
+return Number(b.dataset.views)-Number(a.dataset.views);
+
+});
+
+}
+if(sort=="newest"){
+
+cards.sort(function(a,b){
+
+return Number(b.dataset.created)-Number(a.dataset.created);
+
+});
+
+}
+
+cards.forEach(function(card){
+
+container.appendChild(card);
+
+});
+
+}
+
+      </script>
+      <div id="notification"
+      onclick="event.stopPropagation()"
+      style="
+      position: fixed;
+      top: 30px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #000000;
+      color: rgb(255, 255, 255);
+      padding: 14px 22px;
+      border-radius: 10px;
+      font-size: 16px;
+      opacity: 0;
+      transition: 0.4s;
+      pointer-events: none;
+      z-index: 9999;">
+      </div>
+      <div
+id="contactPopup"
+
+style="
+
+display:none;
+
+position:fixed;
+
+top:0;
+
+left:0;
+
+width:100%;
+
+height:100%;
+
+background:rgba(0,0,0,.45);
+
+backdrop-filter:blur(4px);
+
+justify-content:center;
+
+align-items:center;
+
+z-index:9999;
+
+">
+
+<div
+
+style="
+
+background:white;
+
+padding:30px;
+
+border-radius:15px;
+
+width:350px;
+
+text-align:center;
+
+">
+
+<h2>
+
+Interested?
+
+</h2>
+
+<p>
+
+Choose how you'd like to contact the seller.
+
+</p>
+
+<h3 id="popupProperty"></h3>
+<p
+style="
+font-size:22px;
+font-weight:bold;
+color:#0a8d48;"
+id="popupPrice">
+</p>
+
+<p>
+
+👤
+
+<span id="popupOwner"></span>
+
+</p>
+
+<p>
+
+📞
+
+<span id="popupPhone"></span>
+
+</p>
+
+<br>
+<h4>Your Message</h4>
+
+<textarea
+
+id="popupMessage"
+
+placeholder="Hi, I'm interested in this property. Is it still available?"
+
+style="
+
+width:100%;
+
+height:90px;
+
+padding:10px;
+
+border-radius:10px;
+
+resize:none;
+
+font-size:15px;
+
+"></textarea>
+
+<br><br>
+
+<button id="popupWhatsapp">
+
+💬 Send via WhatsApp
+
+</button>
+
+<br><br>
+
+<button id="popupCall">
+
+📞 Call Seller
+
+</button>
+<br><br>
+
+<button
+
+onclick="closeContactPopup()">
+
+Close
+
+</button>
+
+</div>
+
+</div>
+<div
+id="imageViewer"
+style="
+display:none;
+position:fixed;
+top:0;
+left:0;
+width:100%;
+height:100%;
+background:rgba(0,0,0,.9);
+justify-content:center;
+align-items:center;
+z-index:999999;
+">
+
+<button
+onclick="previousViewerImage()"
+style="
+position:absolute;
+left:25px;
+font-size:45px;
+background:none;
+border:none;
+color:white;
+cursor:pointer;
+">
+❮
+</button>
+
+<img
+id="viewerImage"
+style="
+width:96vw;
+height:96vh;
+max-width:100%;
+max-height:100%;
+object-fit:cover;
+user-select:none;
+">
+
+<button
+onclick="nextViewerImage()"
+style="
+position:absolute;
+right:25px;
+font-size:45px;
+background:none;
+border:none;
+color:white;
+cursor:pointer;
+">
+❯
+</button>
+
+<div
+onclick="closeImageViewer()"
+style="
+position:absolute;
+top:20px;
+right:30px;
+font-size:45px;
+color:white;
+cursor:pointer;
+">
+✕
+</div>
+
+<div
+id="viewerCounter"
+style="
+position:absolute;
+bottom:20px;
+color:white;
+font-size:20px;
+">
+</div>
+
+</div>
+</body>
+</html>

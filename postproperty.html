@@ -1,0 +1,1620 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <style>
+                    .pageHeader{
+
+display:flex;
+
+justify-content:center;
+
+align-items:center;
+
+margin-bottom:30px;
+
+padding-bottom:15px;
+
+border-bottom:1px solid #ddd;
+
+}
+
+.logoLink{
+
+display:flex;
+
+align-items:center;
+
+gap:12px;
+
+text-decoration:none;
+
+color:black;
+
+}
+
+.pageLogo{
+
+width:55px;
+
+height:55px;
+
+object-fit:contain;
+
+}
+
+.logoLink h2{
+
+margin:0;
+
+font-size:32px;
+
+font-weight:bold;
+
+color:#8b008b;
+
+}
+
+@media(max-width:600px){
+
+.pageLogo{
+
+width:42px;
+
+height:42px;
+
+}
+
+.logoLink h2{
+
+font-size:24px;
+
+}
+
+}
+.tagline{
+
+margin:0;
+
+font-size:14px;
+
+color:#666;
+
+}
+        </style>
+        <title>Post Property</title>
+        <link rel="stylesheet"
+        href="style.css">
+    </head>
+    <body>
+        <a href="index.html">
+        <button class="home-btn">
+        💒 Home
+        </button>
+    </a>
+       <header class="pageHeader">
+
+<a href="index.html" class="logoLink">
+
+<img
+src="Frame 1.png"
+class="pageLogo">
+
+<div>
+
+<h2>
+
+Gedarak.lk
+
+</h2>
+
+<p class="tagline">
+
+Sri Lanka's Property Marketplace
+
+</p>
+
+</div>
+
+</a>
+
+</header>
+        <h1>Post Your Property</h1>
+        <form>
+        <input type="text"
+        id="propertyName"
+        placeholder="Property Name"
+        required>
+        <br></br>
+
+       <input
+type="number"
+id="propertyPrice"
+placeholder="Property Price (LKR)"
+oninput="priceChanged()">
+
+<br><br>
+
+<label>
+<input
+type="checkbox"
+id="negotiablePrice"
+onchange="toggleNegotiable()">
+Price Negotiable
+</label>
+
+<br><br>
+         <label>Property Type</label>
+         <select id="propertyType">
+            <option value="">
+                Select Property type
+            </option>
+            <option>House</option>
+             <option>Apartment</option>
+              <option>Villa</option>
+               <option>Annex</option>
+                <option>Land</option>
+                 <option>Commercial</option>
+                <option>Office</option> 
+                   <option>Shop</option>
+                    <option>Warehouse</option>
+                     <option>Building</option>
+                      <option>Hotel</option>
+                       <option>Bungalow</option>
+         </select>
+           <br></br>
+         <label>District</label>
+         <select id="district"
+         onchange="updateCities()">
+            <option value="">Select District</option>
+            <option value="Colombo">Colombo</option>
+             <option value="Gampaha">Gampaha</option>
+              <option value="Kalutara">Kalutara</option>
+              <option value="Kandy">Kandy</option>
+                   <option value="Matale">Matale</option>
+                    <option value="Nuwara Eliya">Nuwara Eliya</option>
+               <option value="Matara">Matara</option>
+                <option value="Hambantota">Hambantota</option>
+                 <option value="Galle">Galle</option>
+                   <option value="Kurunegala">Kurunegala</option>
+                            <option value="Puttalama">Puttalama</option>
+                              <option value="Anuradhapura">Anuradhapura</option>
+                        <option value="Polonnaruwa">Polonnaruwa</option>
+                         <option value="Badulla">Badulla</option>
+                                 <option value="Monaragala">Monaragala</option> 
+                                    <option value="Kegalle">Kegalle</option>
+                               <option value="Ratnapura">Ratnapura</option>
+                     <option value="Ampara">Ampara</option>
+                      <option value="Batticaloa">Batticaloa</option>
+                        <option value="Trincomalee">Trincomalee</option>
+                          <option value="Jaffna">Jaffna</option>
+                          <option value="Kilinochchi">Kilinochchi</option>
+                           <option value="Mannar">Mannar</option>
+                            <option value="Mullaitivu">Mullaitivu</option>
+                             <option value="Vavuniya">Vavuniya</option>
+                    </select>
+         <br><br>
+         <label>City</label>
+         <select id="city">
+            <option value="">Select City</option>
+         </select>
+         <label>Address</label>
+        <input type="text"
+        id="address"
+        placeholder="Street Address"
+        required>
+         <br></br>
+         <input
+         type="text"
+         id="mapLink"
+         placeholder="Google Maps Link(Optional)">
+           <br></br>
+           <div id="bedroomSection">
+          <input type="number"
+          id="bedrooms"
+        placeholder="Bedrooms"
+        required>
+           </div>
+         <br>
+         <div id="bathroomSection">
+          <input type="number"
+          id="bathrooms"
+        placeholder="Bathrooms"
+        required>
+         </div>
+         <br>
+         <label>Land Size(Perches)</label>
+         <input
+         type="number"
+         id="perches"
+         placeholder="Example: 15">
+         <br></br>
+         <div id="sqftSection">
+          <label>Building Size(Square Feet)</label>
+         <input
+         type="number"
+         id="squareFeet"
+         placeholder="Example: 2500">
+         </div>
+         <h3>Amenities</h3>
+         <label>
+            <input type="checkbox" value="Parking" class="amenity">
+            Parking
+         </label>
+          <label>
+            <input type="checkbox" value="Garage" class="amenity">
+            Garage
+         </label>
+          <label>
+            <input type="checkbox" value="Pool" class="amenity">
+            Swimming Pool
+         </label>
+          <label>
+            <input type="checkbox" value="Garden" class="amenity">
+            Garden
+         </label>
+          <label>
+            <input type="checkbox" value="Gym" class="amenity">
+            Gym
+         </label>
+          <label>
+            <input type="checkbox" value="Elevator" class="amenity">
+            Elevator
+         </label>
+          <label>
+            <input type="checkbox" value="Furnished" class="amenity">
+            Furnished
+         </label>
+          <label>
+            <input type="checkbox" value="Basement" class="amenity">
+            Basement
+         </label>
+          <label>
+            <input type="checkbox" value="Outdoor Space" class="amenity">
+            Outdoor Space
+         </label>
+         <h3>Property Viewings</h3>
+          <label>
+            <input type="checkbox" value="City View" class="propertyView">
+            City View
+         </label>
+           <label>
+            <input type="checkbox" value="Ocean View" class="propertyView">
+            Ocean View
+         </label>
+          <label>
+            <input type="checkbox" value="River View" class="propertyView">
+            River View
+         </label>
+          <label>
+            <input type="checkbox" value="Lake View" class="propertyView">
+            Lake View
+         </label>
+          <label>
+            <input type="checkbox" value="Mountain View" class="propertyView">
+            Mountain View
+         </label>
+          <label>
+            <input type="checkbox" value="Forest View" class="propertyView">
+            Forest View
+         </label>
+          <br></br>
+          <input
+type="file"
+id="propertyImages"
+multiple
+accept="image/*"
+onchange="previewImages()">
+
+<p
+style="
+margin-top:8px;
+font-size:14px;
+color:#666;
+">
+You can select multiple images. They will appear below.
+</p>
+
+<div
+id="imagePreview"
+style="
+display:flex;
+flex-wrap:wrap;
+gap:12px;
+margin-top:15px;
+">
+</div>
+         <br>
+         <textarea
+         id="description"
+         placeholder="Property Description">
+        </textarea>
+         <br></br>
+    <div
+style="
+display:flex;
+align-items:center;
+width:110px;
+">
+
+<span
+style="
+width:110px;
+height:42px;
+font:bold;
+display:flex;
+align-items:center;
+justify-content:center;
+padding:0 14px;
+background:#f5f5f5;
+border:1px solid #ccc;
+border-right:none;
+border-radius:8px 0 0 8px;
+font-size:16px;
+color:#555;
+">
++94
+</span>
+
+<input
+type="tel"
+id="phone"
+placeholder="7XXXXXXXX"
+maxlength="9"
+oninput="phoneInput(this)"
+required
+style="
+width:110px;
+height:42px;
+flex:1;
+font: bold;
+padding:0 12px;
+font-size:16px;
+border:1px solid #ccc;
+border-radius:0 8px 8px 0;
+outline:none;
+box-sizing:border-box;
+">
+
+</div>
+<br><br>
+         <label>Status</label>
+         <select id="status">
+            <option value="For Sale">
+                For Sale
+            </option>
+             <option value="For Rent">
+                For Rent
+            </option>
+            <option value="For Sale/Rent">
+                For Sale/Rent
+            </option>
+         </select>
+        <button type="button"
+        onclick="addProperty()">
+            Post Property
+        </button>
+        </form>
+      <script>
+       function phoneInput(input){
+
+    // Keep only numbers
+    input.value = input.value.replace(/\D/g,"");
+
+    // First digit must be 7
+    if(input.value.length > 0 && input.value.charAt(0) !== "7"){
+        input.value = "7";
+    }
+
+    // Maximum 9 digits
+    if(input.value.length > 9){
+        input.value = input.value.slice(0,9);
+    }
+
+}
+        document.getElementById("propertyType").onchange=function(){
+
+let land=this.value=="Land";
+
+document.getElementById("bedroomSection").style.display=
+land?"none":"block";
+
+document.getElementById("bathroomSection").style.display=
+land?"none":"block";
+
+
+if(land){
+
+document.getElementById("bedrooms").value="";
+document.getElementById("bathrooms").value="";
+
+
+}
+
+};
+        function toggleNegotiable(){
+
+let box =
+document.getElementById("negotiablePrice");
+
+let price =
+document.getElementById("propertyPrice");
+
+if(box.checked){
+
+price.value="";
+
+price.disabled=true;
+
+}
+else{
+
+price.disabled=false;
+
+}
+
+}
+
+function priceChanged(){
+
+let price =
+document.getElementById("propertyPrice");
+
+if(price.value!=""){
+
+document.getElementById("negotiablePrice").checked=false;
+
+price.disabled=false;
+
+}
+
+}
+        let selectedImages = [];
+        const districtCities= {
+          Colombo: [
+"Angoda",
+"Athurugiriya",
+"Avissawella",
+"Battaramulla",
+"Boralesgamuwa",
+"Colombo 01 - Fort",
+"Colombo 02 - Slave Island",
+"Colombo 03 - Kollupitiya",
+"Colombo 04 - Bambalapitiya",
+"Colombo 05 - Havelock Town",
+"Colombo 06 - Wellawatte",
+"Colombo 07 - Cinnamon Gardens",
+"Colombo 08 - Borella",
+"Colombo 09 - Dematagoda",
+"Colombo 10 - Maradana",
+"Colombo 11 - Pettah",
+"Colombo 12 - Hulftsdorp",
+"Colombo 13 - Kotahena",
+"Colombo 14 - Grandpass",
+"Colombo 15 - Modara",
+"Dehiwala",
+"Hanwella",
+"Hokandara",
+"Homagama",
+"Kaduwela",
+"Kesbewa",
+"Kolonnawa",
+"Koswatta",
+"Kotikawatta",
+"Kotte",
+"Kottawa",
+"Malabe",
+"Maharagama",
+"Moratuwa",
+"Mount Lavinia",
+"Mulleriyawa",
+"Nawala",
+"Nugegoda",
+"Padukka",
+"Pannipitiya",
+"Piliyandala",
+"Rajagiriya",
+"Ratmalana",
+"Talawatugoda",
+"Wellampitiya"
+],
+Gampaha: [
+
+"Attanagalla",
+"Biyagama",
+"Delgoda",
+"Divulapitiya",
+"Dompe",
+"Ekala",
+"Gampaha",
+"Ganemulla",
+"Ja-Ela",
+"Kadawatha",
+"Kandana",
+"Katana",
+"Katunayake",
+"Kelaniya",
+"Kiribathgoda",
+"Kochchikade",
+"Mabole",
+"Mahara",
+"Minuwangoda",
+"Mirigama",
+"Negombo",
+"Nittambuwa",
+"Peliyagoda",
+"Ragama",
+"Raddolugama",
+"Seeduwa",
+"Udugampola",
+"Urapola",
+"Veyangoda",
+"Wattala",
+"Weliweriya",
+"Yakkala"
+
+],
+         Kalutara: [
+"Agalawatta",
+"Alubomulla",
+"Aluthgama",
+"Bandaragama",
+"Beruwala",
+"Bulathsinhala",
+"Dharga Town",
+"Dodangoda",
+"Gonapola",
+"Horana",
+"Ingiriya",
+"Kalutara",
+"Kalutara North",
+"Kalutara South",
+"Katukurunda",
+"Maggona",
+"Matugama",
+"Millaniya",
+"Neboda",
+"Panadura",
+"Payagala",
+"Wadduwa",
+"Waskaduwa"
+],
+Kandy: [
+"Akurana",
+"Alawatugoda",
+"Ampitiya",
+"Delthota",
+"Digana",
+"Doluwa",
+"Galagedara",
+"Galaha",
+"Gampola",
+"Gelioya",
+"Gurudeniya",
+"Haragama",
+"Hasalaka",
+"Hindagala",
+"Hunnasgiriya",
+"Kadugannawa",
+"Kandy",
+"Katugastota",
+"Kundasale",
+"Madawala",
+"Menikhinna",
+"Nawalapitiya",
+"Pallekele",
+"Panwila",
+"Pathadumbara",
+"Pathahewaheta",
+"Peradeniya",
+"Pilimathalawa",
+"Poojapitiya",
+"Teldeniya",
+"Udadumbara",
+"Udapalatha",
+"Wattegama",
+"Yatinuwara"
+],
+Matale: [
+"Akuramboda",
+"Aluvihare",
+"Ambanganga",
+"Dambulla",
+"Galewela",
+"Inamaluwa",
+"Kandalama",
+"Laggala",
+"Lenadora",
+"Madipola",
+"Matale",
+"Moragolla",
+"Nalanda",
+"Naula",
+"Opalgala",
+"Palapathwela",
+"Pallepola",
+"Rattota",
+"Sigiriya",
+"Ukuwela",
+"Wahacotte",
+"Wilgamuwa",
+"Yatawatta"
+], 
+             Galle: [
+"Ahangama",
+"Akmeemana",
+"Ambalangoda",
+"Baddegama",
+"Balapitiya",
+"Bentota",
+"Boossa",
+"Elpitiya",
+"Galle",
+"Habaraduwa",
+"Hikkaduwa",
+"Imaduwa",
+"Karandeniya",
+"Karapitiya",
+"Koggala",
+"Nagoda",
+"Neluwa",
+"Pitigala",
+"Rathgama",
+"Tawalama",
+"Unawatuna",
+"Wanduramba",
+"Yakkalamulla"
+],
+           Matara: [
+"Akuressa",
+"Athuraliya",
+"Deniyaya",
+"Devinuwara",
+"Dikwella",
+"Godagama",
+"Hakmana",
+"Kamburupitiya",
+"Kananke",
+"Kirinda Puhulwella",
+"Kotapola",
+"Makandura",
+"Madiha",
+"Malimbada",
+"Matara",
+"Mirissa",
+"Morawaka",
+"Mulatiyana",
+"Nadugala",
+"Pasgoda",
+"Pitabeddara",
+"Polhena",
+"Thihagoda",
+"Urubokka",
+"Weligama"
+],
+          Hambantota: [
+"Ambalantota",
+"Angunakolapelessa",
+"Beliatta",
+"Debarawewa",
+"Hambantota",
+"Hungama",
+"Kataragama",
+"Katuwana",
+"Kirinda",
+"Lunugamvehera",
+"Middeniya",
+"Netolpitiya",
+"Okewela",
+"Ranna",
+"Sooriyawewa",
+"Tangalle",
+"Tissamaharama",
+"Walasmulla",
+"Weeraketiya"
+],
+
+"Nuwara Eliya": [
+"Agarapathana",
+"Ambewela",
+"Bogawantalawa",
+"Dayagama",
+"Dickoya",
+"Ginigathhena",
+"Haggala",
+"Hanguranketha",
+"Hatton",
+"Kandapola",
+"Kotagala",
+"Labukele",
+"Lindula",
+"Madulla",
+"Maskeliya",
+"Nanu Oya",
+"Nuwara Eliya",
+"Ohiya",
+"Pattipola",
+"Pedro",
+"Pundaluoya",
+"Ragala",
+"Rikillagaskada",
+"Seetha Eliya",
+"Talawakelle",
+"Walapane"
+],
+      Kurunegala: [
+"Alawwa",
+"Bamunakotuwa",
+"Bingiriya",
+"Dambadeniya",
+"Dodangaslanda",
+"Galgamuwa",
+"Giriulla",
+"Hettipola",
+"Hindagolla",
+"Hiripitiya",
+"Ibbagamuwa",
+"Kobeigane",
+"Kuliyapitiya",
+"Kurunegala",
+"Mahawa",
+"Makandura",
+"Maspotha",
+"Mawathagama",
+"Melsiripura",
+"Narammala",
+"Nikaweratiya",
+"Pannala",
+"Polgahawela",
+"Polpithigama",
+"Rideegama",
+"Wariyapola",
+"Weerambugedara",
+"Wellawa",
+"Yapahuwa"
+],
+Puttalam: [
+"Anamaduwa",
+"Arachchikattuwa",
+"Chilaw",
+"Dankotuwa",
+"Kalpitiya",
+"Madampe",
+"Mahawewa",
+"Marawila",
+"Mundel",
+"Nattandiya",
+"Nawagattegama",
+"Norochcholai",
+"Pallama",
+"Puttalam",
+"Wennappuwa"
+],
+Anuradhapura: [
+"Anuradhapura",
+"Eppawala",
+"Galenbindunuwewa",
+"Galnewa",
+"Galkulama",
+"Habarana",
+"Horowpothana",
+"Ipalogama",
+"Kahatagasdigiliya",
+"Kekirawa",
+"Kebithigollewa",
+"Madatugama",
+"Medawachchiya",
+"Mihintale",
+"Nochchiyagama",
+"Padaviya",
+"Palagala",
+"Palugaswewa",
+"Rajanganaya",
+"Rambewa",
+"Talawa",
+"Tambuttegama",
+"Thirappane"
+],
+Polonnaruwa: [
+"Aralaganwila",
+"Bakamuna",
+"Dimbulagala",
+"Elahera",
+"Galamuna",
+"Giritale",
+"Hingurakgoda",
+"Kaduruwela",
+"Lankapura",
+"Manampitiya",
+"Medirigiriya",
+"Minneriya",
+"Palugasdamana",
+"Polonnaruwa",
+"Sewanapitiya",
+"Thamankaduwa",
+"Welikanda"
+],
+Badulla: [
+"Badulla",
+"Bandarawela",
+"Beragala",
+"Dambagalla",
+"Diyatalawa",
+"Ella",
+"Haldummulla",
+"Hali-Ela",
+"Haputale",
+"Kandaketiya",
+"Koslanda",
+"Lunugala",
+"Mahiyanganaya",
+"Meegahakivula",
+"Passara",
+"Rideemaliyadda",
+"Soranathota",
+"Uva Paranagama",
+"Welimada"
+],
+Monaragala: [
+"Bibile",
+"Buttala",
+"Kataragama",
+"Madulla",
+"Medagama",
+"Monaragala",
+"Okkampitiya",
+"Siyambalanduwa",
+"Thanamalwila",
+"Wellawaya"
+],
+Kegalle: [
+"Aranayake",
+"Bulathkohupitiya",
+"Dehiowita",
+"Deraniyagala",
+"Galigamuwa",
+"Kegalle",
+"Kitulgala",
+"Mawanella",
+"Rambukkana",
+"Ruwanwella",
+"Warakapola",
+"Yatiyantota"
+],
+Ratnapura: [
+"Balangoda",
+"Eheliyagoda",
+"Elapatha",
+"Embilipitiya",
+"Godakawela",
+"Imbulpe",
+"Kahawatta",
+"Kalawana",
+"Kolonna",
+"Kuruwita",
+"Nivithigala",
+"Opanayaka",
+"Pelmadulla",
+"Rakwana",
+"Ratnapura",
+"Weligepola"
+],
+Ampara: [
+"Akkaraipattu",
+"Alayadivembu",
+"Ampara",
+"Damana",
+"Dehiattakandiya",
+"Irakkamam",
+"Kalmunaikudi",
+"Kalmunai",
+"Karaitivu",
+"Lahugala",
+"Maha Oya",
+"Nintavur",
+"Padiyathalawa",
+"Pottuvil",
+"Sainthamaruthu",
+"Sammanthurai",
+"Thirukkovil",
+"Uhana"
+],
+Batticaloa: [
+"Arayampathy",
+"Batticaloa",
+"Chenkalady",
+"Eravur",
+"Kaluwanchikudy",
+"Kattankudy",
+"Kiran",
+"Kalkudah",
+"Karadiyanaru",
+"Mandur",
+"Navatkadu",
+"Oddamavadi",
+"Paddiruppu",
+"Pasikudah",
+"Sittandy",
+"Valachchenai",
+"Vakarai"
+],
+Trincomalee: [
+"China Bay",
+"Gomarankadawala",
+"Jinnapuram",
+"Kantalai",
+"Kinniya",
+"Kuchchaveli",
+"Morawewa",
+"Muttur",
+"Nilaveli",
+"Seruvila",
+"Somapura",
+"Trincomalee",
+"Uppuveli"
+],
+Jaffna: [
+"Achchuveli",
+"Ariyalai",
+"Chankanai",
+"Chavakachcheri",
+"Chunnakam",
+"Elalai",
+"Jaffna",
+"Kankesanthurai",
+"Karainagar",
+"Kayts",
+"Kodikamam",
+"Manipay",
+"Nallur",
+"Navaly",
+"Point Pedro",
+"Punnalaikattuwan",
+"Sandilipay",
+"Tellippalai",
+"Valvettithurai",
+"Velanai"
+],
+Kilinochchi: [
+"Iranamadu",
+"Kandavalai",
+"Karachchi",
+"Kilinochchi",
+"Pachchilaipalli",
+"Pallai",
+"Paranthan",
+"Poonakary",
+"Ramanathapuram",
+"Uruthirapuram"
+],
+Mannar: [
+"Adampan",
+"Erukkalampiddy",
+"Mannar",
+"Mannar Town",
+"Madhu",
+"Murunkan",
+"Nanattan",
+"Pesalai",
+"Silavathurai",
+"Thalaimannar",
+"Tharapuram",
+"Uyilankulam"
+],
+Mullaitivu: [
+"Alampil",
+"Kokkilai",
+"Kokuthuduwai",
+"Keppapilavu",
+"Manthai East",
+"Maritimepattu",
+"Maruthankerny",
+"Mathalan",
+"Mullaitivu",
+"Mulliyawalai",
+"Oddusuddan",
+"Oddupeli",
+"Puthukkudiyiruppu",
+"Thunukkai",
+"Welioya"
+],
+Vavuniya: [
+"Cheddikulam",
+"Kebithigollewa",
+"Madukanda",
+"Maruthodai",
+"Nedunkeni",
+"Omanthai",
+"Poovarasankulam",
+"Puliyankulam",
+"Settikulam",
+"Thandikulam",
+"Vavuniya",
+"Vavuniya North",
+"Vavuniya South",
+"Vavuniya Town"
+]
+            
+        };
+       function updateCities(){
+        let district= 
+        document.getElementById(
+            "district"
+        ).value;
+        let cityDropdown = 
+        document.getElementById(
+            "city"
+        );
+        cityDropdown.innerHTML = 
+        '<option value="">Select City</option>';
+        if(districtCities[district]){
+        districtCities[district]
+        .forEach(function(city){
+            let option = 
+            document.createElement("option");
+            option.value = city;
+            option.textContent = city;
+            cityDropdown.appendChild(
+                option
+            );
+        });
+        }
+       }
+        function addProperty(){
+            let name=
+            document.getElementById(
+                "propertyName"
+            ).value;
+              if(name === ""){
+        alert("Please type the Property name");
+        return;
+       }     
+           let negotiable =
+document.getElementById("negotiablePrice").checked;
+           let price =
+parseInt(
+document.getElementById("propertyPrice").value
+) || null;
+
+if(price===null && !negotiable){
+
+alert("Enter a price or choose Negotiable.");
+
+return;
+
+}
+            let propertyType= 
+            document.getElementById(
+                "propertyType"
+            ).value;
+              if(propertyType === ""){
+        alert("Please select Property type");
+        return;
+       }
+            let district= 
+            document.getElementById("district").value;
+            let city = 
+            document.getElementById(
+                "city"
+            ).value;
+            let address = 
+            document.getElementById(
+                "address"
+            ).value;
+            let bedrooms=
+            document.getElementById(
+                "bedrooms"
+            ).value;
+            let bathrooms=
+            document.getElementById(
+                "bathrooms"
+            ).value;
+            let perches= 
+            parseFloat(
+                document.getElementById("perches").value
+            ) || 0;
+             let squareFeet= 
+            parseInt(
+                document.getElementById("squareFeet").value
+            ) || 0;
+            let amenities=[];
+            document.querySelectorAll(
+                ".amenity:checked"
+            ).forEach(function(item){
+                amenities.push(
+                    item.value
+                );
+            });
+             let propertyView=[];
+            document.querySelectorAll(
+                ".propertyView:checked"
+            ).forEach(function(item){
+                propertyView.push(
+                    item.value
+                );
+            });
+            let description=
+            document.getElementById(
+                "description"
+            ).value;
+            let phone =
+document.getElementById("phone").value.trim();
+
+if(phone.length !== 9){
+
+alert("Please enter a valid Sri Lankan mobile number.");
+
+return;
+
+}
+
+phone = "94" + phone;
+
+             let map=
+            document.getElementById(
+                "mapLink"
+            ).value;
+            let imageFiles = selectedImages;
+             if(district === ""){
+        alert("Please select a district");
+        return;
+       }
+        if(city === ""){
+        alert("Please select a city");
+        return;
+       }
+         if(imageFiles.length === 0){
+            alert("Please select atleast one image.");
+            return;
+         }
+            let images = [];
+            for(let i=0;
+            i < imageFiles.length;
+            i++
+            ){
+                let reader = new FileReader();
+                reader.onload = function(e){
+                   images.push(e.target.result);
+                   if(images.length === imageFiles.length){
+            let property={
+            id:Date.now(),
+            name:name,
+            views: 0,
+            price: price,
+            negotiable: negotiable,
+            propertyType:document.getElementById("propertyType").value,
+            status:
+            document.getElementById("status").value,
+            district:district,
+            city:city,
+            address:address,
+            bedrooms:bedrooms,
+            bathrooms:bathrooms,
+            perches:perches,
+            squareFeet:squareFeet,
+            amenities: amenities,
+            propertyView: propertyView,
+            description:description,
+            images:images,
+            phone:phone,
+
+             owner:
+            localStorage.getItem(
+                "currentUser"
+            ),
+            createdAt:
+            Date.now(),
+            
+            map:
+            document.getElementById(
+                "mapLink"
+            ).value,
+            approved:true
+             };
+             localStorage.setItem(
+                property.name,
+                JSON.stringify(property)
+             );
+             localStorage.setItem(
+"selectedBoostProperty",
+property.id
+);
+           localStorage.setItem(
+    "lastPostedProperty",
+    property.id
+);
+           showBoostPopup();
+        }
+          
+    };
+        reader.readAsDataURL(imageFiles[i]);
+}
+        }
+        function previewImages(){
+
+let input =
+document.getElementById("propertyImages");
+
+selectedImages =
+Array.from(input.files);
+
+refreshPreview();
+let preview =
+document.getElementById("imagePreview");
+
+preview.innerHTML="";
+preview.innerHTML=
+
+"<p style='width:100%;font-weight:bold;'>"+
+files.length+
+" image(s) selected</p>";
+
+for(let i=0;i<files.length;i++){
+
+let reader=new FileReader();
+
+reader.onload=function(e){
+
+preview.innerHTML+=`
+
+<div
+style="
+position:relative;
+display:inline-block;
+">
+
+<img
+src="${e.target.result}"
+style="
+width:150px;
+height:110px;
+object-fit:cover;
+border-radius:10px;
+box-shadow:0 2px 8px rgba(0,0,0,.2);
+">
+
+<button
+onclick="removeSelectedImage(${i})"
+style="
+position:absolute;
+top:6px;
+right:6px;
+width:26px;
+height:26px;
+border:none;
+border-radius:50%;
+background:red;
+color:white;
+cursor:pointer;
+font-weight:bold;
+">
+✕
+</button>
+
+</div>
+
+`;
+
+};
+
+reader.readAsDataURL(files[i]);
+
+}
+
+}
+
+function removeSelectedImage(index){
+
+selectedImages.splice(index,1);
+
+let dataTransfer =
+new DataTransfer();
+
+selectedImages.forEach(function(file){
+
+dataTransfer.items.add(file);
+
+});
+
+document.getElementById("propertyImages").files =
+dataTransfer.files;
+
+refreshPreview();
+
+}
+function refreshPreview(){
+
+let preview =
+document.getElementById("imagePreview");
+
+preview.innerHTML="";
+
+preview.innerHTML =
+"<p style='width:100%;font-weight:bold;'>"+
+selectedImages.length+
+" image(s) selected</p>";
+
+selectedImages.forEach(function(file,index){
+
+let reader=new FileReader();
+
+reader.onload=function(e){
+
+preview.innerHTML +=`
+
+<div
+style="
+position:relative;
+display:inline-block;
+margin:6px;
+">
+
+<img
+src="${e.target.result}"
+style="
+width:150px;
+height:110px;
+object-fit:cover;
+border-radius:10px;
+box-shadow:0 2px 8px rgba(0,0,0,.2);
+">
+
+<button
+type="button"
+onclick="removeSelectedImage(${index})"
+style="
+position:absolute;
+top:6px;
+right:6px;
+width:26px;
+height:26px;
+border:none;
+border-radius:50%;
+background:red;
+color:white;
+cursor:pointer;
+">
+✕
+</button>
+
+</div>
+
+`;
+
+};
+
+reader.readAsDataURL(file);
+
+});
+
+}
+function showBoostPopup(){
+
+document.getElementById("boostPopup").style.display="flex";
+
+}
+
+function skipBoost(){
+
+window.location.href="index.html";
+
+}
+
+function goToBoost(){
+
+window.location.href="boost.html";
+
+}
+      </script>
+<div
+id="boostPopup"
+style="
+display:none;
+position:fixed;
+top:0;
+left:0;
+width:100%;
+height:100%;
+background:rgba(0,0,0,.55);
+backdrop-filter:blur(4px);
+justify-content:center;
+align-items:center;
+z-index:9999;
+">
+
+<div
+style="
+background:white;
+width:520px;
+max-width:92%;
+max-height:85vh;
+overflow-y:auto;
+padding:22px;
+border-radius:18px;
+text-align:center;
+box-shadow:0 15px 40px rgba(0,0,0,.3);
+">
+
+<h2>
+🎉 Property Posted Successfully
+</h2>
+
+<p style="color:#666;">
+Your property is now live on Gedarak.lk.
+</p>
+
+<hr>
+
+<h3>
+🚀 Want more buyers to see it?
+</h3>
+
+<p>
+Boost your listing and appear higher in search results.
+</p>
+
+<div id="boostPackages">
+
+<div style="
+border:1px solid #ddd;
+
+border-radius:14px;
+
+padding:20px;
+
+margin-bottom:20px;
+
+transition:.25s;
+
+background:white;
+
+box-shadow:0 8px 20px rgba(0,0,0,.12);
+">
+
+<h3>⭐ Basic</h3>
+
+<p>7 Days</p>
+
+<p>Higher in search results</p>
+
+<h2>Rs. 300</h2>
+
+<button
+onclick="goToBoost()"
+style="
+width:100%;
+padding:12px;
+border:none;
+border-radius:10px;
+background:#0a8d48;
+color:white;
+font-size:16px;
+font-weight:bold;
+cursor:pointer;
+margin-top:10px;
+">
+Choose
+</button>
+
+</div>
+
+<br>
+
+<div style="
+border:1px solid #ddd;
+
+border-radius:14px;
+
+padding:20px;
+
+margin-bottom:20px;
+
+transition:.25s;
+
+background:white;
+
+box-shadow:0 8px 20px rgba(0,0,0,.12);
+">
+
+<h3>⭐⭐ Premium</h3>
+
+<p>14 Days</p>
+
+<p>Featured in search</p>
+
+<p>Homepage priority</p>
+
+<h2>Rs. 700</h2>
+
+<button 
+onclick="goToBoost()"
+style="
+width:100%;
+padding:12px;
+border:none;
+border-radius:10px;
+background:#0a8d48;
+color:white;
+font-size:16px;
+font-weight:bold;
+cursor:pointer;
+margin-top:10px;
+">
+Choose
+</button>
+
+</div>
+
+<br>
+
+<div style="
+border:1px solid #ddd;
+
+border-radius:14px;
+
+padding:20px;
+
+margin-bottom:20px;
+
+transition:.25s;
+
+background:white;
+
+box-shadow:0 8px 20px rgba(0,0,0,.12);
+">
+
+<h3>👑 Platinum</h3>
+
+<p>30 Days</p>
+
+<p>Top of search</p>
+
+<p>Homepage featured</p>
+
+<p>Maximum visibility</p>
+
+<h2>Rs. 1500</h2>
+
+<button 
+onclick="goToBoost()"
+style="
+width:100%;
+padding:12px;
+border:none;
+border-radius:10px;
+background:#0a8d48;
+color:white;
+font-size:16px;
+font-weight:bold;
+cursor:pointer;
+margin-top:10px;
+">
+Choose
+</button>
+
+</div>
+
+</div>
+
+<br>
+
+<button
+onclick="skipBoost()"
+style="
+margin-top:15px;
+background:none;
+border:none;
+color:#444343;
+font-size:25px;
+cursor:pointer;
+">
+Skip for now →
+</button>
+
+</div>
+
+</div>
+    </body>
+</html>

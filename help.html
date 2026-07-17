@@ -1,0 +1,1148 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Help Center</title>
+        <link rel="stylesheet" href="style.css">
+       <style>
+
+.helpTitle{
+
+font-size:40px;
+
+text-align:center;
+
+margin-top:30px;
+
+font-weight:bold;
+
+}
+
+.helpSubtitle{
+
+text-align:center;
+
+font-size:20px;
+
+margin-bottom:30px;
+
+color:#666;
+
+}
+
+#helpSearch{
+
+width:80%;
+
+max-width:700px;
+
+display:block;
+
+margin:auto;
+
+padding:15px;
+
+font-size:18px;
+
+border-radius:10px;
+
+border:1px solid #ccc;
+
+margin-bottom:35px;
+
+}
+
+.faq{
+
+width:85%;
+
+max-width:900px;
+
+margin:15px auto;
+
+border-radius:12px;
+
+overflow:hidden;
+
+border:1px solid #ddd;
+
+box-shadow:0 3px 8px rgba(0,0,0,.1);
+
+}
+
+.faqQuestion{
+
+width:100%;
+
+padding:18px;
+
+font-size:20px;
+
+font-weight:bold;
+
+cursor:pointer;
+
+border:none;
+
+background:white;
+
+text-align:left;
+
+}
+
+.faqQuestion:hover{
+
+background:#f4f4f4;
+
+}
+
+.faqAnswer{
+
+max-height:0;
+overflow:hidden;
+transition:max-height .3s ease;
+
+}
+h2{
+
+width:85%;
+
+max-width:900px;
+
+margin:40px auto 10px;
+
+font-size:30px;
+
+font-weight:bold;
+
+color:#0b5ed7;
+
+}
+mark{
+
+background:#ffe566;
+
+padding:2px 5px;
+
+border-radius:4px;
+
+}
+        .pageHeader{
+
+display:flex;
+
+justify-content:center;
+
+align-items:center;
+
+margin-bottom:30px;
+
+padding-bottom:15px;
+
+border-bottom:1px solid #ddd;
+
+}
+
+.logoLink{
+
+display:flex;
+
+align-items:center;
+
+gap:12px;
+
+text-decoration:none;
+
+color:black;
+
+}
+
+.pageLogo{
+
+width:55px;
+
+height:55px;
+
+object-fit:contain;
+
+}
+
+.logoLink h2{
+
+margin:0;
+
+font-size:32px;
+
+font-weight:bold;
+
+color:#8b008b;
+
+}
+
+@media(max-width:600px){
+
+.pageLogo{
+
+width:42px;
+
+height:42px;
+
+}
+
+.logoLink h2{
+
+font-size:24px;
+
+}
+
+}
+.tagline{
+
+margin:0;
+
+font-size:14px;
+
+color:#666;
+
+}
+</style>
+    </head>
+    <body>
+ <a href="index.html">
+    <button class="home-btn">
+        💒 Home
+    </button>
+</a>
+   <header class="pageHeader">
+
+<a href="index.html" class="logoLink">
+
+<img
+src="Frame 1.png"
+class="pageLogo">
+
+<div>
+
+<h2>
+
+Gedarak.lk
+
+</h2>
+
+<p class="tagline">
+
+Sri Lanka's Property Marketplace
+
+</p>
+
+</div>
+
+</a>
+
+</header>
+<h1 class="helpTitle">
+    Help Center
+</h1>
+
+<p class="helpSubtitle">
+    Find answers to common questions about Gedarak.lk.
+</p>
+
+<div style="position:relative;max-width:500px;margin:auto;">
+
+<input
+type="text"
+id="helpSearch"
+placeholder="🔍Search for help..."
+onkeyup="
+searchFAQ();
+updateClearButton();
+"
+style="width:100%;padding:12px 40px 12px 15px;">
+
+<span
+id="clearSearch"
+onclick="clearHelpSearch()"
+style="
+display:none;
+position:absolute;
+right:15px;
+top:50%;
+transform:translateY(-50%);
+cursor:pointer;
+font-size:20px;
+font-weight:bold;
+color:#777;
+user-select:none;">
+✖
+</span>
+
+</div>
+<div
+id="suggestions"
+style="
+background:white;
+border:1px solid #ddd;
+border-radius:10px;
+display:none;
+max-width:600px;
+margin:auto;
+overflow:hidden;
+">
+</div>
+
+<p style="
+text-align:center;
+background:#fff8dc;
+padding:15px;
+border-radius:12px;
+max-width:700px;
+margin:25px auto;
+font-size:18px;
+font-weight:bold;
+">
+💡 Tip: Search words like
+rent,
+seller,
+share,
+login,
+favourites,
+or
+post property.
+</p>
+
+<h3 style="
+text-align:center;
+font-size:30px;
+margin-top:40px;
+font-weight:bold;
+">
+🔥 Popular Searches
+</h3>
+
+<div class="popularSearches">
+<div style="
+display:flex;
+justify-content:center;
+flex-wrap:wrap;
+gap:12px;
+margin-bottom:35px;
+">
+<button onclick="quickSearch('post property')">
+Post Property
+</button>
+
+<button onclick="quickSearch('save property')">
+Save Property
+</button>
+
+<button onclick="quickSearch('share property')">
+Share Property
+</button>
+
+<button onclick="quickSearch('rent')">
+Rent
+</button>
+
+<button onclick="quickSearch('contact seller')">
+Contact Seller
+</button>
+
+<button onclick="quickSearch('report')">
+Report Property
+</button>
+</div>
+</div>
+
+<div
+id="noResults"
+style="
+display:none;
+text-align:center;
+padding:30px;
+font-size:20px;
+line-height:1.8;
+font-weight:500;
+color:#444;
+">
+
+<h2>😕 No Help Articles Found</h2>
+
+<p>
+
+Try searching for:
+
+<br><br>
+
+Login
+
+•
+
+Favourite
+
+•
+
+Property
+
+•
+
+Agent
+
+•
+
+Rent
+
+</p>
+
+</div>
+
+
+
+<div id="faqContainer">
+<div class="faqCategory">
+
+<h2>🏡 Buying Properties</h2>
+
+<div class="faq">
+
+<button
+class="faqQuestion"
+onclick="toggleFAQ(this)">
+How do I search for a property?
+</button>
+
+<div class="faqAnswer"
+style="
+font-size:20px;
+line-height:1.8;
+font-weight:500;
+color:#444;
+padding-left:20px;
+">
+Use the search bar on the homepage or apply filters such as district, city, price, bedrooms, bathrooms, property type and amenities.
+</div>
+
+</div>
+
+<div class="faq">
+
+<button
+class="faqQuestion"
+onclick="toggleFAQ(this)">
+How do I contact the seller?
+</button>
+
+<div class="faqAnswer"
+style="
+font-size:20px;
+line-height:1.8;
+font-weight:500;
+color:#444;
+padding-left:20px;
+">
+Open the property page and click the WhatsApp or Contact Agent button.
+</div>
+
+</div>
+
+<div class="faq">
+
+<button
+class="faqQuestion"
+onclick="toggleFAQ(this)">
+Can I negotiate the property price?
+</button>
+
+<div class="faqAnswer"
+style="
+font-size:20px;
+line-height:1.8;
+font-weight:500;
+color:#444;
+padding-left:20px;
+">
+Yes. Gedarak.lk only connects buyers and sellers. Final prices are agreed between both parties.
+</div>
+</div>
+</div>
+<div class="faqCategory">
+
+<h2>❤️ Favourites</h2>
+
+<div class="faq">
+
+<button
+class="faqQuestion"
+onclick="toggleFAQ(this)">
+How do I save a property?
+</button>
+
+<div class="faqAnswer"
+style="
+font-size:20px;
+line-height:1.8;
+font-weight:500;
+color:#444;
+padding-left:20px;
+">
+Click the heart icon on any property. You must be logged in before saving favourites.
+</div>
+
+</div>
+
+<div class="faq">
+
+<button
+class="faqQuestion"
+onclick="toggleFAQ(this)">
+Where are my saved properties?
+</button>
+
+<div class="faqAnswer"
+style="
+font-size:20px;
+line-height:1.8;
+font-weight:500;
+color:#444;
+padding-left:20px;
+">
+Open the Favourites page from the sidebar to view every property you've saved.
+</div>
+
+</div>
+
+<div class="faq">
+
+<button
+class="faqQuestion"
+onclick="toggleFAQ(this)">
+Can I remove a saved property?
+</button>
+
+<div class="faqAnswer"
+style="
+font-size:20px;
+line-height:1.8;
+font-weight:500;
+color:#444;
+padding-left:20px;
+">
+Yes. Click the heart icon again to remove it from your favourites.
+</div>
+</div>
+</div>
+<div class="faqCategory">
+
+<h2>🔗 Sharing</h2>
+
+<div class="faq">
+
+<button
+class="faqQuestion"
+onclick="toggleFAQ(this)">
+How do I share a property?
+</button>
+
+<div class="faqAnswer"
+style="
+font-size:20px;
+line-height:1.8;
+font-weight:500;
+color:#444;
+padding-left:20px;
+">
+Open a property and press the Share button. You can send it through WhatsApp, Facebook, Messenger or copy the link.
+</div>
+
+</div>
+
+<div class="faq">
+
+<button
+class="faqQuestion"
+onclick="toggleFAQ(this)">
+Can I copy the property link?
+</button>
+
+<div class="faqAnswer"
+style="
+font-size:20px;
+line-height:1.8;
+font-weight:500;
+color:#444;
+padding-left:20px;
+">
+Yes. If sharing isn't supported on your device, Gedarak.lk automatically copies the property link.
+</div>
+
+</div>
+</div>
+<div class="faqCategory">
+
+<h2>📝 Posting Properties</h2>
+
+<div class="faq">
+
+<button class="faqQuestion" onclick="toggleFAQ(this)">
+▼ How do I post a property?
+</button>
+
+<div class="faqAnswer"
+style="
+font-size:20px;
+line-height:1.8;
+font-weight:500;
+color:#444;
+padding-left:20px;
+">
+Click the Post Property button on the homepage and complete every required field before submitting.
+</div>
+
+</div>
+
+<div class="faq">
+
+<button class="faqQuestion" onclick="toggleFAQ(this)">
+▼ Why is my property not visible?
+</button>
+
+<div class="faqAnswer"
+style="
+font-size:20px;
+line-height:1.8;
+font-weight:500;
+color:#444;
+padding-left:20px;
+">
+Every property is reviewed before appearing publicly. Please wait for approval.
+</div>
+
+</div>
+
+<div class="faq">
+
+<button class="faqQuestion" onclick="toggleFAQ(this)">
+▼ Can I edit my listing later?
+</button>
+
+<div class="faqAnswer"
+style="
+font-size:20px;
+line-height:1.8;
+font-weight:500;
+color:#444;
+padding-left:20px;
+">
+Yes. After we build the Profile page, you'll be able to edit or remove your own listings.
+</div>
+
+</div>
+
+</div>
+<div class="faqCategory">
+
+<h2>👤 Account</h2>
+
+<div class="faq">
+
+<button class="faqQuestion" onclick="toggleFAQ(this)">
+▼ Do I need an account?
+</button>
+
+<div class="faqAnswer"
+style="
+font-size:20px;
+line-height:1.8;
+font-weight:500;
+color:#444;
+padding-left:20px;
+">
+Browsing is free, but saving favourites and posting properties requires an account.
+</div>
+
+</div>
+
+<div class="faq">
+
+<button class="faqQuestion" onclick="toggleFAQ(this)">
+▼ I forgot my password.
+</button>
+
+<div class="faqAnswer"
+style="
+font-size:20px;
+line-height:1.8;
+font-weight:500;
+color:#444;
+padding-left:20px;
+">
+Password recovery will be available in a future update.
+</div>
+
+</div>
+
+<div class="faq">
+
+<button class="faqQuestion" onclick="toggleFAQ(this)">
+▼ Is my information private?
+</button>
+
+<div class="faqAnswer"
+style="
+font-size:20px;
+line-height:1.8;
+font-weight:500;
+color:#444;
+padding-left:20px;
+">
+Yes. Personal information is never shown publicly without your permission.
+</div>
+
+</div>
+
+</div>
+<div class="faqCategory">
+
+<h2>🛡 Safety</h2>
+
+<div class="faq">
+
+<button class="faqQuestion" onclick="toggleFAQ(this)">
+▼ How do I report a fake property?
+</button>
+
+<div class="faqAnswer"
+style="
+font-size:20px;
+line-height:1.8;
+font-weight:500;
+color:#444;
+padding-left:20px;
+">
+Open the Report Problem page and provide the property details.
+</div>
+
+</div>
+
+<div class="faq">
+
+<button class="faqQuestion" onclick="toggleFAQ(this)">
+▼ Does Gedarak.lk verify every property?
+</button>
+
+<div class="faqAnswer"
+style="
+font-size:20px;
+line-height:1.8;
+font-weight:500;
+color:#444;
+padding-left:20px;
+">
+We review submitted listings, but buyers should always inspect the property before making payments.
+</div>
+
+</div>
+
+<div class="faq">
+
+<button class="faqQuestion" onclick="toggleFAQ(this)">
+▼ Should I pay money before visiting?
+</button>
+
+<div class="faqAnswer"
+style="
+font-size:20px;
+line-height:1.8;
+font-weight:500;
+color:#444;
+padding-left:20px;
+">
+Never send money before inspecting the property and confirming the seller's identity.
+</div>
+
+</div>
+
+</div>
+<div class="faqCategory">
+
+<h2>💰 Prices & Rentals</h2>
+
+<div class="faq">
+
+<button class="faqQuestion" onclick="toggleFAQ(this)">
+▼ Can I search only rental properties?
+</button>
+
+<div class="faqAnswer"
+style="
+font-size:20px;
+line-height:1.8;
+font-weight:500;
+color:#444;
+padding-left:20px;
+">
+Yes. Use the "For Rent" filter in the Filters section.
+</div>
+
+</div>
+
+<div class="faq">
+
+<button class="faqQuestion" onclick="toggleFAQ(this)">
+▼ Can I search by budget?
+</button>
+
+<div class="faqAnswer"
+style="
+font-size:20px;
+line-height:1.8;
+font-weight:500;
+color:#444;
+padding-left:20px;
+">
+Yes. Use the minimum and maximum price filters or type phrases like "under 5 million" in the search bar.
+</div>
+
+</div>
+
+<div class="faq">
+
+<button class="faqQuestion" onclick="toggleFAQ(this)">
+▼ Can I search by bedrooms?
+</button>
+
+<div class="faqAnswer"
+style="
+font-size:20px;
+line-height:1.8;
+font-weight:500;
+color:#444;
+padding-left:20px;
+">
+Yes. Use the bedroom filter or type "3 bedroom house" in the search bar.
+</div>
+
+</div>
+
+</div>
+</div>
+<hr>
+<div style="
+text-align:center;
+padding:40px;
+margin-top:50px;
+background:#f5f5f5;
+border-radius:20px;
+">
+
+<h2>📞 Still Need Help?</h2>
+
+<p>
+Can't find what you're looking for?
+</p>
+
+<p>
+Our support team is happy to help.
+</p>
+
+<a href="contact.html">
+<button>
+📧 Contact Support
+</button>
+</a>
+
+<a href="report.html">
+<button>
+🐞 Report a Problem
+</button>
+</a>
+</div>
+<footer>
+    <p>&copy; 2026 Gedarak.lk</p>
+</footer>
+<script>
+   function clearHelpSearch(){
+
+document.getElementById("helpSearch").value="";
+
+document.getElementById("clearSearch").style.display="none";
+
+searchFAQ();
+
+}
+function updateClearButton(){
+
+let input =
+document.getElementById("helpSearch");
+
+let clear =
+document.getElementById("clearSearch");
+
+if(input.value.trim()==""){
+
+clear.style.display="none";
+
+}
+else{
+
+clear.style.display="block";
+
+}
+
+}
+function quickSearch(text){
+
+document.getElementById("helpSearch").value=text;
+
+searchFAQ();
+
+}
+function toggleFAQ(button){
+
+let answer=
+button.nextElementSibling;
+
+if(answer.style.maxHeight){
+
+answer.style.maxHeight=null;
+
+button.innerHTML=
+button.innerHTML.replace("▲","▼");
+
+}
+
+else{
+
+answer.style.maxHeight=
+answer.scrollHeight+"px";
+
+button.innerHTML=
+button.innerHTML.replace("▼","▲");
+
+}
+
+}
+function searchFAQ(){
+
+let search =
+document.getElementById("helpSearch")
+.value
+.toLowerCase();
+
+let questions =
+document.querySelectorAll(".faq");
+
+let found = false;
+
+questions.forEach(function(item){
+
+let question =
+item.querySelector(".faqQuestion");
+
+let answer =
+item.querySelector(".faqAnswer");
+
+question.innerHTML =
+question.innerHTML.replace(/<mark>|<\/mark>/g,"");
+
+answer.innerHTML =
+answer.innerHTML.replace(/<mark>|<\/mark>/g,"");
+
+let qText =
+question.innerText
+.toLowerCase();
+
+let aText =
+answer.innerText
+.toLowerCase();
+
+let searchWords =
+search
+.replace("sharing","share")
+.replace("shared","share")
+.replace("save","favourite")
+.replace("saved","favourite")
+.replace("call","contact")
+.replace("phone","contact");
+
+let words =
+searchWords.split(" ");
+
+let matched = words.every(function(word){
+
+return qText.includes(word) ||
+aText.includes(word);
+
+});
+
+if(matched){
+
+item.style.display="block";
+
+found = true;
+
+if(search!=""){
+
+question.innerHTML =
+question.innerHTML.replace(
+new RegExp(search,"gi"),
+match=>"<mark>"+match+"</mark>"
+);
+
+answer.innerHTML =
+answer.innerHTML.replace(
+new RegExp(search,"gi"),
+match=>"<mark>"+match+"</mark>"
+);
+
+}
+
+}else{
+
+item.style.display="none";
+
+}
+
+});
+
+document.getElementById("noResults").style.display =
+found ? "none" : "block";
+
+if(search!=""){
+
+let first =
+document.querySelector(
+'.faq[style*="block"] .faqQuestion'
+);
+
+if(first){
+
+let answer =
+first.nextElementSibling;
+
+answer.style.maxHeight =
+answer.scrollHeight+"px";
+
+}
+
+}
+
+document.getElementById("suggestions").style.display = "none";
+updateSuggestions();
+
+}
+function updateSuggestions(){
+
+let search =
+document.getElementById("helpSearch")
+.value
+.toLowerCase();
+
+let box =
+document.getElementById("suggestions");
+
+box.innerHTML="";
+
+if(search==""){
+
+box.style.display="none";
+
+return;
+
+}
+
+let list=[];
+
+document.querySelectorAll(".faqQuestion")
+.forEach(function(q){
+
+let text =
+q.innerText.toLowerCase();
+
+if(
+
+text.includes(search)
+
+||
+
+(search=="share" &&
+text.includes("sharing"))
+
+||
+
+(search=="contact" &&
+text.includes("seller"))
+
+||
+
+(search=="save" &&
+text.includes("favourite"))
+
+){
+
+list.push(q.innerText);
+
+}{
+
+list.push(q.innerText);
+
+}
+
+});
+
+if(list.length==0){
+
+box.style.display="none";
+
+return;
+
+}
+
+box.style.display="block";
+
+list.slice(0,5).forEach(function(text){
+
+box.innerHTML += `
+<div
+class="suggestionItem"
+data-text="${text}"
+style="
+padding:12px;
+cursor:pointer;
+border-bottom:1px solid #eee;
+">
+${text}
+</div>
+`;
+
+});
+document.querySelectorAll(".suggestionItem").forEach(function(item){
+
+item.onclick = function(){
+
+chooseSuggestion(this.dataset.text);
+
+};
+
+});
+
+}
+function chooseSuggestion(text){
+
+document.getElementById("helpSearch").value=text;
+
+document.getElementById("suggestions").style.display="none";
+
+searchFAQ();
+
+}
+window.onload=function(){
+
+document.getElementById("helpSearch").focus();
+
+}
+</script>
+    </body>
+</html>

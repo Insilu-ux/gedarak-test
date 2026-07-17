@@ -1,0 +1,671 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <style>
+
+body{
+
+max-width:900px;
+
+margin:auto;
+
+padding:30px;
+
+font-family:Arial,sans-serif;
+
+background:#f7f7f7;
+
+}
+
+h1{
+
+font-size:36px;
+
+font-weight:bold;
+
+text-align:center;
+
+margin-bottom:10px;
+
+}
+
+.subtitle{
+
+font-size:20px;
+
+text-align:center;
+
+color:#555;
+
+line-height:1.7;
+
+margin-bottom:35px;
+
+}
+
+.contactCard{
+
+background:white;
+
+padding:25px;
+
+border-radius:14px;
+
+box-shadow:0 3px 10px rgba(0,0,0,.12);
+
+margin-bottom:30px;
+
+}
+
+.contactCard h2{
+
+margin-top:0;
+
+}
+
+input,
+textarea,
+select{
+
+width:100%;
+
+padding:12px;
+
+font-size:16px;
+
+border:1px solid #ccc;
+
+border-radius:8px;
+
+box-sizing:border-box;
+
+margin-top:8px;
+
+margin-bottom:18px;
+
+}
+
+button{
+
+padding:12px 22px;
+
+font-size:16px;
+
+border:none;
+
+border-radius:8px;
+
+cursor:pointer;
+
+}
+
+.info{
+
+font-size:18px;
+
+line-height:2;
+
+}
+
+ul{
+
+font-size:18px;
+
+line-height:2;
+
+padding-left:25px;
+
+}
+
+footer{
+
+margin-top:50px;
+
+text-align:center;
+
+color:#666;
+
+}
+
+@media(max-width:600px){
+
+body{
+
+padding:15px;
+
+}
+
+h1{
+
+font-size:30px;
+
+}
+
+.subtitle{
+
+font-size:17px;
+
+}
+
+.contactCard{
+
+padding:18px;
+
+}
+
+.info{
+
+font-size:16px;
+
+}
+
+ul{
+
+font-size:16px;
+
+}
+
+button{
+
+width:100%;
+
+}
+
+}
+.pageHeader{
+
+display:flex;
+
+justify-content:center;
+
+align-items:center;
+
+margin-bottom:30px;
+
+padding-bottom:15px;
+
+border-bottom:1px solid #ddd;
+
+}
+
+.logoLink{
+
+display:flex;
+
+align-items:center;
+
+gap:12px;
+
+text-decoration:none;
+
+color:black;
+
+}
+
+.pageLogo{
+
+width:55px;
+
+height:55px;
+
+object-fit:contain;
+
+}
+
+.logoLink h2{
+
+margin:0;
+
+font-size:32px;
+
+font-weight:bold;
+
+color:#8b008b;
+
+}
+
+@media(max-width:600px){
+
+.pageLogo{
+
+width:42px;
+
+height:42px;
+
+}
+
+.logoLink h2{
+
+font-size:24px;
+
+}
+
+}
+.tagline{
+
+margin:0;
+
+font-size:14px;
+
+color:#666;
+
+}
+</style>
+        <title>Contact Us</title>
+        <link rel="stylesheet" href="style.css">
+    </head>
+    <body>
+    <a href="index.html">
+        <button class="home-btn">
+            💒 Home
+        </button>
+    </a>
+       <header class="pageHeader">
+
+<a href="index.html" class="logoLink">
+
+<img
+src="Frame 1.png"
+class="pageLogo">
+
+<div>
+
+<h2>
+
+Gedarak.lk
+
+</h2>
+
+<p class="tagline">
+
+Sri Lanka's Property Marketplace
+
+</p>
+
+</div>
+
+</a>
+
+</header>
+   <h1>Contact Us</h1>
+
+<p class="subtitle">
+
+Need help with a property, your account, or something else?
+
+We're happy to help.
+
+</p>
+
+<div class="contactCard">
+
+<h2>Contact Information</h2>
+
+<div class="info">
+
+📧 <b>Email</b><br>
+ <a href="mailto:gedarak.lk@gmail.com">
+  gedarak.lk@gmail.com
+</a>
+<br><br>
+
+📞 <b>Phone</b><br>
+
++94 77 712 3456
+
+<br><br>
+
+📍 <b>Office</b><br>
+
+Colombo, Sri Lanka
+
+<br><br>
+
+🕒 <b>Support Hours</b><br>
+
+Monday - Friday
+
+8:30 AM - 6:00 PM
+
+</div>
+
+</div>
+
+<div class="contactCard">
+
+<h2>Send us a Message</h2>
+
+<form id="contactForm">
+
+<input
+
+id="contactName"
+
+placeholder="Your Name"
+
+required>
+
+<input
+type="email"
+id="contactEmail"
+placeholder="example@gmail.com"
+autocomplete="email"
+required>
+
+<input
+type="tel"
+id="contactPhone"
+placeholder="07XXXXXXXX"
+maxlength="10">
+<select id="contactReason">
+
+<option value="">
+
+Choose a Reason
+
+</option>
+
+<option>
+
+General Question
+
+</option>
+
+<option>
+
+Technical Support
+
+</option>
+
+<option>
+
+Property Enquiry
+
+</option>
+
+<option>
+
+Business Partnership
+
+</option>
+
+<option>
+
+Advertising
+
+</option>
+
+<option>
+
+Feedback
+
+</option>
+
+<option>
+
+Other
+
+</option>
+
+</select>
+
+<textarea
+
+id="contactMessage"
+
+rows="7"
+
+placeholder="Write your message..."
+
+required>
+
+</textarea>
+
+<button
+
+type="button"
+
+onclick="sendContactMessage()">
+
+Send Message
+
+</button>
+
+</form>
+
+</div>
+
+<div class="contactCard">
+
+<h2>Why Contact Us?</h2>
+
+<ul>
+
+<li>Property enquiries</li>
+
+<li>Technical support</li>
+
+<li>Business partnerships</li>
+
+<li>Advertising opportunities</li>
+
+<li>General questions</li>
+
+<li>Feedback and suggestions</li>
+
+</ul>
+
+</div>
+
+<div class="contactCard">
+
+<h2>Need to Report a Problem?</h2>
+
+<p>
+
+If you've found a fake listing, scam, incorrect information, or a technical issue, please use our dedicated Report Problem page.
+
+</p>
+
+<button
+
+onclick="window.location.href='report.html'">
+
+Report a Problem
+
+</button>
+
+</div>
+
+<div class="contactCard">
+
+<h2>Average Response Time</h2>
+
+<div class="info">
+
+📧 Email
+
+<br>
+
+Within 24 hours
+
+<br><br>
+
+⚙ Technical Support
+
+<br>
+
+1-2 Business Days
+
+<br><br>
+
+🚨 Fraud Reports
+
+<br>
+
+As Soon As Possible
+
+</div>
+
+</div>
+
+<footer>
+
+<p>
+
+© 2026 Gedarak.lk
+
+</p>
+
+<p>
+
+Making Sri Lankan property search easier.
+
+</p>
+
+</footer>
+<script>
+
+function sendContactMessage(){
+
+let name=
+
+document.getElementById(
+
+"contactName"
+
+).value.trim();
+
+let email=
+
+document.getElementById(
+
+"contactEmail"
+
+).value.trim();
+
+let emailPattern =
+/^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+if(!emailPattern.test(email)){
+
+alert(
+"Please enter a valid email address."
+);
+
+return;
+
+}
+
+let phone =
+document.getElementById(
+"contactPhone"
+).value.trim();
+
+if(
+phone!="" &&
+!/^(07)[0-9]{8}$/.test(phone)
+){
+
+alert(
+"Please enter a valid Sri Lankan mobile number."
+);
+
+return;
+
+}
+
+let reason=
+
+document.getElementById(
+
+"contactReason"
+
+).value;
+
+let message=
+
+document.getElementById(
+
+"contactMessage"
+
+).value.trim();
+
+if(
+
+name==""||
+
+email==""||
+
+reason==""||
+
+message==""
+
+){
+
+alert(
+
+"Please complete all required fields."
+
+);
+
+return;
+
+}
+
+let contact={
+
+name:name,
+
+email:email,
+
+reason:reason,
+
+message:message,
+
+date:new Date().toLocaleString()
+
+};
+
+let contacts=
+
+JSON.parse(
+
+localStorage.getItem(
+
+"contactMessages"
+
+)||"[]"
+
+);
+
+contacts.push(contact);
+
+localStorage.setItem(
+
+"contactMessages",
+
+JSON.stringify(contacts)
+
+);
+
+alert(
+
+"✅ Thank you. Your message has been sent."
+
+);
+
+document.getElementById(
+
+"contactForm"
+
+).reset();
+
+}
+
+</script>
+    </body>
+</html>

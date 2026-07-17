@@ -1,0 +1,679 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <style>
+
+body{
+
+font-family:Arial,sans-serif;
+
+max-width:1200px;
+
+margin:auto;
+
+padding:20px;
+
+background:#f7f7f7;
+
+}
+
+h1{
+
+font-size:34px;
+
+font-weight:bold;
+
+margin-bottom:5px;
+
+}
+
+.subtitle{
+
+font-size:18px;
+
+color:#666;
+
+margin-bottom:30px;
+
+line-height:1.6;
+
+}
+
+#topBar{
+
+display:flex;
+
+justify-content:space-between;
+
+align-items:center;
+
+flex-wrap:wrap;
+
+gap:15px;
+
+margin-bottom:25px;
+
+}
+
+#searchFavourite{
+
+padding:12px;
+
+font-size:16px;
+
+width:260px;
+
+border-radius:8px;
+
+border:1px solid #ccc;
+
+}
+
+#sortFavourite{
+
+padding:12px;
+
+font-size:16px;
+
+border-radius:8px;
+
+}
+
+#favouritesContainer{
+
+display:grid;
+
+grid-template-columns:
+
+repeat(auto-fit,minmax(320px,1fr));
+
+gap:25px;
+
+}
+
+.favouriteCard{
+
+background:white;
+
+border-radius:14px;
+
+overflow:hidden;
+
+box-shadow:0 3px 12px rgba(0,0,0,.12);
+
+}
+
+.favouriteCard img{
+
+width:100%;
+
+height:220px;
+
+object-fit:cover;
+
+}
+
+.cardBody{
+
+padding:18px;
+
+}
+
+.cardBody h2{
+
+margin:0;
+
+font-size:23px;
+
+}
+
+.cardBody p{
+
+margin:8px 0;
+
+font-size:17px;
+
+}
+
+.buttonRow{
+
+display:flex;
+
+gap:10px;
+
+margin-top:20px;
+
+flex-wrap:wrap;
+
+}
+
+.buttonRow button{
+
+flex:1;
+
+padding:12px;
+
+font-size:16px;
+
+border:none;
+
+border-radius:8px;
+
+cursor:pointer;
+
+}
+
+@media(max-width:600px){
+
+body{
+
+padding:12px;
+
+}
+
+h1{
+
+font-size:28px;
+
+}
+
+.subtitle{
+
+font-size:16px;
+
+}
+
+.cardBody h2{
+
+font-size:20px;
+
+}
+
+.cardBody p{
+
+font-size:16px;
+
+}
+
+.buttonRow{
+
+flex-direction:column;
+
+}
+
+.buttonRow button{
+
+width:100%;
+
+}
+
+}
+        .pageHeader{
+
+display:flex;
+
+justify-content:center;
+
+align-items:center;
+
+margin-bottom:30px;
+
+padding-bottom:15px;
+
+border-bottom:1px solid #ddd;
+
+}
+
+.logoLink{
+
+display:flex;
+
+align-items:center;
+
+gap:12px;
+
+text-decoration:none;
+
+color:black;
+
+}
+
+.pageLogo{
+
+width:55px;
+
+height:55px;
+
+object-fit:contain;
+
+}
+
+.logoLink h2{
+
+margin:0;
+
+font-size:32px;
+
+font-weight:bold;
+
+color:#8b008b;
+
+}
+
+@media(max-width:600px){
+
+.pageLogo{
+
+width:42px;
+
+height:42px;
+
+}
+
+.logoLink h2{
+
+font-size:24px;
+
+}
+
+}
+.tagline{
+
+margin:0;
+
+font-size:14px;
+
+color:#666;
+
+}
+</style>
+        <title>My Favourites</title>
+        </head>
+        <body>
+    <a href="index.html">
+        <button class="home-btn">
+        💒 Home
+        </button>
+    </a>
+       <header class="pageHeader">
+
+<a href="index.html" class="logoLink">
+
+<img
+src="Frame 1.png"
+class="pageLogo">
+
+<div>
+
+<h2>
+
+Gedarak.lk
+
+</h2>
+
+<p class="tagline">
+
+Sri Lanka's Property Marketplace
+
+</p>
+
+</div>
+
+</a>
+
+</header>
+      <h1 style="text-align: center;">💗 My Favourite Properties</h1>
+
+<p class="subtitle" style="text-align: center;">
+
+Save properties you're interested in and access them anytime after logging in.
+
+</p>
+
+<div id="topBar">
+
+<h3>
+
+Saved Properties:
+
+<span id="favouriteCount"></span>
+
+</h3>
+
+<div>
+
+<input
+
+id="searchFavourite"
+
+placeholder="Search favourites..."
+
+onkeyup="searchFavourite()">
+
+<select
+
+id="sortFavourite"
+
+onchange="sortFavourite()">
+
+<option value="newest">
+
+Newest
+
+</option>
+
+<option value="oldest">
+
+Oldest
+
+</option>
+
+<option value="low">
+
+Lowest Price
+
+</option>
+
+<option value="high">
+
+Highest Price
+
+</option>
+
+</select>
+
+</div>
+
+</div>
+      <div id="favouritesContainer"></div>
+      <script>
+        let currentUser = 
+        localStorage.getItem("currentUser");
+        if(!currentUser){
+            document.getElementById(
+                "favouritesContainer"
+            ).innerHTML = `
+            <div style="text-align:center;padding:70px;">
+
+<h2>
+
+Please log in first.
+
+</h2>
+
+<p>
+
+Your favourite properties are securely linked to your account.
+
+</p>
+
+<br>
+
+<button
+
+onclick="window.location.href='login.html'">
+
+Login
+
+</button>
+
+</div>`;
+            throw new Error("No user");
+        }
+        let favouriteIds = 
+        JSON.parse(
+            localStorage.getItem(
+                "favourites_" + currentUser
+            )
+        ) || [];
+        let favourites = [];
+        let allFavouriteProperties=[];
+        for(
+            let i=0;
+            i<localStorage.length;
+            i++
+        ){
+            let key = 
+            localStorage.key(i);
+            try{
+                let property = 
+                JSON.parse(
+                    localStorage.getItem(key)
+                );
+                if(
+                    property &&
+                    property.id &&
+                    favouriteIds.includes(String(property.id))
+                ){
+                    favourites.push(property);
+                }
+            }
+            catch(e){}
+        }
+        if(
+            favourites.length===0
+        ){
+            document.getElementById(
+                "favouritesContainer"
+            ).innerHTML= `
+            <div style="text-align:center;padding:70px;">
+
+<h2>
+
+❤ No favourite properties yet
+
+</h2>
+
+<p>
+
+Tap the heart icon on any property to save it here.
+
+</p>
+
+<br>
+
+<button
+
+onclick="window.location.href='index.html'">
+
+Browse Properties
+
+</button>
+
+</div>`;
+        }
+         else{
+           renderFavourites(favourites);
+         }
+           function renderFavourites(list){
+
+let html="";
+
+list.forEach(function(property){
+
+html+=`
+                <div class="favouriteCard">
+<div class="cardBody">
+    <img
+    src="${property.images[0]}"
+    style="
+    width: 100%;
+    height: 300px;
+    object-fit: cover;
+    border-radius: 10px;
+    ">
+    <h2>${property.name}</h2>
+    <p>Property Type: ${property.propertyType}</p>
+    <h3>
+        ${
+property.negotiable
+?
+"💬 Price Negotiable"
+:
+"💸 Rs. "+Number(property.price).toLocaleString()
+}
+    </h3>
+    <p>
+        ${property.city},
+        ${property.district}
+    </p>
+    <p>
+        ${property.bedrooms}
+        Bedrooms
+    </p>
+    <p>
+        ${property.bathrooms}
+        Bathrooms
+    </p>
+   <div class="buttonRow">
+
+<button
+
+onclick="viewProperty(${property.id})">
+
+View Property
+
+</button>
+
+<button
+
+onclick="removeFavourite(${property.id})">
+
+🤍 Remove
+
+</button>
+
+</div>
+    </div>
+    </div>
+
+            `});
+            document.getElementById(
+                "favouritesContainer"
+            ).innerHTML = html;
+        }
+        allFavouriteProperties=favourites;
+
+document.getElementById(
+
+"favouriteCount"
+
+).innerHTML=favourites.length;
+
+        function viewProperty(id){
+            localStorage.setItem(
+                "selectedProperty",
+                id 
+            );
+            window.location.href= 
+            "property.html";
+        }
+        function removeFavourite(id){
+            let favourites = 
+            JSON.parse(
+                localStorage.getItem(
+                   "favourites_" + currentUser
+                )
+            ) || [];
+            favourites = 
+            favourites.filter(
+                item=>item!==String(id) 
+            );
+            localStorage.setItem(
+                "favourites_" + currentUser ,
+                JSON.stringify(favourites)
+            );
+            location.reload();
+        }
+         function searchFavourite(){
+
+let text=
+
+document.getElementById(
+
+"searchFavourite"
+
+).value.toLowerCase();
+
+let filtered=
+
+allFavouriteProperties.filter(function(p){
+
+return(
+
+p.name.toLowerCase().includes(text)||
+
+p.city.toLowerCase().includes(text)||
+
+p.district.toLowerCase().includes(text)||
+
+p.propertyType.toLowerCase().includes(text)
+
+);
+
+});
+
+renderFavourites(filtered);
+
+}
+function sortFavourite(){
+
+let value=
+
+document.getElementById(
+
+"sortFavourite"
+
+).value;
+
+let sorted=[...allFavouriteProperties];
+
+if(value=="low"){
+
+sorted.sort((a,b)=>a.price-b.price);
+
+}
+
+if(value=="high"){
+
+sorted.sort((a,b)=>b.price-a.price);
+
+}
+
+if(value=="newest"){
+
+sorted.sort(
+
+(a,b)=>
+
+new Date(b.createdAt)-
+
+new Date(a.createdAt)
+
+);
+
+}
+
+if(value=="oldest"){
+
+sorted.sort(
+
+(a,b)=>
+
+new Date(a.createdAt)-
+
+new Date(b.createdAt)
+
+);
+
+}
+
+renderFavourites(sorted);
+
+}
+      </script>
+    </body>
+</html>
