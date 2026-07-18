@@ -60,16 +60,16 @@ border-radius:12px;
 overflow:hidden;
 box-shadow:0 2px 8px rgba(0,0,0,.15);
 margin:18px 0;
-min-height:230px;
+min-height:175px;
 
 }
 
 .property-image{
 
-width:40%;
+width:37%;
 position:relative;
 flex-shrink:0;
-height:260px;
+height:145px;
 
 }
 
@@ -84,8 +84,8 @@ display:block;
 
 .property-details{
 
-width:60%;
-padding:12px;
+width:63%;
+padding:8px;
 display:flex;
 flex-direction:column;
 justify-content:space-between;
@@ -380,6 +380,54 @@ justify-content:center;
 border-radius:50%;
 
 box-shadow:0 2px 8px rgba(0,0,0,.2);
+
+}
+@media(max-width:600px){
+
+.property-image{
+
+height:130px;
+
+}
+
+}
+.property-buttons-left{
+
+display:flex;
+gap:6px;
+margin-top:6px;
+
+}
+
+.property-buttons-left button{
+
+flex:1;
+height:34px;
+
+border:none;
+border-radius:7px;
+
+font-size:13px;
+font-weight:600;
+
+cursor:pointer;
+
+}
+.view-btn{
+
+background:#0d6efd;
+color:white;
+
+}
+.contact-btn{
+
+background:#16a34a;
+color:white;
+
+}
+.property-buttons-left button:active{
+
+transform:scale(.97);
 
 }
     </style>
@@ -2887,15 +2935,27 @@ if(property.propertyType !== "Land"){
 roomInfo = `
 
 <p style="
-font-size:16px;
+line-height:1.2;
+font-size:15px;
 font-weight:600;
-text-align:center;
-margin:10px 0;">🛏️ ${property.bedrooms} Bedrooms
+text-align:left;
+margin:4px 0;">
+🛏️ ${property.bedrooms} Beds | 🛁 ${property.bathrooms} Baths
+</p>
+`;
 
-🛁 ${property.bathrooms} Bathrooms
-📐 ${property.squareFeet}Sqft</p>
+}
+if(property.propertyType == "Land"){
 
+roomInfo = `
 
+<p style="
+line-height:1.2;
+font-size:15px;
+font-weight:600;
+text-align:left;
+margin:4px 0;">
+🌳 ${property.perches} Perches
 `;
 
 }
@@ -2924,9 +2984,9 @@ margin:10px 0;">🛏️ ${property.bedrooms} Bedrooms
                 onclick="toggleFavourite(${property.id},this)"
                 style="
                 position:absolute;
-                top:10px;
-                right:10px;
-                font-size:30px;
+                top:8px;
+                right:8px;
+                font-size:24px;
                 cursor:pointer;
                 z-index:20;
                 user-select:none;
@@ -2939,13 +2999,11 @@ ${(Date.now()-property.createdAt)<604800000?`
 <div
 style="
 position:absolute;
-top:54px;
-left:12px;
 background:#16a34a;
 color:white;
-padding:6px 12px;
-border-radius:20px;
-font-size:12px;
+padding:5px 12px;
+border-radius:18px;
+font-size:11px;
 font-weight:bold;
 z-index:20;
 ">
@@ -2958,6 +3016,27 @@ NEW
 id="images${property.id}"
 src="${property.images[0]}"
 onclick="openImageViewer(${property.id})">
+<div class="property-buttons-left">
+
+<button
+class="view-btn"
+onclick="viewProperty('${property.id}')">
+🏠View
+</button>
+
+<button
+class="contact-btn"
+onclick="openContactPopup(
+'${property.owner}',
+'${property.phone}',
+'${property.name}',
+${property.price},
+${property.negotiable}
+)">
+📞Call
+</button>
+
+</div>
                 
                     ${(() => {
 
@@ -3005,10 +3084,11 @@ ${icon} ${boostInfo.package}
 
 <h3
 style="
-font-size:22px;
+font-size:18px;
+line-height:1.3;
 font-weight:bold;
-text-align:center;
-margin:0 0 10px 0;
+text-align:left;
+margin:0 0 4px 0;
 overflow:hidden;
 white-space:nowrap;
 text-overflow:ellipsis;
@@ -3018,104 +3098,46 @@ ${property.name}
 
 <p
 style="
-font-size:17px;
+line-height:1.2;
+font-size:15px;
 font-weight:600;
-text-align:center;
+text-align:left;
 color:#555;
-margin:8px 0;
+margin:3px 0;
 ">
 🏠 ${property.propertyType} • ${property.status}
 </p>
 
 <p
 style="
-font-size:17px;
+line-height:1.2;
+font-size:15px;
 font-weight:600;
-text-align:center;
-margin:8px 0 12px 0;
+text-align:left;
+margin:3px 0;
 ">
 📍 ${property.city}, ${property.district}
 </p>
 
 ${roomInfo}
 
-<p style="
-font-size:16px;
-font-weight:600;
-text-align:center;
-margin:10px 0;
-">
-
-🌳 ${property.perches} Perches
-</p>
-
 <p
 style="
+line-height:1.2;
 font-size:24px;
 font-weight:bold;
 color:#118a1f;
-text-align:center;
-margin:14px 0;
+text-align:left;
+margin:8px 0 0 0;
 ">
 ${
 property.negotiable
 ?
-"💬 Price Negotiable"
+"💬 Negotiable"
 :
 "💸 Rs. "+Number(property.price).toLocaleString()
 }
 </p>
-
-<div
-style="
-display:flex;
-gap:10px;
-margin-top:15px;
-">
-
-<button
-onclick="viewProperty('${property.id}')"
-style="
-flex:1;
-padding:12px;
-font-size:16px;
-font-weight:bold;
-border:none;
-border-radius:10px;
-background:#0d6efd;
-color:white;
-cursor:pointer;
-">
-
-View Property
-
-</button>
-
-<button
-onclick="openContactPopup(
-'${property.owner}',
-'${property.phone}',
-'${property.name}',
-${property.price},
-${property.negotiable}
-)"
-style="
-flex:1;
-padding:12px;
-font-size:16px;
-font-weight:bold;
-border:none;
-border-radius:10px;
-background:#16a34a;
-color:white;
-cursor:pointer;
-">
-
-📞 Contact
-
-</button>
-
-</div>
 
 </div>
                     `;
@@ -3275,7 +3297,7 @@ document.getElementById("popupProperty").innerHTML=property;
 document.getElementById("popupPrice").innerHTML =
 negotiable
 ?
-"💬 Price Negotiable"
+"💬 Negotiable"
 :
 "💸 Rs. " + Number(price).toLocaleString();
 document.getElementById("popupMessage").value =
@@ -3599,27 +3621,60 @@ font-size:15px;
 
 <br><br>
 
-<button id="popupWhatsapp">
-
-💬 Send via WhatsApp
-
+<button 
+id="popupWhatsapp"
+style="
+width:100%;
+padding:15px;
+font-size:17px;
+font-weight:bold;
+border:none;
+border-radius:12px;
+background:#388a13;
+color:white;
+cursor:pointer;
+">
+💬 Chat on WhatsApp
 </button>
+
 
 <br><br>
 
-<button id="popupCall">
 
+<button 
+id="popupCall"
+style="
+width:100%;
+padding:15px;
+font-size:17px;
+font-weight:bold;
+border:none;
+border-radius:12px;
+background:#0d6efd;
+color:white;
+cursor:pointer;
+">
 📞 Call Seller
-
 </button>
+
+
 <br><br>
+
 
 <button
-
-onclick="closeContactPopup()">
-
-Close
-
+onclick="closeContactPopup()"
+style="
+width:100%;
+padding:13px;
+font-size:16px;
+font-weight:600;
+border:1px solid #ddd;
+border-radius:12px;
+background:white;
+color:#444;
+cursor:pointer;
+">
+✕ Close
 </button>
 
 </div>
