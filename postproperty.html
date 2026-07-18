@@ -251,10 +251,25 @@ Price Negotiable
         placeholder="Street Address"
         required>
          <br></br>
-         <input
-         type="text"
-         id="mapLink"
-         placeholder="Google Maps Link(Optional)">
+        <label>Google Maps Location (Optional)</label>
+<br><br>
+
+<input
+type="url"
+id="googleMaps"
+placeholder="Paste Google Maps link">
+
+<br>
+<p style="
+font-size:13px;
+color:#777;
+">
+Open Google Maps → Find your property → Share → Copy Link → Paste here.
+</p>
+
+<small style="color:#666;">
+Buyers can view your property's location directly in Google Maps.
+</small>
            <br></br>
            <div id="bedroomSection">
           <input type="number"
@@ -1215,9 +1230,9 @@ return;
 
 phone = "94" + phone;
 
-             let map=
+             let mapLink=
             document.getElementById(
-                "mapLink"
+                "googleMaps"
             ).value;
             let imageFiles = selectedImages;
              if(district === ""){
@@ -1270,10 +1285,7 @@ phone = "94" + phone;
             createdAt:
             Date.now(),
             
-            map:
-            document.getElementById(
-                "mapLink"
-            ).value,
+           mapLink: document.getElementById("googleMaps").value.trim(),
             approved:true
              };
              localStorage.setItem(
