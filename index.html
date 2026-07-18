@@ -169,9 +169,13 @@ margin-top:auto;
 
 font-size:30px;
 cursor:pointer;
-padding:12px;
+padding:5px 12px;
 border: black;
 
+}
+.hero h2{
+    margin-top:5px;
+    margin-bottom:10px;
 }
 .sidebar{
 
@@ -334,6 +338,19 @@ font-size:14px;
     font-weight:bold;
     cursor:pointer;
 }
+.close-menu{
+    position:absolute;
+    top:12px;
+    right:15px;
+    width:35px;
+    height:35px;
+    border:none;
+    background:none;
+    font-size:30px;
+    font-weight:bold;
+    cursor:pointer;
+    color:#222;
+}
     </style>
     <title>Gedarak.lk</title>
     
@@ -368,8 +385,8 @@ Gedarak.lk
 </div>
    <nav
 style="
-margin-top:8px;
-margin-bottom:18px;
+margin-top:0px;
+margin-bottom:5px;
 padding-left:6px;
 ">
     <div
@@ -380,7 +397,7 @@ padding-left:6px;
 </nav>
     <!--SIDEBAR-->
    <div class="sidebar" id="sidebar">
-
+<button class="close-menu" onclick="closeMenu()">×</button>
 <div class="menu-header">
 
 <div style="
