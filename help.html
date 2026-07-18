@@ -7,7 +7,9 @@
         <title>Help Center</title>
         <link rel="stylesheet" href="style.css">
        <style>
-
+*{
+    box-sizing:border-box;
+}
 .helpTitle{
 
 font-size:40px;
@@ -205,6 +207,117 @@ margin:0;
 font-size:14px;
 
 color:#666;
+
+}
+.popularSearches button{
+
+padding:12px 18px;
+
+border:none;
+
+border-radius:999px;
+
+background:#f5f7fa;
+
+color:#333;
+
+font-size:15px;
+
+font-weight:600;
+
+cursor:pointer;
+
+transition:.2s;
+
+box-shadow:0 2px 8px rgba(0,0,0,.08);
+
+}
+
+.popularSearches button:hover{
+
+background:#0d6efd;
+
+color:white;
+
+transform:translateY(-2px);
+
+}
+
+.popularSearches button:active{
+
+transform:scale(.97);
+
+}
+.supportBtn{
+
+width:260px;
+
+max-width:90%;
+
+padding:15px;
+
+border:none;
+
+border-radius:14px;
+
+background:#0d6efd;
+
+color:white;
+
+font-size:17px;
+
+font-weight:700;
+
+cursor:pointer;
+
+margin:10px auto;
+
+display:block;
+
+transition:.2s;
+
+}
+
+.supportBtn:hover{
+
+background:#0b5ed7;
+
+transform:translateY(-2px);
+
+}
+.reportBtn{
+
+width:260px;
+
+max-width:90%;
+
+padding:15px;
+
+border:none;
+
+border-radius:14px;
+
+background:#dc3545;
+
+color:white;
+
+font-size:17px;
+
+font-weight:700;
+
+cursor:pointer;
+
+margin:10px auto;
+
+transition:.2s;
+
+}
+
+.reportBtn:hover{
+
+background:#bb2d3b;
+
+transform:translateY(-2px);
 
 }
 </style>
@@ -848,13 +961,13 @@ Our support team is happy to help.
 </p>
 
 <a href="contact.html">
-<button>
+<button class="supportBtn">
 📧 Contact Support
 </button>
 </a>
 
 <a href="report.html">
-<button>
+<button class="reportBtn">
 🐞 Report a Problem
 </button>
 </a>
