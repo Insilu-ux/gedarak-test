@@ -7,6 +7,30 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
+       .search-row{
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    gap:10px;
+    margin:18px auto;
+    width:95%;
+    max-width:760px;
+}
+
+#searchInput{
+    flex:1;
+    padding:14px 18px;
+    font-size:16px;
+    border-radius:12px;
+}
+
+.search-btn{
+    width:145px;
+    padding:14px;
+    border-radius:12px;
+    font-size:16px;
+    font-weight:bold;
+}
 .property-card{
 
 display:flex;
@@ -243,6 +267,20 @@ color:#777;
 font-size:14px;
 
 }
+.top-controls{
+    display:flex;
+    justify-content:center;
+    gap:10px;
+    margin-top:10px;
+}
+
+.top-controls button,
+.top-controls select{
+    width:140px;
+    padding:10px 14px;
+    font-size:15px;
+    border-radius:10px;
+}
     </style>
     <title>Gedarak.lk</title>
     
@@ -375,7 +413,7 @@ Version 1.0
 </div>
     <section class="hero" style="text-align: center;">
         <h2>Find Your Perfect Property</h2>
-
+<div class="search-row">
        <input
 type="text"
 id="searchInput"
@@ -400,15 +438,17 @@ position:relative;
 z-index:999999999;
 ">
 </div>
-        <button onclick="applyAndCloseFilters()">
+        <button class="search-btn" onclick="applyAndCloseFilters()">
             🔍Search
         </button>
+</div>
+        <div class="top-controls">
         <button onclick="toggleFilters()">
-            Filters
+           ⚙️ Filters
         </button>
        <select id="sortFilter" onchange="sortProperties()">
         <option value="sortby">
-Sort By
+⇅ Sort By
 </option>
 
 <option value="newest">Newest First</option>
@@ -421,6 +461,7 @@ Sort By
 
 
 </select>
+        </div>
         <div id="filterBox"
         style="display: none; padding: 20px; border: 1px solid #08aaeb; margin-top: 10px;">
         <h3>Filters</h3>
