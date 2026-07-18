@@ -509,7 +509,7 @@ transition:.25s;
 ${
 property.negotiable
 ?
-"💬 Price Negotiable"
+"💬 Negotiable"
 :
 "💸 Rs. "+Number(property.price).toLocaleString()
 }
@@ -1053,11 +1053,11 @@ ${timeAgo(property.createdAt)}
             onclick="openProperty(${property.id})">${property.name}</h3>
             <p>Property Type: ${property.propertyType}</p>
             <p>${property.city}, ${property.district}</p>
-            <p>🛏${property.bedrooms}  🛁${property.bathrooms}</p>
+            <p>🛏 ${property.bedrooms} Beds | 🛁 ${property.bathrooms} Baths</p>
            ${
 property.negotiable
 ?
-"💬 Price Negotiable"
+"💬 Negotiable"
 :
 "💸 Rs. "+Number(property.price).toLocaleString()
 }
@@ -1384,7 +1384,7 @@ document.getElementById("popupProperty").innerHTML=property;
 document.getElementById("popupPrice").innerHTML =
 negotiable
 ?
-"💬 Price Negotiable"
+"💬 Negotiable"
 :
 "💸 Rs. " + Number(price).toLocaleString();
 document.getElementById("popupMessage").value =
@@ -1633,27 +1633,60 @@ font-size:15px;
 
 <br><br>
 
-<button id="popupWhatsapp">
-
-💬 Send via WhatsApp
-
+<button 
+id="popupWhatsapp"
+style="
+width:100%;
+padding:15px;
+font-size:17px;
+font-weight:bold;
+border:none;
+border-radius:12px;
+background:#388a13;
+color:white;
+cursor:pointer;
+">
+💬 Chat on WhatsApp
 </button>
+
 
 <br><br>
 
-<button id="popupCall">
 
+<button 
+id="popupCall"
+style="
+width:100%;
+padding:15px;
+font-size:17px;
+font-weight:bold;
+border:none;
+border-radius:12px;
+background:#0d6efd;
+color:white;
+cursor:pointer;
+">
 📞 Call Seller
-
 </button>
+
+
 <br><br>
+
 
 <button
-
-onclick="closeContactPopup()">
-
-Close
-
+onclick="closeContactPopup()"
+style="
+width:100%;
+padding:13px;
+font-size:16px;
+font-weight:600;
+border:1px solid #ddd;
+border-radius:12px;
+background:white;
+color:#444;
+cursor:pointer;
+">
+✕ Close
 </button>
 
 </div>
