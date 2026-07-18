@@ -430,6 +430,9 @@ color:white;
 transform:scale(.97);
 
 }
+#viewerImage{
+    transition:transform .2s ease;
+}
     </style>
     <title>Gedarak.lk</title>
     
@@ -2923,8 +2926,10 @@ return scoreB-scoreA;
 return b.createdAt-a.createdAt;
 
 });
-   sortProperties();
+sortProperties();
 
+let touchStartX = 0;
+let touchEndX = 0;
             allProperties.forEach(
                 property=>{
             
@@ -3145,8 +3150,37 @@ property.negotiable
                     
             );
 
-         
-        
+         const viewerImage = document.getElementById("viewerImage");
+        viewerImage.addEventListener("touchstart", function(e){
+
+    touchStartX = e.changedTouches[0].screenX;
+
+});
+
+viewerImage.addEventListener("touchend", function(e){
+
+    touchEndX = e.changedTouches[0].screenX;
+
+    handleSwipe();
+
+});
+function handleSwipe(){
+
+    let distance = touchEndX - touchStartX;
+
+    if(distance > 50){
+
+        previousViewerImage();
+
+    }
+
+    if(distance < -50){
+
+        nextViewerImage();
+
+    }
+
+}
 
         function openImageViewer(id){
 
@@ -3377,7 +3411,7 @@ catch(e){
 let boostB = null;
 
 try{
-    boostB = a.dataset.boost
+    boostB = b.dataset.boost
         ? JSON.parse(a.dataset.boost)
         : null;
 }
