@@ -250,6 +250,20 @@ background:#16a34a;
 .report-btn{
 background:#ef4444;
 }
+#viewerImage{
+    transition:transform .2s ease;
+}
+#mapMessage{
+    color:#777;
+    font-size:13px;
+    margin-top:8px;
+}
+
+#mapButton:disabled{
+    background:#d1d5db;
+    color:#666;
+    cursor:not-allowed;
+}
      </style>
     </head>
     <body>
@@ -288,6 +302,8 @@ Sri Lanka's Property Marketplace
 <br>
        <div id="propertyDetails"></div>
 <script>
+    let viewerProperty = null;
+    let viewerIndex = 0;   
     let currentProperty = null;
      let property =null;
      let allProperties=[];
@@ -668,9 +684,11 @@ ${property.description}
 
 </div>
                      <br>
+                     <p id="mapMessage"></p>
                      <div class="button-grid">
                         <a
-href="${property.map}"
+id="mapButton"
+href="${property.mapLink || "#"}"
 target="_blank"
 class="action-btn map-btn"
 style="
@@ -681,6 +699,7 @@ align-items:center;
 ">
 📍 View on Map
 </a>
+
                         <button onclick="shareCurrentProperty()"
                        class="action-btn share-btn">
                            🔗 Share Property
@@ -1462,11 +1481,65 @@ if(event.target===gallery){
 closeGallery();
 
 }
+const viewerImage = document.getElementById("viewerImage");
+
+viewerImage.addEventListener("touchstart", function(e){
+    touchStartX = e.changedTouches[0].screenX;
+});
+
+viewerImage.addEventListener("touchend", function(e){
+    touchEndX = e.changedTouches[0].screenX;
+    handleSwipe();
+});
 
 });
+
+function handleSwipe(){
+
+    let distance = touchEndX - touchStartX;
+
+    if(distance > 50){
+
+        previousViewerImage();
+
+    }
+
+    if(distance < -50){
+
+        nextViewerImage();
+
+    }
+
+}
 function reportProperty(){
     window.location.href="report.html";
 }
+ if(property){const btn = document.getElementById("mapButton");
+
+if(property.mapLink){
+    btn.onclick = function(){
+        window.open(property.mapLink, "_blank");
+    };
+}else{
+
+    btn.removeAttribute("href");
+
+    btn.style.pointerEvents = "none";
+
+    btn.style.background = "#d1d5db";
+
+    btn.style.color = "#666";
+
+    btn.style.cursor = "not-allowed";
+
+    btn.textContent = "📍 Location Not Available";
+
+}
+if(!property.mapLink){
+    document.getElementById("mapMessage").textContent =
+    "The seller hasn't provided a Google Maps location.";
+}
+ }
 </script>
 <div id="notification"
       style="
