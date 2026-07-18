@@ -351,6 +351,37 @@ font-size:14px;
     cursor:pointer;
     color:#222;
 }
+.property-card{
+position:relative;
+}
+
+
+.property-heart{
+
+position:absolute;
+top:12px;
+right:12px;
+
+font-size:30px;
+
+cursor:pointer;
+
+z-index:50;
+
+background:white;
+
+width:45px;
+height:45px;
+
+display:flex;
+align-items:center;
+justify-content:center;
+
+border-radius:50%;
+
+box-shadow:0 2px 8px rgba(0,0,0,.2);
+
+}
     </style>
     <title>Gedarak.lk</title>
     
@@ -873,7 +904,6 @@ gedarak.lk@gmail.com
       </footer>
     <script>
         let selectedOtherType ="";
-        let homepageImageIndex = {};
         let viewerProperty = null;
 let viewerIndex = 0;
 
@@ -1054,6 +1084,7 @@ document
 .classList.remove("active");
 
 }
+
 document.addEventListener("click",function(e){
 
 let sidebar=
@@ -2861,7 +2892,8 @@ font-weight:600;
 text-align:center;
 margin:10px 0;">🛏️ ${property.bedrooms} Bedrooms
 
-🛁 ${property.bathrooms} Bathrooms</p>
+🛁 ${property.bathrooms} Bathrooms
+📐 ${property.squareFeet}Sqft</p>
 
 
 `;
@@ -2887,43 +2919,7 @@ margin:10px 0;">🛏️ ${property.bedrooms} Bedrooms
               data-address="${property.address}"
             data-description="${property.description}"
             data-boost="${property.boost ? JSON.stringify(property.boost) : ''}">
-                <div class="property-image">
-
-<div
-id="counter${property.id}"
-style="
-position:absolute;
-bottom:10px;
-right:10px;
-background:rgba(0,0,0,.6);
-color:white;
-padding:4px 10px;
-border-radius:20px;
-font-size:13px;
-font-weight:bold;
-z-index:15;
-">
-1 / ${property.images.length}
-</div>           <button
-                    onclick="previousHomepageImage(${property.id})"
-                    style="
-                    position:absolute;
-                    left:10px;
-                    top:50%;
-                    transform:translateY(-50%);
-                    width:40px;
-                    height:40px;
-                    border:none;
-                    border-radius:50%;
-                    background:rgba(0,0,0,0.5);
-                    color:white;
-                    font-size:22px;
-                    cursor:pointer;
-                    z-index:10;
-                    ">
-                    ❮
-                    </button>
-                     <div 
+                 <div 
                 id="heart${property.id}"
                 onclick="toggleFavourite(${property.id},this)"
                 style="
@@ -2937,28 +2933,8 @@ z-index:15;
                 ">
                 ${isFavourite(property.id) ? "💗" : "🤍"}
                 </div>
-                <div
-                onclick="shareProperty(${property.id})"
-                style="
-                position:absolute;
-                top:10px;
-                left:10px;
-                font-size:30px;
-                cursor:pointer;
-                z-index:20;
-                user-select:none;
-                background:rgba(0,0,0,.45);
-                color:white;
-                width:40px;
-                height:40px;
-                display:flex;
-                align-items:center;
-                justify-content:center;
-                border-radius:50%;
-                ">
-                🔗
-                </div>
-                ${(Date.now()-property.createdAt)<604800000?`
+            <div class="property-image">
+${(Date.now()-property.createdAt)<604800000?`
 
 <div
 style="
@@ -2982,25 +2958,7 @@ NEW
 id="images${property.id}"
 src="${property.images[0]}"
 onclick="openImageViewer(${property.id})">
-                 <button
-                    onclick="nextHomepageImage(${property.id})"
-                    style="
-                    position:absolute;
-                    right:10px;
-                    top:50%;
-                    transform:translateY(-50%);
-                    width:40px;
-                    height:40px;
-                    border:none;
-                    border-radius:50%;
-                    background:rgba(0,0,0,0.5);
-                    color:white;
-                    font-size:22px;
-                    cursor:pointer;
-                    z-index:10;
-                    ">
-                    ❯
-                    </button>
+                
                     ${(() => {
 
 let boostInfo = getBoostInfo(property);
@@ -3086,7 +3044,7 @@ font-size:16px;
 font-weight:600;
 text-align:center;
 margin:10px 0;
-">📐 ${property.squareFeet} Sqft
+">
 
 🌳 ${property.perches} Perches
 </p>
@@ -3166,39 +3124,13 @@ cursor:pointer;
             );
 
          
-        function nextHomepageImage(id){
-            let property = allProperties.find(p => p.id === id);
-            if(homepageImageIndex[id] == null){
-                homepageImageIndex[id] = 0;
-            }
-            homepageImageIndex[id]++;
-            if(homepageImageIndex[id] >= property.images.length){
-                homepageImageIndex[id] = 0;
-            }
-            document.getElementById("images"+id).src = property.images[homepageImageIndex[id]];
-            document.getElementById("counter"+id).innerHTML = 
-            (homepageImageIndex[id]+1)+" /"+property.images.length;
-        }
-         function previousHomepageImage(id){
-            let property = allProperties.find(p => p.id === id);
-            if(homepageImageIndex[id] == null){
-                homepageImageIndex[id] = 0;
-            }
-            homepageImageIndex[id]--;
-
-            if(homepageImageIndex[id]< 0){
-                homepageImageIndex[id] =property.images.length-1;
-            }
-            document.getElementById("images"+id).src = property.images[homepageImageIndex[id]];
-            document.getElementById("counter"+id).innerHTML = 
-            (homepageImageIndex[id]+1)+" /"+property.images.length;
-        }
+        
 
         function openImageViewer(id){
 
 viewerProperty = allProperties.find(p=>p.id===id);
 
-viewerIndex = homepageImageIndex[id] || 0;
+viewerIndex = 0;
 
 document.getElementById("viewerImage").src =
 viewerProperty.images[viewerIndex];
@@ -3725,11 +3657,10 @@ cursor:pointer;
 <img
 id="viewerImage"
 style="
-width:96vw;
-height:96vh;
+width:100%;
+height:70vh;
 max-width:100%;
-max-height:100%;
-object-fit:cover;
+object-fit:contain;
 user-select:none;
 ">
 
