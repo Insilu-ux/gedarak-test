@@ -433,6 +433,94 @@ transform:scale(.97);
 #viewerImage{
     transition:transform .2s ease;
 }
+.bedroom-btn,
+.bathroom-btn{
+    padding:8px 15px;
+    margin:3px;
+    border:1px solid #ccc;
+    background:white;
+    cursor:pointer;
+    border-radius:8px;
+}
+
+.selected-btn{
+    border:2px solid #008cff;
+    color:#008cff;
+}
+#filterBox button:hover{
+    transform:translateY(-2px);
+    opacity:.95;
+}
+
+#filterBox button:active{
+    transform:scale(.97);
+}
+#filterBox input,
+#filterBox select{
+    width:100%;
+    padding:10px;
+    border-radius:8px;
+    border:1px solid #ccc;
+    box-sizing:border-box;
+}
+#filterBox h3{
+    margin-top:22px;
+    margin-bottom:10px;
+}
+#resultsInfo{
+
+text-align:center;
+margin-top:25px;
+font-size:15px;
+color:#666;
+
+}
+
+#pagination{
+
+display:flex;
+justify-content:center;
+align-items:center;
+gap:8px;
+flex-wrap:wrap;
+margin:25px 0;
+
+}
+
+#pagination button{
+
+padding:10px 15px;
+border:1px solid #d1d5db;
+background:white;
+border-radius:10px;
+cursor:pointer;
+font-weight:bold;
+min-width:42px;
+
+transition:.2s;
+
+}
+
+#pagination button:hover{
+
+background:#f5f5f5;
+
+}
+
+#pagination .active{
+
+background:#0d6efd;
+color:white;
+border-color:#0d6efd;
+
+}
+
+#pagination .disabled{
+
+opacity:.45;
+pointer-events:none;
+
+}
     </style>
     <title>Gedarak.lk</title>
     
@@ -603,7 +691,10 @@ updateSuggestions();
 </select>
         </div>
         <div id="filterBox"
-        style="display: none; padding: 20px; border: 1px solid #08aaeb; margin-top: 10px;">
+        style="display: none; padding: 20px; border:1px solid #08aaeb;
+border-radius:12px;
+background:white;
+box-shadow:0 4px 12px rgba(0,0,0,.08); margin-top: 10px;">
         <h3>Filters</h3>
         <label>District</label>
         <select id="districtFilter"
@@ -643,7 +734,7 @@ updateSuggestions();
         <label>City</label>
         <select id="cityFilter"
         onchange="searchProperty()">
-            <option value="Any City"></option>
+            <option value="">Any City</option>
         </select>
         <br><br>
         <label>Address (Optional)</label>
@@ -659,7 +750,7 @@ updateSuggestions();
        <input
 type="number"
 id="minPrice"
-placeholder="Minimum Price"
+placeholder="Minimum Rs."
 oninput="searchProperty()">
         <br><br>
         <label>Maximum Price</label>
@@ -667,7 +758,7 @@ oninput="searchProperty()">
          <input
         type="number"
         id="maxPrice"
-        placeholder="Maximum Price"
+        placeholder="Maximum Rs."
         oninput="searchProperty()">
         <br><br>
         <h3>Bedrooms</h3>
@@ -694,6 +785,7 @@ oninput="searchProperty()">
               id="minPerches"
               placeholder="Minimum Perches"
               oninput="searchProperty()">
+              <br><br>
               <input
               type="number"
               id="maxPerches"
@@ -705,6 +797,7 @@ oninput="searchProperty()">
               id="minSqft"
               placeholder="Minimum Sqft"
               oninput="searchProperty()">
+               <br><br>
               <input
               type="number"
               id="maxSqft"
@@ -798,14 +891,48 @@ oninput="searchProperty()">
                 </option>
                 </select>
                     <br><br>
-         <button onclick="applyAndCloseFilters()">
-            Apply Filters
-         </button>
-         <button
-         onclick="resetFilters()">
-            Reset Filters
-         </button>
+                   <div style="
+display:flex;
+justify-content:center;
+gap:12px;
+margin-top:20px;
+">
 
+<button
+onclick="applyAndCloseFilters()"
+style="
+width:140px;
+padding:12px;
+background:#0d6efd;
+color:white;
+border:none;
+border-radius:10px;
+font-size:15px;
+font-weight:bold;
+cursor:pointer;
+transition:.2s;
+">
+✅ Apply
+</button>
+
+<button
+onclick="resetFilters()"
+style="
+width:140px;
+padding:12px;
+background:#f3f4f6;
+color:#333;
+border:2px solid #d1d5db;
+border-radius:10px;
+font-size:15px;
+font-weight:bold;
+cursor:pointer;
+transition:.2s;
+">
+🔄 Reset
+</button>
+
+</div>
         </div>
         <div class="category-row">
             <button onclick="filterProperty('all')"
@@ -922,6 +1049,9 @@ oninput="searchProperty()">
     </section>
      <div id="newProperties">
      </div>
+     <div id="resultsInfo"></div>
+
+<div id="pagination"></div>
     <footer
 
 style="
@@ -954,9 +1084,11 @@ gedarak.lk@gmail.com
         <p>&copy; 2026 Gedarak.lk</p>
       </footer>
     <script>
-        let selectedOtherType ="";
+        let currentPage = 1;
+const propertiesPerPage = 20;
         let viewerProperty = null;
-let viewerIndex = 0;
+        let viewerIndex = 0;   
+        let selectedOtherType ="";
 
       function toggleOtherTags(){
 
@@ -1033,6 +1165,11 @@ searchProperty();
                   document.getElementById("maxSqft").value= "";
                      document.getElementById("amenityFilter").value= "";
                         document.getElementById("propertyViewFilter").value= "";
+                        document.querySelectorAll(".bedroom-btn")
+.forEach(btn => btn.classList.remove("selected-btn"));
+
+document.querySelectorAll(".bathroom-btn")
+.forEach(btn => btn.classList.remove("selected-btn"));
                   selectedBedroom = "";
                   selectedBathroom = "";
                   selectedOtherType = "";
@@ -1115,9 +1252,19 @@ searchProperty();
             window.location.href=
             "property.html";
         }
-        window.addEventListener("load",function(){
+        window.addEventListener("load", function () {
 
-    resetFilters();
+            resetFilters();
+const viewerImage = document.getElementById("viewerImage");
+
+viewerImage.addEventListener("touchstart", function(e){
+    touchStartX = e.changedTouches[0].screenX;
+});
+
+viewerImage.addEventListener("touchend", function(e){
+    touchEndX = e.changedTouches[0].screenX;
+    handleSwipe();
+});
 
 });
 
@@ -1161,14 +1308,34 @@ sidebar.classList.remove("active");
 });
         let selectedBedroom = "";
         let selectedBathroom = "";
-        function setBedroomFilter(value){
-            selectedBedroom = value;
-            searchProperty();
-        }
-        function setBathroomFilter(value){
-            selectedBathroom = value;
-            searchProperty();
-        }
+       function setBedroomFilter(value){
+
+    selectedBedroom = value;
+
+    document.querySelectorAll(".bedroom-btn")
+    .forEach(function(btn){
+        btn.classList.remove("selected-btn");
+    });
+
+    event.target.classList.add("selected-btn");
+
+    searchProperty();
+
+}
+       function setBathroomFilter(value){
+
+    selectedBathroom = value;
+
+    document.querySelectorAll(".bathroom-btn")
+    .forEach(function(btn){
+        btn.classList.remove("selected-btn");
+    });
+
+    event.target.classList.add("selected-btn");
+
+    searchProperty();
+
+}
          const districtCities= {
                Colombo: [
 "Angoda",
@@ -2580,9 +2747,34 @@ propertyPrice <= maxPrice
                     card.style.display="none";
                 }
             });
-            let visibleCards = 
+           let visibleCards =
 Array.from(document.querySelectorAll(".property-card"))
 .filter(card => card.style.display !== "none");
+
+// Pagination
+let totalProperties = visibleCards.length;
+let totalPages = Math.ceil(totalProperties / propertiesPerPage);
+
+if(currentPage > totalPages){
+    currentPage = totalPages || 1;
+}
+
+let start = (currentPage - 1) * propertiesPerPage;
+let end = start + propertiesPerPage;
+
+// Hide every visible card first
+visibleCards.forEach(card=>{
+    card.style.display="none";
+});
+
+// Show only this page
+visibleCards
+.slice(start,end)
+.forEach(card=>{
+    card.style.display="";
+});
+updateResultsInfo(totalProperties,start,end);
+renderPagination(totalPages);
 
 let noResult = document.getElementById("noResults");
 
@@ -2627,6 +2819,137 @@ old.remove();
             sortBoostedProperties();
             sortProperties();
         }
+        function updateResultsInfo(total,start,end){
+
+let info =
+document.getElementById("resultsInfo");
+
+if(total==0){
+
+info.innerHTML="";
+
+return;
+
+}
+
+info.innerHTML=
+`Showing ${start+1}-${Math.min(end,total)} of ${total} properties`;
+
+}
+function goToPage(page){
+
+currentPage = page;
+
+searchProperty();
+
+window.scrollTo({
+
+top:0,
+
+behavior:"smooth"
+
+});
+
+}
+function renderPagination(totalPages){
+
+let box =
+document.getElementById("pagination");
+
+box.innerHTML = "";
+
+if(totalPages <= 1){
+
+return;
+
+}
+
+// Previous button
+
+box.innerHTML += `
+<button
+${currentPage==1 ? "disabled class='disabled'" : ""}
+onclick="goToPage(${currentPage-1})">
+← Previous
+</button>
+`;
+let pages = [];
+
+if(totalPages <= 7){
+
+for(let i=1;i<=totalPages;i++){
+
+pages.push(i);
+
+}
+
+}
+else{
+
+pages.push(1);
+
+if(currentPage > 4){
+
+pages.push("...");
+
+}
+
+let start =
+Math.max(2,currentPage-2);
+
+let end =
+Math.min(totalPages-1,currentPage+2);
+
+for(let i=start;i<=end;i++){
+
+pages.push(i);
+
+}
+
+if(currentPage < totalPages-3){
+
+pages.push("...");
+
+}
+
+pages.push(totalPages);
+
+}
+pages.forEach(function(page){
+
+if(page==="..."){
+
+box.innerHTML +=
+`<span style="
+padding:10px;
+font-weight:bold;
+">
+...
+</span>`;
+
+}
+
+else{
+
+box.innerHTML += `
+<button
+class="${page==currentPage ? "active" : ""}"
+onclick="goToPage(${page})">
+${page}
+</button>
+`;
+
+}
+
+});
+box.innerHTML += `
+<button
+${currentPage==totalPages ? "disabled class='disabled'" : ""}
+onclick="goToPage(${currentPage+1})">
+Next →
+</button>
+`;
+}
     
         function updateSuggestions(){
 console.log("updateSuggestions called");
@@ -2989,9 +3312,9 @@ margin:4px 0;">
                 onclick="toggleFavourite(${property.id},this)"
                 style="
                 position:absolute;
-                top:8px;
-                right:8px;
-                font-size:24px;
+                top:0px;
+                right:0px;
+                font-size:22px;
                 cursor:pointer;
                 z-index:20;
                 user-select:none;
@@ -3150,20 +3473,6 @@ property.negotiable
                     
             );
 
-         const viewerImage = document.getElementById("viewerImage");
-        viewerImage.addEventListener("touchstart", function(e){
-
-    touchStartX = e.changedTouches[0].screenX;
-
-});
-
-viewerImage.addEventListener("touchend", function(e){
-
-    touchEndX = e.changedTouches[0].screenX;
-
-    handleSwipe();
-
-});
 function handleSwipe(){
 
     let distance = touchEndX - touchStartX;
@@ -3412,7 +3721,7 @@ let boostB = null;
 
 try{
     boostB = b.dataset.boost
-        ? JSON.parse(a.dataset.boost)
+        ? JSON.parse(b.dataset.boost)
         : null;
 }
 catch(e){
