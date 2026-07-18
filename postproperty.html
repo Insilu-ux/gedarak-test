@@ -83,6 +83,50 @@ font-size:14px;
 color:#666;
 
 }
+.post-property-btn{
+
+width:90%;
+max-width:450px;
+
+display:block;
+margin:30px auto;
+
+padding:18px;
+
+font-size:22px;
+font-weight:bold;
+
+color:white;
+
+background:linear-gradient(135deg,#16a34a,#22c55e);
+
+border:none;
+
+border-radius:16px;
+
+cursor:pointer;
+
+box-shadow:0 8px 20px rgba(22,163,74,.3);
+
+transition:.25s;
+
+}
+
+
+.post-property-btn:hover{
+
+transform:translateY(-3px);
+
+box-shadow:0 12px 25px rgba(22,163,74,.4);
+
+}
+
+
+.post-property-btn:active{
+
+transform:scale(.97);
+
+}
         </style>
         <title>Post Property</title>
         <link rel="stylesheet"
@@ -121,7 +165,7 @@ Sri Lanka's Property Marketplace
 </a>
 
 </header>
-        <h1>Post Your Property</h1>
+        <h1 style="text-align: center;">Post Your Property</h1>
         <form>
         <input type="text"
         id="propertyName"
@@ -233,7 +277,7 @@ Price Negotiable
          placeholder="Example: 15">
          <br></br>
          <div id="sqftSection">
-          <label>Building Size(Square Feet)</label>
+          <label>Building Size(Sqft)</label>
          <input
          type="number"
          id="squareFeet"
@@ -329,9 +373,17 @@ margin-top:15px;
 </div>
          <br>
          <textarea
-         id="description"
-         placeholder="Property Description">
-        </textarea>
+id="description"
+placeholder="Describe your property"
+style="
+width:100%;
+min-height:180px;
+padding:14px;
+font-size:16px;
+border-radius:10px;
+resize:vertical;
+box-sizing:border-box;
+"></textarea>
         <p
 style="
 margin-top:8px;
@@ -340,7 +392,6 @@ color:#666;
 ">
 Describe the Property.
 </p>
-         <br></br>
     <div
 style="
 display:flex;
@@ -388,7 +439,7 @@ box-sizing:border-box;
 ">
 
 </div>
-<br><br>
+<br>
          <label>Status</label>
          <select id="status">
             <option value="For Sale">
@@ -401,7 +452,8 @@ box-sizing:border-box;
                 For Sale/Rent
             </option>
          </select>
-        <button type="button"
+         <br><br>
+        <button class="post-property-btn" type="button"
         onclick="addProperty()">
             Post Property
         </button>
@@ -433,12 +485,14 @@ land?"none":"block";
 document.getElementById("bathroomSection").style.display=
 land?"none":"block";
 
+document.getElementById("sqftSection").style.display=
+land?"none":"block";
 
 if(land){
 
 document.getElementById("bedrooms").value="";
 document.getElementById("bathrooms").value="";
-
+document.getElementById("squareFeet").value="";
 
 }
 
