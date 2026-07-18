@@ -307,25 +307,13 @@ font-size:14px;
     gap:8px;
     justify-content:center;
 }
-.category-dropdown{
-    padding:8px 12px;
-    margin:5px;
-    border:2px solid #0a5caf;
-    border-radius:25px;
-    background:#3286e6;
-    color:white;
-    font-size:15px;
-    font-weight:bold;
-    cursor:pointer;
-}
 .category-row{
     display:flex;
-    justify-content:center;
+    justify-content:flex-start;
     align-items:center;
     gap:8px;
-    flex-wrap:nowrap;
     overflow-x:auto;
-    padding:8px 10px;
+    padding:8px 12px;
     scrollbar-width:none;
 }
 
@@ -333,9 +321,18 @@ font-size:14px;
     display:none;
 }
 
+
 .category-row button,
-.category-row select{
+.category-dropdown{
     flex:0 0 auto;
+    padding:10px 18px;
+    border:2px solid #0a5caf;
+    border-radius:25px;
+    background-color:rgb(50,134,230);
+    color:white;
+    font-size:15px;
+    font-weight:bold;
+    cursor:pointer;
 }
     </style>
     <title>Gedarak.lk</title>
@@ -986,13 +983,10 @@ selectedRentalType = type;
 searchProperty();
 
 }
-       function filterProperty(type){
+     function filterProperty(type){
 
 selectedOtherType = "";
 selectedRentalType = "";
-
-document.getElementById("otherTags").style.display="none";
-document.getElementById("rentalTags").style.display="none";
 
 document.getElementById("typeFilter").value =
 type==="all" ? "" : type;
