@@ -465,7 +465,6 @@ listings++;
 
 totalViews += property.views || 0;
 
-totalSaves += property.saves || 0;
 
 
 }
@@ -474,6 +473,16 @@ totalSaves += property.saves || 0;
 catch(e){}
 
 }
+// USER'S TOTAL SAVED PROPERTIES
+let mySavedProperties =
+JSON.parse(
+    localStorage.getItem(
+        "favourites_" + user
+    ) || "[]"
+);
+
+totalSaves = mySavedProperties.length;
+
 enquiries.filter(function(item){
 
 return String(item.owner).trim().toLowerCase() ===
