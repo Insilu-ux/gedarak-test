@@ -526,7 +526,26 @@ opacity:.45;
 pointer-events:none;
 
 }
-    </style>
+.profile-icon{
+    position:absolute;
+    top:2px;
+    right:2px;
+
+    font-size:28px;
+    width:45px;
+    height:45px;
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+    background:white;
+    border-radius:50%;
+    box-shadow:0 1px 4px rgba(0,0,0,.1);
+    cursor:pointer;
+
+    z-index:1000;
+}   </style>
     <title>Gedarak.lk</title>
     
 </head>
@@ -538,8 +557,10 @@ display:flex;
 align-items:center;
 justify-content:center;
 gap:10px;
-width:100%;
-margin-top:5px;
+
+position:relative;
+width:fit-content;
+margin:5px auto 0 auto;
 ">
 <img
 src="Frame 1.png"
@@ -563,6 +584,11 @@ Gedarak.lk
     class="menu-icon"
     onclick="openMenu()">
         ☰
+    </div>
+     <div
+    class="profile-icon"
+    onclick="window.location.href='profile.html'">
+        👤
     </div>
 </nav>
     <!--SIDEBAR-->
@@ -600,7 +626,8 @@ Gedarak.lk
 
 <button
 class="menu-post"
-onclick="openPostProperty()">
+onclick="openPostProperty()"
+>
 
 ➕ Post Property
 
@@ -608,7 +635,7 @@ onclick="openPostProperty()">
 
 <hr>
 
-<a href="profile.html">
+<a href="profile.html" >
 
 👤 My Account
 
@@ -628,7 +655,7 @@ onclick="openPostProperty()">
 
 <a href="about.html">
 
-ℹ️ About 
+ℹ️ About Us
 
 </a>
 
@@ -637,7 +664,6 @@ onclick="openPostProperty()">
 🚩 Report Problem
 
 </a>
-
 <div id="adminLink"></div>
 
 <div class="menu-footer">
@@ -651,7 +677,7 @@ Version 1.0
 </div>
 
 </div>
-    <section class="hero" style="text-align: center;">
+    <section  class="hero" style="text-align: center;">
         <h2>Find Your Perfect Property</h2>
 <div class="search-row">
     <div class="search-input-wrapper">
@@ -666,7 +692,7 @@ updateSuggestions();
 <div id="searchSuggestions">
 </div>
     </div>
-        <button class="search-btn" onclick="applyAndCloseFilters()">
+        <button  class="search-btn" onclick="applyAndCloseFilters()">
             🔍Search
         </button>
 </div>
