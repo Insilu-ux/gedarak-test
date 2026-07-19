@@ -2088,7 +2088,7 @@ Vavuniya: [
 "Vavuniya Town"
 ]
         };
-    function intelligentSearch(){
+ function intelligentSearch(){
 
 let text =
 document.getElementById("searchInput")
@@ -2115,12 +2115,10 @@ house: [
 "home",
 "homes",
 "residence",
-"residences",
-"property"
+"residences"
 ],
 
 villa: [
-"luxury villa",
 "private villa"
 ],
 
@@ -2254,35 +2252,207 @@ text = text
 
 .replace(/\bmn\b/g,"million")
 
-.replace(/\bm\b/g,"million")
+.replace(/\b(\d+)m\b/g,"$1 million")
 
-.replace(/\bcr\b/g,"crore")
+.replace(/\b(\d+)cr\b/g,"$1 crore")
 
 .replace(/\blk\b/g,"lakh");
-// Detect rental searches
+
+text = text
+
+.replace(/\bnear\b/g,"")
+.replace(/\baround\b/g,"")
+
+.replace(/\bclose to\b/g," near ")
+
+.replace(/\barea\b/g," ");
+const singlishMap={
+
+"wala":"",
+
+"geder":"house",
+
+"gedara":"house",
+
+"gedarak":"house",
+
+"watura":"water",
+
+"loku":"large",
+
+"podda":"small",
+
+"aluth":"new",
+"gedhara":"house",
+
+"gedaraak":"house",
+
+"gedarak":"house",
+
+"eka":""
+};
+
+
+Object.keys(singlishMap).forEach(function(word){
+
+text=text.replace(
+
+new RegExp("\\b"+word+"\\b","g"),
+
+singlishMap[word]
+
+);
+
+});
+
+searchSize="";
+
 
 if(
-text.includes("rent") ||
-text.includes("rental") ||
-text.includes("lease")
+text.includes("large") ||
+text.includes("big") ||
+text.includes("spacious")
 ){
 
-document.getElementById("rentOnlyFilter").checked = true;
+searchSize="large";
 
 }
 
-// Detect sale searches
 
 if(
-text.includes("sale") ||
-text.includes("buy") ||
-text.includes("purchase")
+text.includes("small") ||
+text.includes("compact")
 ){
 
-document.getElementById("rentOnlyFilter").checked = false;
+searchSize="small";
 
 }
-// Reset all automatic filters
+
+if(
+text.includes("cheap") ||
+text.includes("budget") ||
+text.includes("affordable") ||
+text.includes("reasonable") ||
+text.includes("low price")
+){
+
+document.getElementById("sortFilter").value="priceLow";
+
+}
+
+searchIntent="";
+
+
+if(
+text.includes("want") ||
+text.includes("looking") ||
+text.includes("find")
+){
+
+searchIntent="search";
+
+}
+
+
+if(
+text.includes("best") ||
+text.includes("top") ||
+text.includes("recommended")
+){
+
+searchIntent="recommend";
+
+}
+// REMOVE USELESS WORDS HERE
+
+const uselessWords = [
+"show",
+"find",
+"looking",
+"for",
+"me",
+"want",
+"need",
+"give",
+"please",
+"search",
+];
+
+
+uselessWords.forEach(function(word){
+
+text = text.replace(
+new RegExp("\\b"+word+"\\b","g"),
+""
+);
+
+});
+
+text=text.trim();
+
+// PROPERTY PURPOSE DETECTION
+
+searchPurpose="";
+
+
+if(
+text.includes("family") ||
+text.includes("families") ||
+text.includes("kids") ||
+text.includes("children")
+){
+
+searchPurpose = "family";
+
+}
+
+
+if(
+text.includes("investment") ||
+text.includes("invest") ||
+text.includes("income") ||
+text.includes("rental return")
+){
+
+searchPurpose = "investment";
+
+}
+
+
+if(
+text.includes("business") ||
+text.includes("shop") ||
+text.includes("office")
+){
+
+searchPurpose = "business";
+
+}
+
+if(text.trim()==""){
+
+    selectedBedroom = "";
+    selectedBathroom = "";
+
+    document.getElementById("typeFilter").value = "";
+    document.getElementById("cityFilter").value = "";
+    document.getElementById("rentOnlyFilter").checked = false;
+
+    document.getElementById("maxPrice").value = "";
+    document.getElementById("minPrice").value = "";
+
+    document.getElementById("amenityFilter").value = "";
+    document.getElementById("propertyViewFilter").value = "";
+    document.getElementById("districtFilter").value = "";
+
+    searchProperty();
+
+    return;
+
+}
+
+
+// Reset old automatic filters before new search
 
 selectedBedroom = "";
 
@@ -2295,17 +2465,34 @@ document.getElementById("cityFilter").value = "";
 document.getElementById("rentOnlyFilter").checked = false;
 
 document.getElementById("maxPrice").value = "";
-document.getElementById("amenityFilter").value = "";
-document.getElementById("propertyViewFilter").value = "";
-document.getElementById("districtFilter").value = "";
+
 document.getElementById("minPrice").value = "";
-if(text.trim()==""){
 
-    searchProperty();
+document.getElementById("amenityFilter").value = "";
 
-    return;
+document.getElementById("propertyViewFilter").value = "";
+
+document.getElementById("districtFilter").value = "";
+// Detect rental searches
+
+if(
+text.includes("rent")
+){
+
+document.getElementById("rentOnlyFilter").checked = true;
 
 }
+// Detect sale searches
+
+if(
+text.includes("sale") ||
+text.includes("buy")
+){
+
+document.getElementById("rentOnlyFilter").checked = false;
+
+}
+
 let bedroomMatch =
 text.match(/([1-9])\s*(bed|bedroom|bedrooms)/);
 
@@ -2412,7 +2599,7 @@ districts.forEach(function(district){
 
 const words = text.split(/\s+/);
 
-if(words.includes(district)){
+if(text.includes(district)){
 
 document.getElementById("districtFilter").value =
 
@@ -2479,10 +2666,13 @@ document.getElementById("propertyViewFilter").value=view;
 }
 
 });
+
 let underMatch =
 text.match(
 /(under|below|less than)\s*(\d+(?:\.\d+)?)\s*(crore|crores|million|millions|lakh|lakhs)?/
 );
+
+let cleanText = text;
 
 if(underMatch){
 
@@ -2512,7 +2702,7 @@ amount *= 100000;
 
 document.getElementById("maxPrice").value =
 Math.round(amount);
-
+}
 let aboveMatch =
 text.match(
 /(above|over|more than)\s*(\d+(?:\.\d+)?)\s*(crore|crores|million|millions|lakh|lakhs)?/
@@ -2551,9 +2741,10 @@ Math.round(amount);
 
 let betweenMatch =
 text.match(
-/between\s*(\d+(?:\.\d+)?)\s*(lakh|lakhs|crore|crores|million|millions)?\s*and\s*(\d+(?:\.\d+)?)\s*(lakh|lakhs|crore|crores|million|millions)?/
+/between\s+(\d+(?:\.\d+)?)\s*(lakh|lakhs|crore|crores|million|millions)?\s*(?:and|to|-)\s*(\d+(?:\.\d+)?)\s*(lakh|lakhs|crore|crores|million|millions)?/
 );
-
+console.log("SEARCH TEXT:",text);
+console.log("BETWEEN MATCH:",betweenMatch);
 if(betweenMatch){
 
 let min =
@@ -2663,11 +2854,16 @@ document.getElementById("sortFilter").value =
 "newest";
 
 }
-text = text.replace(
-underMatch[0],
-""
-).trim();
+if(underMatch){
+    cleanText = cleanText.replace(underMatch[0],"").trim();
+}
 
+if(aboveMatch){
+    cleanText = cleanText.replace(aboveMatch[0],"").trim();
+}
+
+if(betweenMatch){
+    cleanText = cleanText.replace(betweenMatch[0],"").trim();
 }
 searchProperty();
 
@@ -3499,7 +3695,7 @@ margin:4px 0;">
             data-boost="${property.boost ? JSON.stringify(property.boost) : ''}">
                  <div 
                 id="heart${property.id}"
-                onclick="toggleFavourite(${property.id},this)"
+            onclick="event.stopPropagation();toggleFavourite(${property.id},this)"
                 style="
                 position:absolute;
                 top:0px;
@@ -3533,7 +3729,7 @@ NEW
                <img
 id="images${property.id}"
 src="${property.images[0]}"
-onclick="openImageViewer(${property.id})">
+onclick="event.stopPropagation();openImageViewer(${property.id})">
 <div class="property-buttons-left">
 
 <button
@@ -3544,7 +3740,7 @@ onclick="viewProperty('${property.id}')">
 
 <button
 class="contact-btn"
-onclick="openContactPopup(
+onclick="event.stopPropagation();openContactPopup(
 '${property.owner}',
 '${property.phone}',
 '${property.name}',
@@ -3598,7 +3794,10 @@ ${icon} ${boostInfo.package}
 
 })()}
                     </div>
-                  <div class="property-details">
+                  <div
+class="property-details"
+onclick="viewProperty('${property.id}')"
+style="cursor:pointer;">
 
 <h3
 style="
