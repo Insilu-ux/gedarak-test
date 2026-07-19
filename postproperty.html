@@ -127,6 +127,13 @@ box-shadow:0 12px 25px rgba(22,163,74,.4);
 transform:scale(.97);
 
 }
+label{
+    display:block;
+    font-size:18px;
+    font-weight:bold;
+    margin-bottom:8px;
+    color:#333;
+}
         </style>
         <title>Post Property</title>
         <link rel="stylesheet"
@@ -167,12 +174,13 @@ Sri Lanka's Property Marketplace
 </header>
         <h1 style="text-align: center;">Post Your Property</h1>
         <form>
+                  <label>Property Name</label>
         <input type="text"
         id="propertyName"
         placeholder="Property Name"
         required>
         <br></br>
-
+      <label>Property Price</label>
        <input
 type="number"
 id="propertyPrice"
@@ -189,7 +197,6 @@ onchange="toggleNegotiable()">
 Price Negotiable
 </label>
 
-<br><br>
          <label>Property Type</label>
          <select id="propertyType">
             <option value="">
@@ -252,12 +259,11 @@ Price Negotiable
         required>
          <br></br>
         <label>Google Maps Location (Optional)</label>
-<br><br>
 
 <input
 type="url"
-id="googleMaps"
-placeholder="Paste Google Maps link">
+id="mapLink"
+placeholder="https://maps.app.goo.gl/...">
 
 <br>
 <p style="
@@ -266,12 +272,20 @@ color:#777;
 ">
 Open Google Maps → Find your property → Share → Copy Link → Paste here.
 </p>
+</p>
+<p style="
+font-size:15px;
+color:#330808;
+">
+Only Google Maps links are accepted..
 
+</p>
 <small style="color:#666;">
 Buyers can view your property's location directly in Google Maps.
 </small>
            <br></br>
            <div id="bedroomSection">
+                  <label>Number of Bedrooms </label>
           <input type="number"
           id="bedrooms"
         placeholder="Bedrooms"
@@ -279,6 +293,7 @@ Buyers can view your property's location directly in Google Maps.
            </div>
          <br>
          <div id="bathroomSection">
+                  <label>Number of Batharooms </label>
           <input type="number"
           id="bathrooms"
         placeholder="Bathrooms"
@@ -455,8 +470,27 @@ box-sizing:border-box;
 
 </div>
 <br>
-         <label>Status</label>
-         <select id="status">
+         <label
+for="status"
+style="
+display:block;
+font-size:18px;
+font-weight:bold;
+margin-bottom:8px;
+color:#333;
+">
+Status
+</label>
+         <select
+id="status"
+style="
+width:100%;
+padding:14px;
+font-size:17px;
+border:1px solid #ccc;
+border-radius:10px;
+box-sizing:border-box;
+">
             <option value="For Sale">
                 For Sale
             </option>
@@ -1230,10 +1264,17 @@ return;
 
 phone = "94" + phone;
 
-             let mapLink=
-            document.getElementById(
-                "googleMaps"
-            ).value;
+             let mapLink =
+document.getElementById("mapLink").value.trim();
+if(
+    mapLink !== "" &&
+    !mapLink.includes("google.com") &&
+    !mapLink.includes("goo.gl/maps") &&
+    !mapLink.includes("maps.app.goo.gl")
+){
+    alert("Please paste a valid Google Maps link.");
+    return;
+}
             let imageFiles = selectedImages;
              if(district === ""){
         alert("Please select a district");
@@ -1285,7 +1326,7 @@ phone = "94" + phone;
             createdAt:
             Date.now(),
             
-           mapLink: document.getElementById("googleMaps").value.trim(),
+           mapLink: mapLink,
             approved:true
              };
              localStorage.setItem(
