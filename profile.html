@@ -442,10 +442,17 @@ localStorage.getItem("enquiries")
 || "[]"
 
 );
-           document.getElementById("userName").innerHTML=
+           if(user){
 
-"Welcome back,<br>"+user;
-           
+document.getElementById("userName").innerHTML =
+"Welcome back,<br>" + user;
+
+}else{
+
+document.getElementById("userName").innerHTML =
+"Welcome back";
+
+}
            for(let i=0;i<localStorage.length;i++){
 
 let key=localStorage.key(i);
