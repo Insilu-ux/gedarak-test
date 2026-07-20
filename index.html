@@ -934,19 +934,19 @@ box-shadow:0 4px 12px rgba(0,0,0,.08); margin-top: 10px;">
         <br><br>
         <label>Minimum Price</label>
         <br>
-       <input
-type="number"
+     <input
+type="text"
 id="minPrice"
 placeholder="Minimum Rs."
-oninput="searchProperty()">
+oninput="formatPriceInput(this); searchProperty();">
         <br><br>
         <label>Maximum Price</label>
         <br>
-         <input
-        type="number"
-        id="maxPrice"
-        placeholder="Maximum Rs."
-        oninput="searchProperty()">
+        <input
+type="text"
+id="maxPrice"
+placeholder="Maximum Rs."
+oninput="formatPriceInput(this); searchProperty();">
         <br><br>
         <h3>Bedrooms</h3>
         <button class="bedroom-btn" onclick="setBedroomFilter('')">Any</button>
@@ -979,17 +979,17 @@ oninput="searchProperty()">
               placeholder="Maximum Perches"
               oninput="searchProperty()">
                <h3>Building Size(Sqft)</h3>
-              <input
-              type="number"
-              id="minSqft"
-              placeholder="Minimum Sqft"
-              oninput="searchProperty()">
+            <input
+type="text"
+id="minSqft"
+placeholder="Minimum Sqft"
+oninput="formatPriceInput(this); searchProperty()">
                <br><br>
-              <input
-              type="number"
-              id="maxSqft"
-              placeholder="Maximum Sqft"
-              oninput="searchProperty()">
+             <input
+type="text"
+id="maxSqft"
+placeholder="Maximum Sqft"
+oninput="formatPriceInput(this); searchProperty()">
               <h3>Property Type</h3>
                <select
                id="typeFilter"
@@ -1277,6 +1277,17 @@ const propertiesPerPage = 20;
         let viewerIndex = 0;   
         let selectedOtherType ="";
 
+function formatPriceInput(input){
+
+let value = input.value.replace(/,/g,"");
+
+if(value==="") return;
+
+value = value.replace(/\D/g,"");
+
+input.value = Number(value).toLocaleString();
+
+}
       function toggleOtherTags(){
 
 document.getElementById("rentalTags").style.display="none";
@@ -2874,14 +2885,24 @@ searchProperty();
             parseFloat(document.getElementById("minPerches").value) || 0;
               let maxPerches= 
             parseFloat(document.getElementById("maxPerches").value) || 999999;
-              let minSqft= 
-            parseInt(document.getElementById("minSqft").value) || 0;
-              let maxSqft= 
-            parseInt(document.getElementById("maxSqft").value) || 9999999999;
-             let minPrice= 
-            parseInt(document.getElementById("minPrice").value) || 0;
-            let maxPrice= 
-            parseInt(document.getElementById("maxPrice").value) || 999999999999;
+            let minSqft =
+parseInt(
+document.getElementById("minSqft").value.replace(/,/g,"")
+) || 0;
+
+let maxSqft =
+parseInt(
+document.getElementById("maxSqft").value.replace(/,/g,"")
+) || 9999999999;
+           let minPrice =
+parseInt(
+document.getElementById("minPrice").value.replace(/,/g,"")
+) || 0;
+
+let maxPrice =
+parseInt(
+document.getElementById("maxPrice").value.replace(/,/g,"")
+) || 999999999999;
             let searchText =
 document.getElementById("searchInput")
 .value
@@ -3642,9 +3663,26 @@ let touchEndX = 0;
             allProperties.forEach(
                 property=>{
             
-                let roomInfo = "";
+            let roomInfo = "";
 
-if(property.propertyType !== "Land"){
+let residentialTypes = [
+"House",
+"Apartment",
+"Villa",
+"Annex",
+"Bungalow"
+];
+
+let commercialTypes = [
+"Commercial",
+"Office",
+"Shop",
+"Warehouse",
+"Building"
+];
+
+
+if(property.propertyType === "Land"){
 
 roomInfo = `
 
@@ -3654,12 +3692,15 @@ font-size:15px;
 font-weight:600;
 text-align:left;
 margin:4px 0;">
-🛏️ ${property.bedrooms} Beds | 🛁 ${property.bathrooms} Baths
+🌳 ${property.perches || 0} Perches
 </p>
+
 `;
 
 }
-if(property.propertyType == "Land"){
+
+
+else if(property.propertyType === "Hotel"){
 
 roomInfo = `
 
@@ -3669,7 +3710,45 @@ font-size:15px;
 font-weight:600;
 text-align:left;
 margin:4px 0;">
-🌳 ${property.perches} Perches
+🛏️ ${property.bedrooms || 0} Bedrooms | 📐 ${Number(property.squareFeet || 0).toLocaleString()} Sqft
+</p>
+
+`;
+
+}
+
+
+else if(residentialTypes.includes(property.propertyType)){
+
+roomInfo = `
+
+<p style="
+line-height:1.2;
+font-size:15px;
+font-weight:600;
+text-align:left;
+margin:4px 0;">
+🛏️ ${property.bedrooms || 0} Beds | 🛁 ${property.bathrooms || 0} Baths
+</p>
+
+`;
+
+}
+
+
+else if(commercialTypes.includes(property.propertyType)){
+
+roomInfo = `
+
+<p style="
+line-height:1.2;
+font-size:15px;
+font-weight:600;
+text-align:left;
+margin:4px 0;">
+📐 ${Number(property.squareFeet || 0).toLocaleString()} Sqft | 🌳 ${property.perches || 0} Perches
+</p>
+
 `;
 
 }
@@ -4023,7 +4102,7 @@ document.getElementById("popupCall").onclick=function(){
 };
 
 document.getElementById("popupPhone").innerHTML =
-phone.replace("94","0");
+phone.replace(/^94/, "0");
 
 document.getElementById("popupProperty").innerHTML=property;
 document.getElementById("popupPrice").innerHTML =
@@ -4340,7 +4419,7 @@ color:#0a8d48;"
 id="popupPrice">
 </p>
 
-<p>
+<p style="font-size:20px;font-weight:600;">
 
 👤
 
@@ -4348,7 +4427,7 @@ id="popupPrice">
 
 </p>
 
-<p>
+<p style="font-size:20px;font-weight:600;">
 
 📞
 
