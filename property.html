@@ -1493,30 +1493,34 @@ updateViewerImage();
 
       }
       
-      function openContactPopup(owner, phone, property, price, negotiable){
+  function openContactPopup(owner, phone, property, price, negotiable){
 
 document.getElementById("contactPopup").style.display="flex";
+
+let localPhone = phone.replace(/^94/, "0");
 
 document.getElementById("popupOwner").innerHTML=owner;
 
 document.getElementById("popupCall").onclick=function(){
 
-    window.location.href="tel:"+phone;
+    window.location.href="tel:"+localPhone;
 
 };
 
-document.getElementById("popupPhone").innerHTML =
-phone.replace(/^94/, "0");
+document.getElementById("popupPhone").innerHTML = localPhone;
 
 document.getElementById("popupProperty").innerHTML=property;
+
 document.getElementById("popupPrice").innerHTML =
 negotiable
 ?
 "💬 Negotiable"
 :
 "💸 Rs. " + Number(price).toLocaleString();
+
 document.getElementById("popupMessage").value =
 "Hello, I'm interested in " + property + ". Is it still available?";
+
 
 document.getElementById("popupWhatsapp").onclick=function(){
 
@@ -1531,16 +1535,13 @@ message =
 }
 
 window.open(
-
-"https://wa.me/"+phone+
-
+"https://wa.me/"+phone.replace(/^0/,"94")+
 "?text="+encodeURIComponent(message)
-
 );
 
 };
-}
 
+}
 function closeContactPopup(){
 
 document.getElementById("contactPopup").style.display="none";
