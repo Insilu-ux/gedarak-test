@@ -129,12 +129,65 @@ transform:scale(.97);
 }
 label{
     display:block;
-    font-size:18px;
-    font-weight:bold;
-    margin-bottom:8px;
+    font-size:20px;
+    font-weight:700;
+    margin-bottom:10px;
     color:#333;
 }
-        </style>
+.checkboxLabel{
+    display:inline-flex;
+    align-items:center;
+    gap:12px;
+    font-size:18px;
+    font-weight:600;
+    margin:12px 0;
+    cursor:pointer;
+    line-height:1;
+}
+.checkboxLabel input[type="checkbox"]{
+    width:auto;
+    margin:0;
+    padding:0;
+    transform:scale(1.25);
+    flex-shrink:0;
+    accent-color:#0d6efd;
+}
+.checkboxLabel span{
+    display:inline-block;
+    line-height:1.2;
+}
+.formInput,
+select,
+textarea{
+    width:100%;
+    padding:16px;
+    font-size:17px;
+    border:1px solid #d6d6d6;
+    border-radius:12px;
+    background:white;
+    transition:.2s;
+    box-sizing:border-box;
+    margin-top:6px;
+}
+
+.formInput:focus,
+select:focus,
+textarea:focus{
+    outline:none;
+    border-color:#0d6efd;
+    box-shadow:0 0 0 4px rgba(13,110,253,.15);
+}
+
+.sectionHeading{
+    font-size:24px;
+    font-weight:700;
+    color:#222;
+    margin-top:35px;
+    margin-bottom:18px;
+    padding-bottom:8px;
+    border-bottom:2px solid #e8e8e8;
+}
+     </style>
         <title>Post Property</title>
         <link rel="stylesheet"
         href="style.css">
@@ -176,27 +229,34 @@ Sri Lanka's Property Marketplace
         <form>
                   <label>Property Name</label>
         <input type="text"
+        class="formInput"
         id="propertyName"
         placeholder="Property Name"
         required>
         <br></br>
       <label>Property Price</label>
-       <input
-type="number"
+     <input
+     class="formInput"
+type="text"
 id="propertyPrice"
 placeholder="Property Price (LKR)"
+inputmode="numeric"
 oninput="priceChanged()">
 
-<br><br>
+<br>
 
-<label>
+<label class="checkboxLabel">
+
 <input
+class="formInput"
 type="checkbox"
 id="negotiablePrice"
 onchange="toggleNegotiable()">
-Price Negotiable
-</label>
 
+<span>Price Negotiable</span>
+
+</label>
+<br><br>
          <label>Property Type</label>
          <select id="propertyType">
             <option value="">
@@ -254,6 +314,7 @@ Price Negotiable
          <br><br>
          <label>Address</label>
         <input type="text"
+        class="formInput"
         id="address"
         placeholder="Street Address"
         required>
@@ -261,6 +322,7 @@ Price Negotiable
         <label>Google Maps Location (Optional)</label>
 
 <input
+class="formInput"
 type="url"
 id="mapLink"
 placeholder="https://maps.app.goo.gl/...">
@@ -287,14 +349,16 @@ Buyers can view your property's location directly in Google Maps.
            <div id="bedroomSection">
                   <label>Number of Bedrooms </label>
           <input type="number"
+          class="formInput"
           id="bedrooms"
         placeholder="Bedrooms"
         required>
            </div>
          <br>
          <div id="bathroomSection">
-                  <label>Number of Batharooms </label>
+                  <label>Number of Bathrooms </label>
           <input type="number"
+          class="formInput"
           id="bathrooms"
         placeholder="Bathrooms"
         required>
@@ -303,80 +367,101 @@ Buyers can view your property's location directly in Google Maps.
          <label>Land Size(Perches)</label>
          <input
          type="number"
+         class="formInput"
          id="perches"
          placeholder="Example: 15">
          <br></br>
          <div id="sqftSection">
           <label>Building Size(Sqft)</label>
          <input
-         type="number"
-         id="squareFeet"
-         placeholder="Example: 2500">
+         class="formInput"
+type="text"
+id="squareFeet"
+placeholder="Example: 2,500"
+inputmode="numeric"
+oninput="formatSqft(this)">
          </div>
-         <h3>Amenities</h3>
-         <label>
-            <input type="checkbox" value="Parking" class="amenity">
-            Parking
-         </label>
-          <label>
-            <input type="checkbox" value="Garage" class="amenity">
-            Garage
-         </label>
-          <label>
-            <input type="checkbox" value="Pool" class="amenity">
-            Swimming Pool
-         </label>
-          <label>
-            <input type="checkbox" value="Garden" class="amenity">
-            Garden
-         </label>
-          <label>
-            <input type="checkbox" value="Gym" class="amenity">
-            Gym
-         </label>
-          <label>
-            <input type="checkbox" value="Elevator" class="amenity">
-            Elevator
-         </label>
-          <label>
-            <input type="checkbox" value="Furnished" class="amenity">
-            Furnished
-         </label>
-          <label>
-            <input type="checkbox" value="Basement" class="amenity">
-            Basement
-         </label>
-          <label>
-            <input type="checkbox" value="Outdoor Space" class="amenity">
-            Outdoor Space
-         </label>
-         <h3>Property Viewings</h3>
-          <label>
-            <input type="checkbox" value="City View" class="propertyView">
-            City View
-         </label>
-           <label>
-            <input type="checkbox" value="Ocean View" class="propertyView">
-            Ocean View
-         </label>
-          <label>
-            <input type="checkbox" value="River View" class="propertyView">
-            River View
-         </label>
-          <label>
-            <input type="checkbox" value="Lake View" class="propertyView">
-            Lake View
-         </label>
-          <label>
-            <input type="checkbox" value="Mountain View" class="propertyView">
-            Mountain View
-         </label>
-          <label>
-            <input type="checkbox" value="Forest View" class="propertyView">
-            Forest View
-         </label>
+        <h3 class="sectionHeading">🏡 Amenities</h3>
+
+<label class="checkboxLabel">
+<input type="checkbox" value="Parking" class="amenity">
+<span>Parking</span>
+</label>
+
+<label class="checkboxLabel">
+<input type="checkbox" value="Garage" class="amenity">
+<span>Garage</span>
+</label>
+
+<label class="checkboxLabel">
+<input type="checkbox" value="Pool" class="amenity">
+<span>Swimming Pool</span>
+</label>
+
+<label class="checkboxLabel">
+<input type="checkbox" value="Garden" class="amenity">
+<span>Garden</span>
+</label>
+
+<label class="checkboxLabel">
+<input type="checkbox" value="Gym" class="amenity">
+<span>Gym</span>
+</label>
+
+<label class="checkboxLabel">
+<input type="checkbox" value="Elevator" class="amenity">
+<span>Elevator</span>
+</label>
+
+<label class="checkboxLabel">
+<input type="checkbox" value="Furnished" class="amenity">
+<span>Furnished</span>
+</label>
+
+<label class="checkboxLabel">
+<input type="checkbox" value="Basement" class="amenity">
+<span>Basement</span>
+</label>
+
+<label class="checkboxLabel">
+<input type="checkbox" value="Outdoor Space" class="amenity">
+<span>Outdoor Space</span>
+</label>
+        <h3 class="sectionHeading">🌄 Property Viewings</h3>
+
+<label class="checkboxLabel">
+<input type="checkbox" value="City View" class="propertyView">
+<span>City View</span>
+</label>
+
+<label class="checkboxLabel">
+<input type="checkbox" value="Ocean View" class="propertyView">
+<span>Ocean View</span>
+</label>
+
+<label class="checkboxLabel">
+<input type="checkbox" value="River View" class="propertyView">
+<span>River View</span>
+</label>
+
+<label class="checkboxLabel">
+<input type="checkbox" value="Lake View" class="propertyView">
+<span>Lake View</span>
+</label>
+
+<label class="checkboxLabel">
+<input type="checkbox" value="Mountain View" class="propertyView">
+<span>Mountain View</span>
+</label>
+
+<label class="checkboxLabel">
+<input type="checkbox" value="Forest View" class="propertyView">
+<span>Forest View</span>
+</label>
           <br></br>
-          <input
+         <label>Property Images</label>
+<input
+class="formInput"
 type="file"
 id="propertyImages"
 multiple
@@ -422,13 +507,12 @@ color:#666;
 ">
 Describe the Property.
 </p>
-    <div
+ <div
 style="
 display:flex;
 align-items:center;
 width:110px;
 ">
-
 <span
 style="
 width:110px;
@@ -571,16 +655,45 @@ price.disabled=false;
 
 function priceChanged(){
 
-let price =
+let input =
 document.getElementById("propertyPrice");
 
-if(price.value!=""){
+// Keep only numbers
+let value =
+input.value.replace(/\D/g,"");
+
+// Format with commas
+if(value===""){
+
+input.value="";
+
+return;
+
+}
+
+input.value =
+Number(value).toLocaleString();
 
 document.getElementById("negotiablePrice").checked=false;
 
-price.disabled=false;
+input.disabled=false;
 
 }
+function formatSqft(input){
+
+let value =
+input.value.replace(/\D/g,"");
+
+if(value===""){
+
+input.value="";
+
+return;
+
+}
+
+input.value =
+Number(value).toLocaleString();
 
 }
         let selectedImages = [];
@@ -1185,9 +1298,12 @@ Vavuniya: [
        }     
            let negotiable =
 document.getElementById("negotiablePrice").checked;
-           let price =
+          let priceText =
+document.getElementById("propertyPrice").value;
+
+let price =
 parseInt(
-document.getElementById("propertyPrice").value
+priceText.replace(/,/g,"")
 ) || null;
 
 if(price===null && !negotiable){
@@ -1227,10 +1343,10 @@ return;
             parseFloat(
                 document.getElementById("perches").value
             ) || 0;
-             let squareFeet= 
-            parseInt(
-                document.getElementById("squareFeet").value
-            ) || 0;
+             let squareFeet =
+parseInt(
+document.getElementById("squareFeet").value.replace(/,/g,"")
+) || 0;
             let amenities=[];
             document.querySelectorAll(
                 ".amenity:checked"
@@ -1251,7 +1367,16 @@ return;
             document.getElementById(
                 "description"
             ).value;
-            let phone =
+            let imageFiles = selectedImages;
+             if(district === ""){
+        alert("Please select a district");
+        return;
+       }
+        if(city === ""){
+        alert("Please select a city");
+        return;
+       }
+        let phone =
 document.getElementById("phone").value.trim();
 
 if(phone.length !== 9){
@@ -1275,15 +1400,21 @@ if(
     alert("Please paste a valid Google Maps link.");
     return;
 }
-            let imageFiles = selectedImages;
-             if(district === ""){
-        alert("Please select a district");
+       if(
+    document.getElementById("propertyType").value !== "Land"
+){
+
+    if(document.getElementById("bedrooms").value === ""){
+        alert("Please enter the number of bedrooms.");
         return;
-       }
-        if(city === ""){
-        alert("Please select a city");
+    }
+
+    if(document.getElementById("bathrooms").value === ""){
+        alert("Please enter the number of bathrooms.");
         return;
-       }
+    }
+
+}
          if(imageFiles.length === 0){
             alert("Please select atleast one image.");
             return;
