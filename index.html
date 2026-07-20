@@ -2103,12 +2103,240 @@ Vavuniya: [
 "Vavuniya Town"
 ]
         };
+        const synonymMap = {
+
+
+house:[
+"home",
+"homes",
+"residence",
+"residences",
+"property",
+"properties",
+"bungalow",
+"bungalows"
+],
+
+
+villa:[
+"private villa",
+"holiday villa",
+"luxury villa"
+],
+
+
+apartment:[
+"flat",
+"flats",
+"condo",
+"condos",
+"condominium",
+"unit",
+"units"
+],
+
+
+land:[
+"plot",
+"plots",
+"bare land",
+"estate",
+"estates"
+],
+
+
+office:[
+"workspace",
+"workplace",
+"office space",
+"corporate space"
+],
+
+
+shop:[
+"store",
+"stores",
+"retail",
+"retail shop",
+"commercial shop"
+],
+
+
+warehouse:[
+"storage",
+"storage building",
+"godown"
+],
+
+
+building:[
+"complex",
+"commercial building",
+"tower"
+],
+
+
+commercial:[
+"business property",
+"business space",
+"commercial property"
+],
+
+
+annex:[
+"annexe",
+"attached house"
+],
+
+
+luxury:[
+"premium",
+"high end",
+"high-end",
+"exclusive",
+"upscale",
+"elite",
+"expensive"
+],
+
+
+cheap:[
+"budget",
+"affordable",
+"low cost",
+"low price",
+"economical"
+],
+
+
+rent:[
+"lease",
+"leasing",
+"rental",
+"rentals"
+],
+
+
+buy:[
+"purchase",
+"purchasing",
+"acquire",
+"acquisition"
+]
+
+
+};
+        const searchCorrections = {
+
+
+apartmant:"apartment",
+
+apartmentt:"apartment",
+
+aprtment:"apartment",
+
+aprtmnt:"apartment",
+
+
+vilaa:"villa",
+
+vila:"villa",
+
+
+hous:"house",
+
+houe:"house",
+
+
+offce:"office",
+
+ofice:"office",
+
+
+warehous:"warehouse",
+
+
+hotle:"hotel",
+
+hote:"hotel",
+
+
+lan:"land",
+
+lnd:"land",
+
+
+colomboo:"colombo",
+
+colomb:"colombo",
+
+
+kandyy:"kandy",
+
+galleee:"galle"
+
+
+};
+        function correctSearchWords(text){
+
+
+let words =
+text.split(/\s+/);
+
+
+words =
+words.map(function(word){
+
+
+if(searchCorrections[word]){
+
+return searchCorrections[word];
+
+}
+
+
+return word;
+
+
+});
+
+
+return words.join(" ");
+
+
+}
+function showSearchCorrection(original,corrected){
+
+
+if(original!==corrected){
+
+
+showNotification(
+"Did you mean: "+corrected
+);
+
+
+}
+
+
+}
  function intelligentSearch(){
 
 let text =
 document.getElementById("searchInput")
 .value
 .toLowerCase();
+
+let originalText=text;
+
+text = correctSearchWords(text);
+
+
+showSearchCorrection(
+originalText,
+text
+);
+
 text = text 
 .replace(/\bhouses\b/g,"house")
 .replace(/\bvillas\b/g,"villa")
@@ -2123,77 +2351,33 @@ text = text
 .replace(/\blands\b/g,"land");
 
 // synonym map
+text = text
 
-const synonymMap = {
+.replace(/\brooms\b/g,"room")
 
-house: [
-"home",
-"homes",
-"residence",
-"residences"
-],
+.replace(/\bbedrooms\b/g,"bedroom")
 
-villa: [
-"private villa"
-],
+.replace(/\bbaths\b/g,"bathroom")
 
-apartment: [
-"flat",
-"flats",
-"condo",
-"condominium",
-"unit"
-],
+.replace(/\bbathrooms\b/g,"bathroom")
 
-land: [
-"plot",
-"plots",
-"estate",
-"bare land"
-],
+.replace(/\bproperties\b/g,"property");
 
-office: [
-"workspace",
-"workplace",
-"office space"
-],
-
-shop: [
-"store",
-"stores",
-"retail",
-"retail shop"
-],
-
-warehouse: [
-"storage",
-"storage building",
-"godown"
-],
-
-building: [
-"complex",
-"block"
-],
-
-commercial: [
-"business",
-"commercial property"
-],
-
-annex: [
-"annexe"
-]
-
-};
 
 Object.keys(synonymMap).forEach(function(mainWord){
 
 synonymMap[mainWord].forEach(function(word){
 
-let regex = new RegExp("\\b"+word+"\\b","gi");
+let regex = new RegExp(
+"\\b"+word.replace(/[.*+?^${}()|[\]\\]/g,"\\$&")+"\\b",
+"gi"
+);
 
-text = text.replace(regex,mainWord);
+
+text = text.replace(
+regex,
+mainWord
+);
 
 });
 
@@ -2880,10 +3064,580 @@ if(aboveMatch){
 if(betweenMatch){
     cleanText = cleanText.replace(betweenMatch[0],"").trim();
 }
-searchProperty();
+let historyText =
+document.getElementById("searchInput").value.trim();
+
+
+if(historyText.length >= 4){
+
+saveSearchHistory(historyText);
 
 }
 
+searchProperty();
+
+}
+function calculateSearchScore(card, words){
+
+let score = 0;
+
+
+let text =
+[
+card.innerText,
+
+card.dataset.type || "",
+
+card.dataset.city || "",
+
+card.dataset.district || "",
+
+card.dataset.amenities || "",
+
+card.dataset.propertyview || "",
+
+card.dataset.address || "",
+
+card.dataset.description || ""
+
+]
+.join(" ")
+.toLowerCase();
+
+
+// Every keyword match
+
+words.forEach(function(word){
+
+
+if(
+text.includes(word)
+||
+text.split(/\s+/)
+.some(item=>item.startsWith(word))
+){
+
+
+let weight = 3;
+
+
+// important property words
+
+let highPriority = [
+
+"house",
+
+"villa",
+
+"apartment",
+
+"land",
+
+"hotel",
+
+"office",
+
+"shop",
+
+"warehouse",
+
+"building",
+
+"annex"
+
+];
+
+
+let locationWords = [
+
+"colombo",
+
+"gampaha",
+
+"kandy",
+
+"galle",
+
+"matara",
+
+"jaffna",
+
+"kurunegala"
+
+];
+
+
+// property type match
+
+if(highPriority.includes(word)){
+
+weight = 8;
+
+}
+
+
+// location match
+
+if(locationWords.includes(word)){
+
+weight = 7;
+
+}
+
+
+// feature words
+
+let featureWords=[
+
+"pool",
+
+"garden",
+
+"parking",
+
+"garage",
+
+"furnished",
+
+"gym",
+
+"ocean",
+
+"view"
+
+];
+
+
+if(featureWords.includes(word)){
+
+weight = 5;
+
+}
+
+
+score += weight;
+
+
+}
+
+});
+// Exact phrase matching bonus
+
+let fullSearch =
+words.join(" ");
+
+
+if(text.includes(fullSearch)){
+
+score += 15;
+
+}
+
+
+// Exact property type boost
+
+let type =
+(card.dataset.type || "")
+.toLowerCase();
+
+
+words.forEach(function(word){
+
+if(type.includes(word)){
+
+score += 20;
+
+}
+
+});
+
+
+// City accuracy
+
+let city =
+(card.dataset.city || "")
+.toLowerCase();
+
+
+words.forEach(function(word){
+
+if(city.includes(word)){
+
+score += 15;
+
+}
+
+});
+
+
+// District accuracy
+
+let district =
+(card.dataset.district || "")
+.toLowerCase();
+
+
+words.forEach(function(word){
+
+if(district.includes(word)){
+
+score += 10;
+
+}
+
+});
+
+
+// Amenities
+
+let amenities =
+(card.dataset.amenities || "")
+.toLowerCase();
+
+
+words.forEach(function(word){
+
+if(amenities.includes(word)){
+
+score += 8;
+
+}
+
+});
+
+
+// Description relevance
+
+let description =
+(card.dataset.description || "")
+.toLowerCase();
+
+
+words.forEach(function(word){
+
+if(description.includes(word)){
+
+score += 2;
+
+}
+
+});
+
+
+// Luxury intent
+
+if(
+words.includes("luxury") &&
+text.includes("luxury")
+){
+
+score += 5;
+
+}
+
+
+// Cheap intent
+
+if(
+words.includes("cheap") &&
+text.includes("cheap")
+){
+
+score += 5;
+
+}
+let bedroomSearch =
+words.find(word=>word.match(/^\d+$/));
+
+
+if(bedroomSearch){
+
+let bedrooms =
+card.dataset.bedrooms || "";
+
+
+if(bedrooms === bedroomSearch){
+
+score += 12;
+
+}
+
+}
+
+let sriLankaLocations = [
+
+"colombo",
+"gampaha",
+"kalutara",
+"kandy",
+"matale",
+"galle",
+"matara",
+"hambantota",
+"kurunegala",
+"puttalam",
+"jaffna",
+"badulla",
+"ratnapura",
+"kegalle",
+"ampara",
+"batticaloa",
+"trincomalee"
+
+];
+
+
+words.forEach(function(word){
+
+
+if(
+sriLankaLocations.includes(word)
+&&
+text.includes(word)
+){
+
+score += 10;
+
+}
+
+
+});
+
+return score;
+
+}
+function saveSearchHistory(text){
+
+text=text.trim().toLowerCase();
+
+
+// ignore short searches
+
+if(text.length < 4){
+
+return;
+
+}
+
+
+// ignore repeated letters like hhhh, aaaa, ffff
+
+if(/(.)\1{3,}/.test(text)){
+
+return;
+
+}
+
+
+// must contain useful search words
+
+let usefulWords = [
+
+"house",
+"villa",
+"apartment",
+"land",
+"hotel",
+"office",
+"shop",
+"warehouse",
+"building",
+"annex",
+"bungalow",
+"colombo",
+"kandy",
+"galle",
+"matara",
+"jaffna",
+"rent",
+"buy",
+"luxury",
+"cheap",
+"bedroom",
+"bathroom"
+
+];
+
+
+let hasUsefulWord = usefulWords.some(function(word){
+
+return text.includes(word);
+
+});
+
+
+if(!hasUsefulWord){
+
+return;
+
+}
+
+
+let history =
+JSON.parse(
+localStorage.getItem("searchHistory")
+||
+"[]"
+);
+
+
+// remove duplicate
+
+history =
+history.filter(item => item !== text);
+
+
+// add newest first
+
+history.unshift(text);
+
+
+// keep only latest 10
+
+history =
+history.slice(0,10);
+
+
+localStorage.setItem(
+"searchHistory",
+JSON.stringify(history)
+);
+
+
+}
+const popularSearches = [
+
+"House Colombo",
+
+"Apartment Colombo",
+
+"Luxury Villa Galle",
+
+"Land Kandy",
+
+"House Gampaha",
+
+"Beach Villa Matara",
+
+"Commercial Property Colombo",
+
+"Hotel Galle"
+
+];
+function showSearchHistory(){
+
+let box =
+document.getElementById(
+"searchSuggestions"
+);
+
+
+let history =
+JSON.parse(
+localStorage.getItem("searchHistory")
+||
+"[]"
+);
+
+
+box.innerHTML="";
+
+
+// Recent searches
+
+if(history.length>0){
+
+
+box.innerHTML += `
+
+<div style="
+padding:10px;
+font-weight:bold;
+color:#666;
+">
+
+Recent Searches
+
+</div>
+
+`;
+
+
+history.forEach(function(item){
+
+
+box.innerHTML += `
+
+<div
+
+onclick="chooseSuggestion('${item}')"
+
+style="
+padding:12px;
+cursor:pointer;
+border-bottom:1px solid #eee;
+">
+
+🕘 ${item}
+
+</div>
+
+`;
+
+
+});
+
+
+}
+
+
+// Popular searches
+
+
+box.innerHTML += `
+
+<div style="
+padding:10px;
+font-weight:bold;
+color:#666;
+">
+
+Popular Searches
+
+</div>
+
+`;
+
+
+popularSearches.forEach(function(item){
+
+
+box.innerHTML += `
+
+<div
+
+onclick="chooseSuggestion('${item}')"
+
+style="
+padding:12px;
+cursor:pointer;
+border-bottom:1px solid #eee;
+">
+
+🔥 ${item}
+
+</div>
+
+`;
+
+
+});
+
+
+box.style.display="block";
+
+
+}
         function searchProperty(){
             let minPerches= 
             parseFloat(document.getElementById("minPerches").value) || 0;
@@ -2912,6 +3666,20 @@ document.getElementById("searchInput")
 .value
 .toLowerCase()
 .trim();
+
+if(searchText===""){
+
+document.querySelectorAll(".property-card")
+.forEach(function(card){
+
+card.style.display="";
+
+});
+
+return;
+
+}
+
 searchText = searchText.replace(
 /(under|below|less than)\s*\d+(?:\.\d+)?\s*(crore|crores|million|millions|lakh|lakhs)?/g,
 ""
@@ -2955,6 +3723,7 @@ document.getElementById("typeFilter").value.toLowerCase();
             document.querySelectorAll(
                 ".property-card"
             );
+            let searchRanking = [];
             cards.forEach(function(card){
                 let cardText=
                 card.innerText.toLowerCase();
@@ -3033,13 +3802,44 @@ return word !== "" &&
 
 });
 
-let matchedWords = words.filter(function(word){
-    return searchableText.includes(word);
-});
+let searchScore = 0;
 
-let matchesSearch =
-words.length === 0 ||
-matchedWords.length >= Math.ceil(words.length * 0.6);
+words.forEach(function(word){
+
+    if(searchableText.includes(word)){
+
+        searchScore += 1;
+
+    }
+
+});
+let importantWords = [
+"luxury",
+"premium",
+"villa",
+"house",
+"apartment",
+"hotel",
+"ocean",
+"pool",
+"parking",
+"garden",
+"colombo"
+];
+
+
+importantWords.forEach(function(word){
+
+if(
+searchableText.includes(word) &&
+words.includes(word)
+){
+
+searchScore += 3;
+
+}
+
+});
 
                 let matchesDistrict = 
                 district === "" ||
@@ -3133,28 +3933,59 @@ propertyPrice <= maxPrice
                      let matchesOtherType =
                      selectedOtherType === "" ||
                     cardType === selectedOtherType.toLowerCase();
-                if(
-                    matchesSearch &&
-                    matchesDistrict &&
-                    matchesCity &&
-                    matchesBedroom &&
-                    matchesBathroom &&
-                    matchesPrice &&
-                    matchesType &&
-                    matchesAmenity &&
-                    matchespropertyView &&
-                    matchesPerches &&
-                    matchesSqft &&
-                    matchesRentalType &&
-                    matchesRentOnly &&
-                    matchesOtherType
-                ){
-                    card.style.display="";
-                }
-                else{
-                    card.style.display="none";
-                }
+               if(
+searchScore > 0 &&
+matchesDistrict &&
+matchesCity &&
+matchesBedroom &&
+matchesBathroom &&
+matchesPrice &&
+matchesType &&
+matchesAmenity &&
+matchespropertyView &&
+matchesPerches &&
+matchesSqft &&
+matchesRentalType &&
+matchesRentOnly &&
+matchesOtherType
+){
+
+let score =
+calculateSearchScore(card,words);
+
+
+searchRanking.push({
+
+card:card,
+
+score:score
+
+});
+
+
+card.style.display="";
+card.dataset.searchScore = searchScore;
+
+}
+
+else{
+
+card.style.display="none";
+
+}
             });
+            searchRanking.sort(function(a,b){
+
+return b.score-a.score;
+
+});
+
+
+searchRanking.forEach(function(item){
+
+newContainer.appendChild(item.card);
+
+});
            let visibleCards =
 Array.from(document.querySelectorAll(".property-card"))
 .filter(card => card.style.display !== "none");
@@ -3185,6 +4016,13 @@ updateResultsInfo(totalProperties,start,end);
 renderPagination(totalPages);
 
 let noResult = document.getElementById("noResults");
+
+console.log(
+"Search:",
+searchText,
+"Results:",
+visibleCards.length
+);
 
 if(visibleCards.length === 0){
 
@@ -3224,8 +4062,11 @@ old.remove();
 }
 
 }
-            sortBoostedProperties();
-            sortProperties();
+sortBoostedProperties();
+
+sortProperties();
+
+sortSearchResults();
         }
         function updateResultsInfo(total,start,end){
 
@@ -3422,7 +4263,22 @@ if(match && !suggestions.includes(item)){
 
 box.innerHTML="";
 
-suggestions
+let combinedSuggestions = [
+
+...suggestions,
+
+...popularSearches
+
+];
+
+
+combinedSuggestions =
+[
+...new Set(combinedSuggestions)
+];
+
+
+combinedSuggestions
 .slice(0,10)
 .forEach(function(item){
 
@@ -3444,8 +4300,14 @@ border-bottom:1px solid #eee;
 
 🔍 ${
 item.replace(
-new RegExp(input,"ig"),
+
+new RegExp(
+input.replace(/[.*+?^${}()|[\]\\]/g,"\\$&"),
+"ig"
+),
+
 match=>"<b>"+match+"</b>"
+
 )
 }
 
@@ -3496,8 +4358,32 @@ document.getElementById("searchSuggestions").style.display="none";
 });
 document.getElementById("searchInput")
 .addEventListener("input", function () {
-    intelligentSearch();
-    updateSuggestions();
+
+
+if(this.value.trim()===""){
+
+showSearchHistory();
+
+return;
+
+}
+
+
+intelligentSearch();
+
+updateSuggestions();
+
+
+});
+document.getElementById("searchInput")
+.addEventListener("focus",function(){
+
+if(this.value.trim()===""){
+
+showSearchHistory();
+
+}
+
 });
 
         function toggleFavourite(id,heart){
@@ -4253,6 +5139,39 @@ return {
 package: property.boost.package,
 daysLeft: daysLeft
 };
+}
+function sortSearchResults(){
+
+let container =
+document.getElementById("newProperties");
+
+
+let cards =
+Array.from(
+container.querySelectorAll(".property-card")
+);
+
+
+cards.sort(function(a,b){
+
+let scoreA =
+Number(a.dataset.searchScore || 0);
+
+let scoreB =
+Number(b.dataset.searchScore || 0);
+
+
+return scoreB-scoreA;
+
+});
+
+
+cards.forEach(function(card){
+
+container.appendChild(card);
+
+});
+
 }
 function sortProperties(){
 
