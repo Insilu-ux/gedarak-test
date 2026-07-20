@@ -1506,7 +1506,7 @@ document.getElementById("popupCall").onclick=function(){
 };
 
 document.getElementById("popupPhone").innerHTML =
-phone.replace("94","0");
+phone.replace(/^94/, "0");
 
 document.getElementById("popupProperty").innerHTML=property;
 document.getElementById("popupPrice").innerHTML =
@@ -1856,7 +1856,7 @@ color:#0a8d48;"
 id="popupPrice">
 </p>
 
-<p>
+<p style="font-size:20px;font-weight:600;">
 
 👤
 
@@ -1864,14 +1864,13 @@ id="popupPrice">
 
 </p>
 
-<p>
+<p style="font-size:20px;font-weight:600;">
 
 📞
 
 <span id="popupPhone"></span>
 
 </p>
-
 <br>
 <h4>Your Message</h4>
 
