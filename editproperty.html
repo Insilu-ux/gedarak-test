@@ -1570,39 +1570,74 @@ property.propertyView.push(box.value);
 
 });
 let imageFiles = selectedImages;
-if(imageFiles.length>0){
 
-property.images=[];
+if(selectedImages.length === 0){
 
-let loaded=0;
+    alert("Please keep at least one property image.");
 
-for(let i=0;i<imageFiles.length;i++){
-
-let reader=new FileReader();
-
-reader.onload=function(e){
-
-property.images.push(e.target.result);
-
-loaded++;
-
-if(loaded===imageFiles.length){
-
-saveEditedProperty();
+    return;
 
 }
 
-};
 
-reader.readAsDataURL(imageFiles[i]);
+property.images = [];
+
+
+let uploadedFiles = selectedImages.filter(function(item){
+
+    return item instanceof File;
+
+});
+
+
+let existingImages = selectedImages.filter(function(item){
+
+    return typeof item === "string";
+
+});
+
+
+property.images = existingImages;
+
+
+if(uploadedFiles.length === 0){
+
+    saveEditedProperty();
+
+    return;
 
 }
 
-}
-else{
 
-saveEditedProperty();
-}
+let loaded = 0;
+
+
+uploadedFiles.forEach(function(file){
+
+    let reader = new FileReader();
+
+
+    reader.onload=function(e){
+
+        property.images.push(e.target.result);
+
+        loaded++;
+
+
+        if(loaded === uploadedFiles.length){
+
+            saveEditedProperty();
+
+        }
+
+    };
+
+
+    reader.readAsDataURL(file);
+
+
+});
+
 }
 function saveEditedProperty(){
 
