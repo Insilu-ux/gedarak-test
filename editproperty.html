@@ -1416,54 +1416,6 @@ font-weight:bold;
 
 }
 }
-let preview =
-document.getElementById("imagePreview");
-
-preview.innerHTML="";
-
-property.images.forEach(function(img){
-
-preview.innerHTML+=`
-
-<div
-style="
-position:relative;
-display:inline-block;
-">
-
-<img
-src="${e.target.result}"
-style="
-width:150px;
-height:110px;
-object-fit:cover;
-border-radius:10px;
-box-shadow:0 2px 8px rgba(0,0,0,.2);
-">
-
-<button
-onclick="removeSelectedImage(${i})"
-style="
-position:absolute;
-top:6px;
-right:6px;
-width:26px;
-height:26px;
-border:none;
-border-radius:50%;
-background:red;
-color:white;
-cursor:pointer;
-font-weight:bold;
-">
-✕
-</button>
-
-</div>
-
-`;
-
-});
        function updateCities(){
         let district= 
         document.getElementById(
@@ -1499,13 +1451,7 @@ if(document.getElementById("propertyType").value === ""){
     alert("Please select a property type.");
     return;
 }
-if(!negotiable && isNaN(price)){
 
-    alert("Enter a price or choose Negotiable.");
-
-    return;
-
-}
 if(document.getElementById("district").value === ""){
     alert("Please select a district.");
     return;
@@ -1535,6 +1481,13 @@ document.getElementById("propertyPrice")
 .replace(/,/g,"")
 );
 
+if(!negotiable && isNaN(price)){
+
+    alert("Enter a price or choose Negotiable.");
+
+    return;
+
+}
 property.negotiable = negotiable;
 
 property.price = negotiable ? 0 : price;
