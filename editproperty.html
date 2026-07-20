@@ -1323,6 +1323,7 @@ document.getElementById("squareFeet").value =
 property.squareFeet
 ? Number(property.squareFeet).toLocaleString("en-US")
 : "";
+
 document.getElementById("description").value =
 property.description;
 
@@ -1351,6 +1352,69 @@ box.checked =
 priceChanged();
 
 formatSqft(document.getElementById("squareFeet"));
+// Load existing property images into edit preview
+
+if(property.images && property.images.length > 0){
+
+selectedImages = property.images;
+
+let preview =
+document.getElementById("imagePreview");
+
+preview.innerHTML =
+"<p style='width:100%;font-weight:bold;'>"+
+selectedImages.length+
+" existing image(s)</p>";
+
+
+selectedImages.forEach(function(img,index){
+
+preview.innerHTML += `
+
+<div
+style="
+position:relative;
+display:inline-block;
+margin:6px;
+">
+
+<img
+src="${img}"
+style="
+width:150px;
+height:110px;
+object-fit:cover;
+border-radius:10px;
+box-shadow:0 2px 8px rgba(0,0,0,.2);
+">
+
+
+<button
+type="button"
+onclick="removeExistingImage(${index})"
+style="
+position:absolute;
+top:6px;
+right:6px;
+width:26px;
+height:26px;
+border:none;
+border-radius:50%;
+background:red;
+color:white;
+cursor:pointer;
+font-weight:bold;
+">
+✕
+</button>
+
+</div>
+
+`;
+
+});
+
+}
 }
 let preview =
 document.getElementById("imagePreview");
@@ -1457,21 +1521,7 @@ if(document.getElementById("address").value.trim() === ""){
     return;
 }
 
-if(
-    document.getElementById("propertyType").value !== "Land"
-){
 
-    if(document.getElementById("bedrooms").value === ""){
-        alert("Please enter the number of bedrooms.");
-        return;
-    }
-
-    if(document.getElementById("bathrooms").value === ""){
-        alert("Please enter the number of bathrooms.");
-        return;
-    }
-
-}
 property.name =
 document.getElementById("propertyName").value.trim();
 
@@ -1697,6 +1747,70 @@ font-weight:bold;
 reader.readAsDataURL(files[i]);
 
 }
+
+}
+function removeExistingImage(index){
+
+selectedImages.splice(index,1);
+
+refreshExistingPreview();
+
+}
+function refreshExistingPreview(){
+
+let preview =
+document.getElementById("imagePreview");
+
+preview.innerHTML =
+"<p style='width:100%;font-weight:bold;'>"+
+selectedImages.length+
+" image(s)</p>";
+
+
+selectedImages.forEach(function(img,index){
+
+preview.innerHTML += `
+
+<div
+style="
+position:relative;
+display:inline-block;
+margin:6px;
+">
+
+<img
+src="${img}"
+style="
+width:150px;
+height:110px;
+object-fit:cover;
+border-radius:10px;
+box-shadow:0 2px 8px rgba(0,0,0,.2);
+">
+
+<button
+type="button"
+onclick="removeExistingImage(${index})"
+style="
+position:absolute;
+top:6px;
+right:6px;
+width:26px;
+height:26px;
+border:none;
+border-radius:50%;
+background:red;
+color:white;
+cursor:pointer;
+">
+✕
+</button>
+
+</div>
+
+`;
+
+});
 
 }
 function removeSelectedImage(index){
