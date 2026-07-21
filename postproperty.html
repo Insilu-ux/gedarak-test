@@ -1368,6 +1368,13 @@ document.getElementById("squareFeet").value.replace(/,/g,"")
                 "description"
             ).value;
             let imageFiles = selectedImages;
+            if(imageFiles.length > 20){
+
+alert("Maximum 20 images are allowed.");
+
+return;
+
+}
              if(district === ""){
         alert("Please select a district");
         return;
@@ -1470,10 +1477,35 @@ property.id
 let input =
 document.getElementById("propertyImages");
 
-selectedImages =
+let files =
 Array.from(input.files);
 
-refreshPreview();
+
+if(files.length > 20){
+
+alert("Maximum 20 images are allowed.");
+
+files = files.slice(0,20);
+
+}
+
+
+// keep selected images
+selectedImages = files;
+
+
+// update file input also
+let dataTransfer = new DataTransfer();
+
+selectedImages.forEach(function(file){
+
+dataTransfer.items.add(file);
+
+});
+
+input.files = dataTransfer.files;
+
+
 let preview =
 document.getElementById("imagePreview");
 
