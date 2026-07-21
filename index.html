@@ -1275,12 +1275,13 @@ gedarak.lk@gmail.com
         <p>&copy; 2026 Gedarak.lk</p>
       </footer>
     <script>
+        let processedSearchText = "";
+        let selectedOtherType ="";
+let selectedRentalType = "";
         let currentPage = 1;
 const propertiesPerPage = 20;
         let viewerProperty = null;
         let viewerIndex = 0;   
-        let selectedOtherType ="";
-
 function formatPriceInput(input){
 
 let value = input.value.replace(/,/g,"");
@@ -1408,7 +1409,6 @@ else{
 
 }
        let rentalMode = "";
-       let selectedRentalType = "";
        
      function filterRentalType(type){
 
@@ -1467,7 +1467,6 @@ viewerImage.addEventListener("touchend", function(e){
     touchEndX = e.changedTouches[0].screenX;
     handleSwipe();
 });
-
 });
 
         function openMenu(){
@@ -3075,7 +3074,7 @@ saveSearchHistory(historyText);
 }
 
 searchProperty();
-
+processedSearchText = text;
 }
 function calculateSearchScore(card, words){
 
@@ -3616,7 +3615,7 @@ box.innerHTML += `
 
 <div
 
-onclick="chooseSuggestion('${item}')"
+onclick='chooseSuggestion(${JSON.stringify(item)})'
 
 style="
 padding:12px;
@@ -3661,51 +3660,8 @@ let maxPrice =
 parseInt(
 document.getElementById("maxPrice").value.replace(/,/g,"")
 ) || 999999999999;
-            let searchText =
-document.getElementById("searchInput")
-.value
-.toLowerCase()
-.trim();
+            let searchText = processedSearchText;
 
-if(searchText===""){
-
-document.querySelectorAll(".property-card")
-.forEach(function(card){
-
-card.style.display="";
-
-card.dataset.searchScore = 0;
-
-});
-
-let totalProperties =
-document.querySelectorAll(".property-card").length;
-
-let totalPages =
-Math.ceil(totalProperties / propertiesPerPage);
-
-let start =
-(currentPage-1) * propertiesPerPage;
-
-let end =
-start + propertiesPerPage;
-
-let cards =
-Array.from(document.querySelectorAll(".property-card"));
-
-cards.forEach(card=>card.style.display="none");
-
-cards.slice(start,end).forEach(card=>{
-card.style.display="";
-});
-
-updateResultsInfo(totalProperties,start,end);
-
-renderPagination(totalPages);
-
-return;
-
-}
 
 searchText = searchText.replace(
 /(under|below|less than)\s*\d+(?:\.\d+)?\s*(crore|crores|million|millions|lakh|lakhs)?/g,
@@ -3750,6 +3706,57 @@ document.getElementById("typeFilter").value.toLowerCase();
             document.querySelectorAll(
                 ".property-card"
             );
+           if(
+searchText==="" &&
+propertyType==="" &&
+district==="" &&
+city==="" &&
+selectedAmenity==="" &&
+selectedpropertyView==="" &&
+!rentOnly &&
+selectedBedroom==="" &&
+selectedBathroom==="" &&
+selectedRentalType==="" &&
+selectedOtherType===""
+){
+
+document.querySelectorAll(".property-card")
+.forEach(function(card){
+
+card.style.display="";
+
+card.dataset.searchScore = 0;
+
+});
+
+let totalProperties =
+document.querySelectorAll(".property-card").length;
+
+let totalPages =
+Math.ceil(totalProperties / propertiesPerPage);
+
+let start =
+(currentPage-1) * propertiesPerPage;
+
+let end =
+start + propertiesPerPage;
+
+let cards =
+Array.from(document.querySelectorAll(".property-card"));
+
+cards.forEach(card=>card.style.display="none");
+
+cards.slice(start,end).forEach(card=>{
+card.style.display="";
+});
+
+updateResultsInfo(totalProperties,start,end);
+
+renderPagination(totalPages);
+
+return;
+
+}
             let searchRanking = [];
             cards.forEach(function(card){
                 let cardText=
@@ -3961,7 +3968,7 @@ propertyPrice <= maxPrice
                      selectedOtherType === "" ||
                     cardType === selectedOtherType.toLowerCase();
                if(
-searchScore > 0 &&
+(searchText === "" || searchScore > 0) &&
 matchesDistrict &&
 matchesCity &&
 matchesBedroom &&
