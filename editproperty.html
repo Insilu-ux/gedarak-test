@@ -1579,7 +1579,13 @@ if(selectedImages.length === 0){
 
 }
 
+if(selectedImages.length > 20){
 
+alert("Maximum 20 images are allowed.");
+
+return;
+
+}
 property.images = [];
 
 
@@ -1665,13 +1671,53 @@ alert("Property Updated!");
 window.location.href="profile.html";
 
 }
- function previewImages(){
+function checkImageLimit(){
+
+let maxImages = 20;
+
+if(selectedImages.length > maxImages){
+
+alert(
+"Maximum 20 images are allowed. Please remove some images."
+);
+
+selectedImages =
+selectedImages.slice(0,maxImages);
+
+}
+
+}
+function previewImages(){
 
 let input =
 document.getElementById("propertyImages");
 
-selectedImages =
+let newImages =
 Array.from(input.files);
+
+
+if(selectedImages.length + newImages.length > 20){
+
+let allowed =
+20 - selectedImages.length;
+
+
+alert(
+"You can upload only " +
+allowed +
+" more image(s). Maximum is 20."
+);
+
+
+newImages =
+newImages.slice(0,allowed);
+
+}
+
+
+selectedImages =
+selectedImages.concat(newImages);
+
 
 refreshPreview();
 let preview =
