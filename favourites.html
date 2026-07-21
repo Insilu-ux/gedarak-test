@@ -198,17 +198,6 @@ font-size:16px;
 
 }
 
-.buttonRow{
-
-flex-direction:column;
-
-}
-
-.buttonRow button{
-
-width:100%;
-
-}
 
 }
         .pageHeader{
@@ -476,11 +465,20 @@ Tap the heart icon on any property to save it here.
 <br>
 
 <button
-
-onclick="window.location.href='index.html'">
-
-Browse Properties
-
+onclick="window.location.href='index.html'"
+style="
+padding:14px 28px;
+border:none;
+border-radius:12px;
+background:#2563eb;
+color:white;
+font-size:16px;
+font-weight:700;
+cursor:pointer;
+box-shadow:0 4px 10px rgba(37,99,235,.25);
+transition:.25s;
+">
+🏠 Browse Properties
 </button>
 
 </div>`;
@@ -520,30 +518,67 @@ property.negotiable
         ${property.city},
         ${property.district}
     </p>
-    <p>
-        🛏 ${property.bedrooms}
-        Bedrooms
-    </p>
-    <p>
-        🛁 ${property.bathrooms}
-        Bathrooms
-    </p>
+   ${
+property.propertyType === "Land"
+
+?
+
+`
+<p>
+🌳 ${property.perches || 0} Perches
+</p>
+`
+
+:
+
+`
+<p>
+🛏 ${property.bedrooms || 0} Bedrooms
+</p>
+
+<p>
+🛁 ${property.bathrooms || 0} Bathrooms
+</p>
+
+<p>
+📐 ${Number(property.squareFeet || 0).toLocaleString()} Sqft
+</p>
+`
+}
    <div class="buttonRow">
 
 <button
-
-onclick="viewProperty(${property.id})">
-
-View Property
-
+onclick="viewProperty(${property.id})"
+style="
+padding:13px;
+border:none;
+border-radius:12px;
+background:#16a34a;
+color:white;
+font-size:16px;
+font-weight:700;
+cursor:pointer;
+box-shadow:0 4px 10px rgba(22,163,74,.25);
+transition:.25s;
+">
+👁 View Property
 </button>
 
 <button
-
-onclick="removeFavourite(${property.id})">
-
+onclick="removeFavourite(${property.id})"
+style="
+padding:13px;
+border:none;
+border-radius:12px;
+background:#ef4444;
+color:white;
+font-size:16px;
+font-weight:700;
+cursor:pointer;
+box-shadow:0 4px 10px rgba(239,68,68,.25);
+transition:.25s;
+">
 🤍 Remove
-
 </button>
 
 </div>
