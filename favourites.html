@@ -432,13 +432,26 @@ Login
                 JSON.parse(
                     localStorage.getItem(key)
                 );
-                if(
-                    property &&
-                    property.id &&
-                    favouriteIds.includes(String(property.id))
-                ){
-                    favourites.push(property);
-                }
+               if(
+    property &&
+    property.id &&
+    favouriteIds.includes(String(property.id))
+){
+
+    let alreadyExists = favourites.some(function(item){
+
+        return String(item.id) === String(property.id);
+
+    });
+
+
+    if(!alreadyExists){
+
+        favourites.push(property);
+
+    }
+
+}
             }
             catch(e){}
         }
