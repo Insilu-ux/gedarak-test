@@ -3674,7 +3674,34 @@ document.querySelectorAll(".property-card")
 
 card.style.display="";
 
+card.dataset.searchScore = 0;
+
 });
+
+let totalProperties =
+document.querySelectorAll(".property-card").length;
+
+let totalPages =
+Math.ceil(totalProperties / propertiesPerPage);
+
+let start =
+(currentPage-1) * propertiesPerPage;
+
+let end =
+start + propertiesPerPage;
+
+let cards =
+Array.from(document.querySelectorAll(".property-card"));
+
+cards.forEach(card=>card.style.display="none");
+
+cards.slice(start,end).forEach(card=>{
+card.style.display="";
+});
+
+updateResultsInfo(totalProperties,start,end);
+
+renderPagination(totalPages);
 
 return;
 
