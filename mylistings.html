@@ -335,7 +335,7 @@ margin:0;
 ${
 property.negotiable
 ?
-"💬 Price Negotiable"
+"💬 Negotiable"
 :
 "💸 Rs. "+Number(property.price).toLocaleString()
 }
@@ -353,6 +353,33 @@ property.negotiable
 📅 ${timeAgo(property.createdAt)}
 </p>
 
+${
+property.propertyType === "Land"
+
+?
+
+`
+<p>
+🌳 ${property.perches || 0} Perches
+</p>
+`
+
+:
+
+`
+<p>
+🛏 ${property.bedrooms || 0} Beds
+|
+🛁 ${property.bathrooms || 0} Baths
+</p>
+
+<p>
+📐 ${Number(property.squareFeet || 0).toLocaleString()} Sqft
+|
+🌳 ${property.perches || 0} Perches
+</p>
+`
+                    }
 <p>
 
 ${property.status=="For Sale"
