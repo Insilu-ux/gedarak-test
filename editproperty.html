@@ -1362,7 +1362,9 @@ let preview =
 document.getElementById("imagePreview");
 
 preview.innerHTML =
-selectedImages.length
+"<p style='width:100%;font-weight:bold;'>"+
+selectedImages.length+
+" existing image(s)</p>";
 
 
 selectedImages.forEach(function(img,index){
@@ -1577,13 +1579,7 @@ if(selectedImages.length === 0){
 
 }
 
-if(selectedImages.length > 20){
 
-alert("Maximum 20 images are allowed.");
-
-return;
-
-}
 property.images = [];
 
 
@@ -1669,53 +1665,13 @@ alert("Property Updated!");
 window.location.href="profile.html";
 
 }
-function checkImageLimit(){
-
-let maxImages = 20;
-
-if(selectedImages.length > maxImages){
-
-alert(
-"Maximum 20 images are allowed. Please remove some images."
-);
-
-selectedImages =
-selectedImages.slice(0,maxImages);
-
-}
-
-}
-function previewImages(){
+ function previewImages(){
 
 let input =
 document.getElementById("propertyImages");
 
-let newImages =
-Array.from(input.files);
-
-
-if(selectedImages.length + newImages.length > 20){
-
-let allowed =
-20 - selectedImages.length;
-
-
-alert(
-"You can upload only " +
-allowed +
-" more image(s). Maximum is 20."
-);
-
-
-newImages =
-newImages.slice(0,allowed);
-
-}
-
-
 selectedImages =
-selectedImages.concat(newImages);
-
+Array.from(input.files);
 
 refreshPreview();
 let preview =
