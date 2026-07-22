@@ -6,40 +6,42 @@
     <meta charset="UTF-8">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <style>
-       .search-row{
+  <style>
+.search-row{
     display:flex;
     justify-content:center;
     align-items:center;
     gap:10px;
     margin:18px auto;
     width:95%;
-    max-width:760px;
+    max-width:900px;
+}
+
+.search-input-wrapper{
+    position:relative;
+    flex:1;
 }
 
 #searchInput{
-    flex:1;
+    width:100%;
+    box-sizing:border-box;
     padding:14px 18px;
     font-size:16px;
     border-radius:12px;
 }
 
 .search-btn{
-    width:145px;
+    flex:0 0 145px;
     padding:14px;
     border-radius:12px;
     font-size:16px;
     font-weight:bold;
 }
-.search-input-wrapper{
-    position:relative;
-    flex:1;
-}
 
 #searchSuggestions{
     display:none;
     position:absolute;
-    top:100%;
+    top:calc(100% + 5px);
     left:0;
     width:100%;
     max-height:250px;
@@ -49,7 +51,22 @@
     border-radius:10px;
     text-align:left;
     box-shadow:0 4px 12px rgba(0,0,0,.15);
-    z-index:9999;
+    z-index:99999;
+}
+
+
+@media(max-width:600px){
+
+.search-row{
+    gap:6px;
+}
+
+.search-btn{
+    flex:0 0 100px;
+    padding:14px 8px;
+    font-size:14px;
+}
+
 }
 .property-card{
 
