@@ -394,6 +394,118 @@ color:#777;
 line-height:1.4;
 
 }
+.signup-modal{
+
+position:fixed;
+
+top:0;
+left:0;
+
+width:100%;
+height:100%;
+
+background:rgba(0,0,0,.45);
+
+display:none;
+
+align-items:center;
+justify-content:center;
+
+z-index:999999;
+
+}
+
+
+.signup-modal-box{
+
+background:white;
+
+width:90%;
+
+max-width:420px;
+
+padding:30px;
+
+border-radius:20px;
+
+text-align:center;
+
+box-shadow:0 15px 40px rgba(0,0,0,.3);
+
+animation:signupPopup .25s ease;
+
+}
+
+
+.signup-modal-box h2{
+
+margin:0 0 15px;
+
+font-size:26px;
+
+}
+
+
+.signup-modal-box p{
+
+font-size:17px;
+
+line-height:1.6;
+
+color:#444;
+
+}
+
+
+.signup-modal-btn{
+
+margin-top:20px;
+
+padding:12px 35px;
+
+border:none;
+
+border-radius:12px;
+
+background:#0d8ae8;
+
+color:white;
+
+font-size:16px;
+
+font-weight:bold;
+
+cursor:pointer;
+
+}
+
+
+.signup-modal-btn:hover{
+
+transform:translateY(-2px);
+
+}
+
+
+@keyframes signupPopup{
+
+from{
+
+transform:scale(.8);
+
+opacity:0;
+
+}
+
+to{
+
+transform:scale(1);
+
+opacity:1;
+
+}
+
+}
         </style>
     </head>
     <body>
@@ -402,6 +514,27 @@ line-height:1.4;
             💒 Home
         </button>
     </a>
+    <div class="signup-modal" id="signupModal">
+
+<div class="signup-modal-box">
+
+<h2 id="signupModalTitle">
+</h2>
+
+<p id="signupModalMessage">
+</p>
+
+<button 
+class="signup-modal-btn"
+onclick="closeSignupModal()">
+
+OK
+
+</button>
+
+</div>
+
+</div>
        <header class="pageHeader">
 
 <a href="index.html" class="logoLink">
@@ -436,7 +569,7 @@ class="logo">
        style="
        text-align: center;">Create Your Account</h1>
 
-<p>
+<p style="text-align: center;">
 
 Join Gedarak.lk to save favourites,
 post properties and contact sellers.
@@ -506,399 +639,225 @@ gedarak.lk@gmail.com
         <p>&copy; 2026 Gedarak.lk</p>
       </footer>
     </div>
-    <script>
-        function signup(){
-                    let btn=
+   <script type="module">
+    import { auth, db } from "./firebase-config.js";
 
-document.getElementById("signupButton");
+import {
+    createUserWithEmailAndPassword
+} from "https://www.gstatic.com/firebasejs/12.16.0/firebase-auth.js";
 
-btn.disabled=true;
+import {
+    doc,
+    getDoc,
+    setDoc,
+    serverTimestamp
+} from "https://www.gstatic.com/firebasejs/12.16.0/firebase-firestore.js";
 
-btn.innerHTML="Creating...";
-           let username=
+window.showSignupMessage = function(title,message){
 
-document.getElementById(
+document.getElementById("signupModalTitle").innerHTML = title;
 
-"newUsername"
+document.getElementById("signupModalMessage").innerHTML = message;
 
-).value
+document.getElementById("signupModal").style.display="flex";
 
-.trim()
+};
 
-.toLowerCase();
-             let password=
-            document.getElementById(
-                "newPassword"
-            ).value;
-            let confirmPassword=
-document.getElementById(
-"confirmPassword"
-).value;
-let email=
 
-document.getElementById(
+window.closeSignupModal=function(){
 
-"email"
+document.getElementById("signupModal").style.display="none";
 
-).value.trim();
-           if(
+};
 
-username.trim()=="" ||
+window.signup = async function () {
+    console.log("STEP 1");
+    let btn = document.getElementById("signupButton");
 
-password.trim()=="" ||
+    btn.disabled = true;
+    btn.innerHTML = "Creating...";
 
-confirmPassword.trim()==""
+    let username = document.getElementById("newUsername").value.trim().toLowerCase();
 
-){
+    let email = document.getElementById("email").value.trim().toLowerCase();
 
-alert(
+    let password = document.getElementById("newPassword").value;
 
-"Please fill all fields."
+    let confirmPassword = document.getElementById("confirmPassword").value;
 
-);
-btn.disabled=false;
+    if (!username || !email || !password || !confirmPassword) {
 
-btn.innerHTML="Create Account";
-
-return;
-
-}
-
-if(password.length<4){
-
-alert("Password must contain at least 4 characters.");
-
-btn.disabled=false;
-
-btn.innerHTML="Create Account";
-
-return;
-
-}
-if(password!==confirmPassword){
-
-alert("Passwords do not match.");
-
-btn.disabled=false;
-
-btn.innerHTML="Create Account";
-
-return;
-
-}
-if(
-
-!email.includes("@")||
-
-!email.includes(".")
-
-){
-
-alert("Invalid email.");
-btn.disabled=false;
-
-btn.innerHTML="Create Account";
-
-return;
-
-}
-if(
-
-username.length<3
-
-){
-
-alert(
-
-"Username must contain at least 3 characters."
-
-);
-btn.disabled=false;
-
-btn.innerHTML="Create Account";
-
-return;
-
-}
-let usernamePattern=/^[a-zA-Z0-9_]+$/;
-
-if(
-
-!usernamePattern.test(username)
-
-){
-
-alert(
-
-"Username can only contain letters, numbers and _"
-
-);
-btn.disabled=false;
-
-btn.innerHTML="Create Account";
-
-return;
-
-}
-           let user={
-
-id:"USER"+Date.now(),
-
-username:username,
-
-password:password,
-
-email:email,
-
-role:"User",
-
-createdAt:new Date().toISOString(),
-
-savedProperties:[],
-
-postedProperties:[],
-
-status:"Active"
-
-}
-if(
-
-localStorage.getItem(
-
-"user_"+username
-
-)
-
-){
-
-alert(
-
-"Username already exists."
-
-);
-btn.disabled=false;
-
-btn.innerHTML="Create Account";
-
-return;
-
-}
-for(
-
-let i=0;
-
-i<localStorage.length;
-
-i++
-
-){
-
-let key=
-
-localStorage.key(i);
-
-if(key.startsWith("user_")){
-
-let u=
-
-JSON.parse(
-
-localStorage.getItem(key)
-
+        showSignupMessage(
+"⚠️ Complete Your Account",
+"Please fill in all fields before creating your Gedarak.lk account."
 );
 
-if(
+        btn.disabled = false;
+        btn.innerHTML = "Create Account";
+        return;
+    }
 
-u.email===email
+    if (password !== confirmPassword) {
 
-){
-
-alert(
-
-"Email already registered."
-
-);
-btn.disabled=false;
-
-btn.innerHTML="Create Account";
-
-return;
-
-}
-
-}
-
-}
-
-
-            localStorage.setItem(
-"user_" + username,
-JSON.stringify(user)
-);
-           localStorage.setItem(
-
-"loggedIn",
-
-"true"
-
+        showSignupMessage(
+"🔒 Passwords Don't Match",
+"Your password and confirmation password are different. Please check and try again."
 );
 
-localStorage.setItem(
+        btn.disabled = false;
+        btn.innerHTML = "Create Account";
+        return;
+    }
 
-"currentUser",
+    if (password.length < 6) {
 
-username
-
+       showSignupMessage(
+"🔐 Password Too Short",
+"Your password must contain at least 6 characters."
 );
 
-alert(
+        btn.disabled = false;
+        btn.innerHTML = "Create Account";
+        return;
+    }
 
-"Welcome to Gedarak.lk!"
+    const usernameRef = doc(db, "usernames", username);
 
+    const usernameDoc = await getDoc(usernameRef);
+console.log("STEP 2");
+    if (usernameDoc.exists()) {
+
+        showSignupMessage(
+"👤 Username Taken",
+"This username is already registered. Please choose another username."
 );
 
-window.location.href=
+        btn.disabled = false;
+        btn.innerHTML = "Create Account";
+        return;
+    }
 
-"index.html";
-        }
-        function togglePassword(){
+    try {
 
+        const result = await createUserWithEmailAndPassword(auth, email, password);
+console.log("STEP 3");
+        const uid = result.user.uid;
 
-let newPassword=
+        await setDoc(doc(db, "users", uid), {
 
-document.getElementById(
+            uid: uid,
 
-"newPassword"
+            username: username,
 
+            email: email,
+
+            role: "User",
+
+            status: "Active",
+
+            favourites: [],
+
+            postedProperties: [],
+
+            createdAt: serverTimestamp()
+
+        });
+
+        await setDoc(doc(db, "usernames", username), {
+
+            uid: uid
+
+        });
+
+      showSignupMessage(
+"🎉 Welcome to Gedarak.lk",
+"Your account has been created successfully."
 );
 
-if(newPassword){
+document.querySelector(".signup-modal-btn").onclick=function(){
 
-newPassword.type=
+window.location.href="index.html";
 
-newPassword.type=="password"
+};
 
-?
+    }
 
-"text"
+   catch (error) {
 
-:
+    if (error.code === "auth/email-already-in-use") {
 
-"password";
+        showSignupMessage(
+        "📧 Email Already Registered",
+        "This email is already linked to an account. Please log in instead."
+        );
 
-}
-let confirmPassword =
+    }
 
-document.getElementById(
+    else if (error.code === "auth/weak-password") {
 
-"confirmPassword"
+        showSignupMessage(
+        "🔐 Weak Password",
+        "Your password is too weak. Please use at least 6 characters."
+        );
 
-);
+    }
 
-if(confirmPassword){
+    else if (error.code === "auth/invalid-email") {
 
-confirmPassword.type=
+        showSignupMessage(
+        "📧 Invalid Email",
+        "Please enter a valid email address. Example: name@gmail.com"
+        );
 
-confirmPassword.type=="password"
+    }
 
-?
+    else {
 
-"text"
+        showSignupMessage(
+        "⚠️ Something Went Wrong",
+        "Please try again later."
+        );
 
-:
+        console.log(error);
+    }
 
-"password";
 
-}
-}
-document.getElementById(
-
-"newPassword"
-
-).addEventListener(
-
-"input",
-
-function(){
-
-let p=this.value;
-
-let strength="Weak";
-
-if(
-
-p.length>=8
-
-){
-
-strength="Medium";
+    btn.disabled = false;
+    btn.innerHTML = "Create Account";
 
 }
 
-if(
+    btn.disabled = false;
 
-p.length>=10 &&
+    btn.innerHTML = "Create Account";
 
-/[A-Z]/.test(p)&&
+};
 
-/[0-9]/.test(p)
+window.togglePassword = function () {
 
-){
+    let ids = ["newPassword", "confirmPassword"];
 
-strength="Strong";
+    ids.forEach(id => {
 
-}
+        let input = document.getElementById(id);
 
-});
-let strength=document.getElementById("passwordStrength");
+        input.type = input.type === "password" ? "text" : "password";
 
-document.getElementById("newPassword")
-.addEventListener("input",function(){
+    });
 
-let p=this.value;
+};
 
-strength.className="";
-
-if(p.length<4){
-
-strength.innerHTML="Weak Password";
-
-strength.classList.add("weak");
-
-}
-
-else if(p.length<8){
-
-strength.innerHTML="Good Password";
-
-strength.classList.add("medium");
-
-}
-
-else{
-
-strength.innerHTML="Strong Password";
-
-strength.classList.add("strong");
-
-}
-
-});
-
-document.addEventListener(
-
-"keydown",
-
-function(event){
-
-if(event.key==="Enter"){
-
-signup();
-
-}
-
-});
 document.getElementById("newUsername").focus();
-    </script>
+
+document.addEventListener("keydown", function (e) {
+
+    if (e.key === "Enter") {
+
+        signup();
+
+    }
+
+});
+   </script>
     </body>
 </html>
