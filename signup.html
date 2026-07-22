@@ -697,6 +697,20 @@ window.signup = async function () {
         return;
     }
 
+    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+if (!emailPattern.test(email)) {
+
+    showSignupMessage(
+    "📧 Invalid Email",
+    "Please enter a valid email address."
+    );
+
+    btn.disabled = false;
+    btn.innerHTML = "Create Account";
+    return;
+}
+
     if (password !== confirmPassword) {
 
         showSignupMessage(
@@ -789,15 +803,6 @@ window.location.href="index.html";
         showSignupMessage(
         "📧 Email Already Registered",
         "This email is already linked to an account. Please log in instead."
-        );
-
-    }
-
-    else if (error.code === "auth/weak-password") {
-
-        showSignupMessage(
-        "🔐 Weak Password",
-        "Your password is too weak. Please use at least 6 characters."
         );
 
     }
