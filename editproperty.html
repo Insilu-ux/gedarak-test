@@ -202,6 +202,7 @@ textarea:focus{
         💒 Home
         </button>
     </a>
+    
        <header class="pageHeader">
 
 <a href="index.html" class="logoLink">
@@ -615,20 +616,16 @@ Number(numbers).toLocaleString("en-US");
 }
 
 
-function formatSqft(input){
+window.formatSqft = function(input){
 
-let numbers =
-input.value.replace(/\D/g,"");
+    let value = input.value.replace(/\D/g,"");
 
-if(numbers===""){
+    if(value===""){
+        input.value="";
+        return;
+    }
 
-input.value="";
-return;
-
-}
-
-input.value =
-Number(numbers).toLocaleString("en-US");
+    input.value = Number(value).toLocaleString();
 
 }
        function phoneInput(input){
@@ -1440,34 +1437,52 @@ font-weight:bold;
         });
         }
        }
-        
         function saveChanges(){
 if(document.getElementById("propertyName").value.trim() === ""){
-    alert("Please enter the property name.");
+    showAlert(
+    "Missing Property Name",
+    "Please enter the property name."
+);
     return;
 }
 
 if(document.getElementById("propertyType").value === ""){
-    alert("Please select a property type.");
+    showAlert(
+    "Property Type Required",
+    "Please select a Property type."
+);
     return;
 }
 
 if(document.getElementById("district").value === ""){
-    alert("Please select a district.");
+    showAlert(
+    "District Required",
+    "Please select a district."
+);
     return;
 }
 
 if(document.getElementById("city").value === ""){
-    alert("Please select a city.");
+   showAlert(
+    "City Required",
+    "Please select a city."
+);
     return;
 }
-
-if(document.getElementById("address").value.trim() === ""){
-    alert("Please enter the address.");
+if(document.getElementById("address").value === ""){
+    showAlert(
+    "Property Address Required",
+    "Please enter Property address."
+);
     return;
 }
-
-
+if(document.getElementById("description").value === ""){
+    showAlert(
+    "Property Description Required",
+    "Please enter a Property description."
+);
+    return;
+}
 property.name =
 document.getElementById("propertyName").value.trim();
 
@@ -1483,7 +1498,10 @@ document.getElementById("propertyPrice")
 
 if(!negotiable && isNaN(price)){
 
-    alert("Enter a price or choose Negotiable.");
+   showAlert(
+    "Price Required",
+    "Enter a property price or select Price Negotiable."
+);
 
     return;
 
@@ -1525,15 +1543,30 @@ document.getElementById("description").value;
 let phone =
 document.getElementById("phone").value.trim();
 
-if(phone.length !== 9){
+phone=phone.replace(/\D/g,"");
 
-    alert("Please enter a valid Sri Lankan mobile number.");
+if(phone.length!==9){
+
+    showAlert(
+        "Invalid Phone Number",
+        "Enter a valid mobile number."
+    );
 
     return;
+
 }
 
-phone = "94" + phone;
-property.phone = phone;
+if(phone.charAt(0)!=="7"){
+
+    showAlert(
+    "Invalid Phone Number",
+    "Sri Lankan mobile numbers must start with 7."
+);
+    return;
+
+}
+
+property.phone="94"+phone;
 
 let mapLink =
 document.getElementById("mapLink").value.trim();
@@ -1544,7 +1577,10 @@ if(
     !mapLink.includes("goo.gl/maps") &&
     !mapLink.includes("maps.app.goo.gl")
 ){
-    alert("Please paste a valid Google Maps link.");
+    showAlert(
+    "Invalid Google Maps Link",
+    "Please paste a valid Google Maps location."
+);
     return;
 }
 property.mapLink = mapLink;
@@ -1573,7 +1609,10 @@ let imageFiles = selectedImages;
 
 if(selectedImages.length === 0){
 
-    alert("Please keep at least one property image.");
+    showAlert(
+    "Property Images Required",
+    "Please keep at least one property image."
+);
 
     return;
 
@@ -1660,83 +1699,16 @@ JSON.stringify(property)
 
 }
 
-alert("Property Updated!");
+showAlert(
+    "Property Updated!",
+    "Your property has been updated successfully.",
+    "success"
+);
 
-window.location.href="profile.html";
-
-}
- function previewImages(){
-
-let input =
-document.getElementById("propertyImages");
-
-selectedImages =
-Array.from(input.files);
-
-refreshPreview();
-let preview =
-document.getElementById("imagePreview");
-
-preview.innerHTML="";
-preview.innerHTML=
-
-"<p style='width:100%;font-weight:bold;'>"+
-files.length+
-" image(s) selected</p>";
-
-for(let i=0;i<files.length;i++){
-
-let reader=new FileReader();
-
-reader.onload=function(e){
-
-preview.innerHTML+=`
-
-<div
-style="
-position:relative;
-display:inline-block;
-">
-
-<img
-src="${e.target.result}"
-style="
-width:150px;
-height:110px;
-object-fit:cover;
-border-radius:10px;
-box-shadow:0 2px 8px rgba(0,0,0,.2);
-">
-
-<button
-onclick="removeSelectedImage(${i})"
-style="
-position:absolute;
-top:6px;
-right:6px;
-width:26px;
-height:26px;
-border:none;
-border-radius:50%;
-background:red;
-color:white;
-cursor:pointer;
-font-weight:bold;
-">
-✕
-</button>
-
-</div>
-
-`;
-
-};
-
-reader.readAsDataURL(files[i]);
+window.redirectAfterAlert = "profile.html";
 
 }
-
-}
+  
 function removeExistingImage(index){
 
 selectedImages.splice(index,1);
@@ -1746,147 +1718,285 @@ refreshExistingPreview();
 }
 function refreshExistingPreview(){
 
-let preview =
-document.getElementById("imagePreview");
+    const preview=document.getElementById("imagePreview");
 
-preview.innerHTML =
-"<p style='width:100%;font-weight:bold;'>"+
-selectedImages.length+
-" image(s)</p>";
+    preview.innerHTML="";
 
+    if(selectedImages.length===0){
 
-selectedImages.forEach(function(img,index){
+        preview.innerHTML="<p>No images.</p>";
+        return;
 
-preview.innerHTML += `
+    }
 
-<div
-style="
-position:relative;
-display:inline-block;
-margin:6px;
-">
+    selectedImages.forEach(function(img,index){
 
-<img
-src="${img}"
-style="
-width:150px;
-height:110px;
-object-fit:cover;
-border-radius:10px;
-box-shadow:0 2px 8px rgba(0,0,0,.2);
-">
+        preview.innerHTML+=`
 
-<button
-type="button"
-onclick="removeExistingImage(${index})"
-style="
-position:absolute;
-top:6px;
-right:6px;
-width:26px;
-height:26px;
-border:none;
-border-radius:50%;
-background:red;
-color:white;
-cursor:pointer;
-">
-✕
-</button>
+        <div style="
+        position:relative;
+        display:inline-block;
+        ">
 
-</div>
+        <img
+        src="${img}"
+        style="
+        width:150px;
+        height:110px;
+        object-fit:cover;
+        border-radius:10px;
+        ">
 
-`;
+        <button
+        type="button"
+        onclick="removeExistingImage(${index})"
+        style="
+        position:absolute;
+        top:5px;
+        right:5px;
+        width:26px;
+        height:26px;
+        border:none;
+        border-radius:50%;
+        background:red;
+        color:white;
+        cursor:pointer;
+        ">
+        ✕
 
-});
+        </button>
+
+        </div>
+
+        `;
+
+    });
 
 }
 function removeSelectedImage(index){
 
-selectedImages.splice(index,1);
+    selectedImages.splice(index,1);
 
-let dataTransfer =
-new DataTransfer();
+    const dt=new DataTransfer();
 
-selectedImages.forEach(function(file){
+    selectedImages.forEach(file=>{
 
-dataTransfer.items.add(file);
+        dt.items.add(file);
 
-});
+    });
 
-document.getElementById("propertyImages").files =
-dataTransfer.files;
+    document.getElementById("propertyImages").files=dt.files;
 
-refreshPreview();
+    refreshPreview();
 
 }
+window.previewImages = function () {
+
+    const input = document.getElementById("propertyImages");
+    const files = Array.from(input.files);
+
+    selectedImages = files;
+
+    if (selectedImages.length > 20) {
+
+        showAlert(
+    "Maximum Images Reached",
+    "You can upload up to 20 images."
+);
+
+        selectedImages = selectedImages.slice(0,20);
+
+        const dt = new DataTransfer();
+
+        selectedImages.forEach(file=>{
+            dt.items.add(file);
+        });
+
+        input.files = dt.files;
+    }
+
+    refreshPreview();
+
+}
+
 function refreshPreview(){
 
-let preview =
-document.getElementById("imagePreview");
+    const preview=document.getElementById("imagePreview");
 
-preview.innerHTML="";
+    preview.innerHTML="";
 
-preview.innerHTML =
-"<p style='width:100%;font-weight:bold;'>"+
-selectedImages.length+
-" image(s) selected</p>";
+    if(selectedImages.length===0){
 
-selectedImages.forEach(function(file,index){
+        preview.innerHTML="<p>No images selected.</p>";
+        return;
 
-let reader=new FileReader();
+    }
 
-reader.onload=function(e){
+    selectedImages.forEach(function(file,index){
 
-preview.innerHTML +=`
+        const reader=new FileReader();
+
+        reader.onload=function(e){
+
+            preview.innerHTML+=`
+
+            <div style="
+            position:relative;
+            display:inline-block;
+            ">
+
+            <img
+            src="${e.target.result}"
+            style="
+            width:150px;
+            height:110px;
+            object-fit:cover;
+            border-radius:10px;
+            ">
+
+            <button
+            type="button"
+            onclick="removeSelectedImage(${index})"
+            style="
+            position:absolute;
+            top:5px;
+            right:5px;
+            width:26px;
+            height:26px;
+            border:none;
+            border-radius:50%;
+            background:red;
+            color:white;
+            cursor:pointer;
+            ">
+            ✕
+            </button>
+
+            </div>
+
+            `;
+
+        }
+
+        reader.readAsDataURL(file);
+
+    });
+
+}
+
+function showAlert(title,message,type="warning"){
+
+    document.getElementById("alertTitle").textContent=title;
+
+    document.getElementById("alertMessage").textContent=message;
+
+
+    let icon=document.getElementById("alertIcon");
+
+
+    if(type==="success"){
+
+        icon.textContent="✅";
+
+    }
+    else if(type==="error"){
+
+        icon.textContent="❌";
+
+    }
+    else{
+
+        icon.textContent="⚠️";
+
+    }
+
+
+    document.getElementById("customAlert").style.display="flex";
+
+}
+
+function closeAlert(){
+
+    document.getElementById("customAlert").style.display="none";
+
+    if(window.redirectAfterAlert){
+
+        window.location.href = window.redirectAfterAlert;
+
+    }
+
+}
+      </script>
+<div id="customAlert"
+style="
+display:none;
+position:fixed;
+top:0;
+left:0;
+width:100%;
+height:100%;
+background:rgba(0,0,0,.45);
+backdrop-filter:blur(4px);
+justify-content:center;
+align-items:center;
+z-index:99999;
+">
 
 <div
 style="
-position:relative;
-display:inline-block;
-margin:6px;
+background:white;
+width:90%;
+max-width:380px;
+padding:25px;
+border-radius:20px;
+text-align:center;
+box-shadow:0 15px 40px rgba(0,0,0,.25);
 ">
 
-<img
-src="${e.target.result}"
+<div id="alertIcon"
 style="
-width:150px;
-height:110px;
-object-fit:cover;
-border-radius:10px;
-box-shadow:0 2px 8px rgba(0,0,0,.2);
+font-size:45px;
+margin-bottom:10px;
 ">
+⚠️
+</div>
+
+<h2 id="alertTitle"
+style="
+margin:10px 0;
+color:#222;
+">
+Warning
+</h2>
+
+<p id="alertMessage"
+style="
+color:#030101;
+font-size:19px;
+line-height:1.5;
+">
+Message
+</p>
 
 <button
-type="button"
-onclick="removeSelectedImage(${index})"
+onclick="closeAlert()"
 style="
-position:absolute;
-top:6px;
-right:6px;
-width:26px;
-height:26px;
+margin-top:20px;
+width:100%;
+padding:13px;
 border:none;
-border-radius:50%;
-background:red;
+border-radius:12px;
+background:#8b008b;
 color:white;
+font-size:17px;
+font-weight:bold;
 cursor:pointer;
 ">
-✕
+OK
 </button>
 
 </div>
 
-`;
-
-};
-
-reader.readAsDataURL(file);
-
-});
-
-}
-      </script>
-
+</div>
     </body>
 </html>
