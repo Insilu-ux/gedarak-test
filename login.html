@@ -334,7 +334,115 @@ border:1px solid #0d8ae8;
 box-shadow:0 0 5px rgba(13,138,232,.3);
 
 }
+.login-modal{
 
+position:fixed;
+top:0;
+left:0;
+
+width:100%;
+height:100%;
+
+background:rgba(0,0,0,.45);
+
+display:none;
+
+align-items:center;
+justify-content:center;
+
+z-index:999999;
+
+}
+
+
+.login-modal-box{
+
+background:white;
+
+width:90%;
+
+max-width:420px;
+
+padding:30px;
+
+border-radius:20px;
+
+text-align:center;
+
+box-shadow:0 15px 40px rgba(0,0,0,.3);
+
+animation:loginPopup .25s ease;
+
+}
+
+
+.login-modal-box h2{
+
+margin:0 0 15px;
+
+font-size:26px;
+
+}
+
+
+.login-modal-box p{
+
+font-size:17px;
+
+line-height:1.6;
+
+color:#444;
+
+}
+
+
+.login-modal-btn{
+
+margin-top:20px;
+
+padding:12px 35px;
+
+border:none;
+
+border-radius:12px;
+
+background:#0d8ae8;
+
+color:white;
+
+font-size:16px;
+
+font-weight:bold;
+
+cursor:pointer;
+
+}
+
+
+.login-modal-btn:hover{
+
+transform:translateY(-2px);
+
+}
+
+
+@keyframes loginPopup{
+
+from{
+
+transform:scale(.8);
+opacity:0;
+
+}
+
+to{
+
+transform:scale(1);
+opacity:1;
+
+}
+
+}
 </style>
 
 </head>
@@ -344,6 +452,26 @@ box-shadow:0 0 5px rgba(13,138,232,.3);
         💒 Home
         </button>
     </a>
+
+<div class="login-modal" id="loginModal">
+
+<div class="login-modal-box">
+
+<h2 id="loginModalTitle"></h2>
+
+<p id="loginModalMessage"></p>
+
+<button 
+class="login-modal-btn"
+onclick="closeLoginModal()">
+
+OK
+
+</button>
+
+</div>
+
+</div>
           <header class="pageHeader">
 
 <a href="index.html" class="logoLink">
@@ -380,10 +508,10 @@ Sri Lanka's Property Marketplace
 <p class="subtitle">
 Login to save favourites, manage your listings and contact sellers.
 </p>
-       <input 
-       type="text"
-       id="username"
-       placeholder="Enter Username">
+       <input
+type="email"
+id="email"
+placeholder="Enter Email">
     
        <input 
        type="password"
@@ -452,165 +580,264 @@ gedarak.lk@gmail.com
         <p>Phone: +94 771 234 567</p>
         <p>&copy; 2026 Gedarak.lk</p>
       </footer>
-    <script>
-        function login(){
-            let btn=
+   <script type="module">
+   import { auth, db } from "./firebase-config.js";
 
-document.getElementById("loginButton");
+import {
+signInWithEmailAndPassword
+} from "https://www.gstatic.com/firebasejs/12.16.0/firebase-auth.js";
+
+import {
+doc,
+getDoc
+} from "https://www.gstatic.com/firebasejs/12.16.0/firebase-firestore.js";
+
+
+window.showLoginMessage=function(title,message){
+
+document.getElementById("loginModalTitle").innerHTML=title;
+
+document.getElementById("loginModalMessage").innerHTML=message;
+
+document.getElementById("loginModal").style.display="flex";
+
+};
+
+
+window.closeLoginModal=function(){
+
+document.getElementById("loginModal").style.display="none";
+
+};
+
+
+
+window.login = async function(){
+
+const btn=document.getElementById("loginButton");
+
 
 btn.disabled=true;
 
 btn.innerHTML="Logging you in...";
-           let username=
 
-document.getElementById(
 
-"username"
+const email=document.getElementById("email").value.trim().toLowerCase();
 
-).value
+const password=document.getElementById("password").value;
 
-.trim()
 
-.toLowerCase();
-             let password=
-            document.getElementById(
-                "password"
-            ).value;
-            if(
-                username==""
-                ||
-                password.trim()===""
-            ){
-            alert(
-                "Enter username and password"
-            );
-            btn.disabled=false;
 
-btn.innerHTML="Login";
-            return;
-            }
-            let data=
-           localStorage.getItem(
-"user_" + username
+if(email==="" || password===""){
+
+
+showLoginMessage(
+"⚠️ Missing Details",
+"Please enter both your email address and password."
 );
-            if(data){
-                let user=
-                JSON.parse(data);
-                if(
 
-user.status=="Banned"
 
-){
-
-alert(
-
-"This account has been suspended."
-
-);
 btn.disabled=false;
 
 btn.innerHTML="Login";
+
 return;
 
 }
-                if(
-                    user.password===password
-                ){
-                    localStorage.setItem(
-                        "loggedIn",
-                        "true"
-                    );
-                    localStorage.setItem(
 
-"currentUser",
 
-username
 
+const emailPattern=/^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+
+if(!emailPattern.test(email)){
+
+
+showLoginMessage(
+"📧 Invalid Email",
+"Please enter a valid email address. Example: name@gmail.com"
 );
 
-localStorage.setItem(
 
-"loginTime",
+btn.disabled=false;
 
-new Date().toISOString()
+btn.innerHTML="Login";
 
+return;
+
+}
+
+
+
+try{
+
+
+const result=await signInWithEmailAndPassword(
+auth,
+email,
+password
 );
-                    alert(
-                        "Login Successful"
-                    );
-                    window.location.href=
-                    "index.html";
-                }
-                    else{
-                        alert(
-                            "Wrong Password"
-                        );
-                        btn.disabled=false;
+
+
+
+const uid=result.user.uid;
+
+
+const userRef=doc(db,"users",uid);
+
+
+const userSnap=await getDoc(userRef);
+
+
+
+if(!userSnap.exists()){
+
+
+showLoginMessage(
+"⚠️ Profile Missing",
+"Your authentication exists, but your Gedarak.lk profile could not be found."
+);
+
+
+btn.disabled=false;
+
 btn.innerHTML="Login";
-                    }
-                }
-                else{
-                    alert(
-                        "No account found"
-                    );
-                    btn.disabled=false;
+
+return;
+
+}
+
+
+
+const user=userSnap.data();
+
+
+
+if(user.status==="Banned"){
+
+
+showLoginMessage(
+"🚫 Account Suspended",
+"This account has been suspended. Please contact Gedarak.lk support."
+);
+
+
+btn.disabled=false;
+
 btn.innerHTML="Login";
-                }
-            }
-            
-           function togglePassword(){
 
-let ids=[
+return;
 
-"password",
+}
 
-"newPassword",
 
-"confirmPassword"
 
-];
+showLoginMessage(
+"🎉 Welcome Back",
+"You have successfully logged into Gedarak.lk."
+);
 
-ids.forEach(function(id){
 
-let input=document.getElementById(id);
 
-if(input){
+document.querySelector(".login-modal-btn").onclick=function(){
+
+window.location.href="index.html";
+
+};
+
+
+
+}
+
+
+catch(error){
+
+
+
+if(
+error.code==="auth/invalid-credential" ||
+error.code==="auth/user-not-found" ||
+error.code==="auth/wrong-password"
+){
+
+
+showLoginMessage(
+"🔐 Login Failed",
+"Incorrect email or password. Please check your details and try again."
+);
+
+
+}
+
+
+else if(error.code==="auth/invalid-email"){
+
+
+showLoginMessage(
+"📧 Invalid Email",
+"Please enter a valid email address."
+);
+
+
+}
+
+
+else{
+
+
+showLoginMessage(
+"⚠️ Something Went Wrong",
+"Please try again later."
+);
+
+
+console.log(error);
+
+
+}
+
+
+
+}
+
+
+btn.disabled=false;
+
+btn.innerHTML="Login";
+
+
+};
+
+
+
+window.togglePassword=function(){
+
+
+const input=document.getElementById("password");
+
 
 input.type=
+input.type==="password"
+?"text"
+:"password";
 
-input.type=="password"
 
-?
+};
 
-"text"
 
-:
 
-"password";
+document.addEventListener("keydown",function(e){
 
-}
-
-});
-
-}
-document.addEventListener(
-
-"keydown",
-
-function(event){
-
-if(event.key==="Enter"){
+if(e.key==="Enter"){
 
 login();
 
 }
 
 });
-document.getElementById(
 
-"username"
 
-).focus();
-    </script>
+document.getElementById("email").focus();
+   </script>
     </body>
 </html>
