@@ -189,8 +189,6 @@ textarea:focus{
 }
      </style>
         <title>Post Property</title>
-        <link rel="stylesheet"
-        href="style.css">
     </head>
     <body>
         <a href="index.html">
@@ -226,7 +224,7 @@ Sri Lanka's Property Marketplace
 
 </header>
         <h1 style="text-align: center;">Post Your Property</h1>
-        <form>
+        <form id="propertyForm">
                   <label>Property Name</label>
         <input type="text"
         class="formInput"
@@ -316,8 +314,7 @@ onchange="toggleNegotiable()">
         <input type="text"
         class="formInput"
         id="address"
-        placeholder="Street Address"
-        required>
+        placeholder="Street Address">
          <br></br>
         <label>Google Maps Location (Optional)</label>
 
@@ -351,8 +348,7 @@ Buyers can view your property's location directly in Google Maps.
           <input type="number"
           class="formInput"
           id="bedrooms"
-        placeholder="Bedrooms"
-        required>
+        placeholder="Bedrooms">
            </div>
          <br>
          <div id="bathroomSection">
@@ -360,8 +356,7 @@ Buyers can view your property's location directly in Google Maps.
           <input type="number"
           class="formInput"
           id="bathrooms"
-        placeholder="Bathrooms"
-        required>
+        placeholder="Bathrooms">
          </div>
          <br>
          <label>Land Size(Perches)</label>
@@ -591,8 +586,23 @@ box-sizing:border-box;
             Post Property
         </button>
         </form>
-      <script>
-       function phoneInput(input){
+      <script type="module">
+        import { auth, db, storage } from "./firebase-config.js";
+
+import {
+    ref,
+    uploadBytes,
+    getDownloadURL
+} from "https://www.gstatic.com/firebasejs/12.16.0/firebase-storage.js";
+
+import {
+collection,
+addDoc,
+serverTimestamp
+}
+from "https://www.gstatic.com/firebasejs/12.16.0/firebase-firestore.js";
+
+       window.phoneInput = function(input){
 
     // Keep only numbers
     input.value = input.value.replace(/\D/g,"");
@@ -630,7 +640,7 @@ document.getElementById("squareFeet").value="";
 }
 
 };
-        function toggleNegotiable(){
+       window.toggleNegotiable = function(){
 
 let box =
 document.getElementById("negotiablePrice");
@@ -653,7 +663,7 @@ price.disabled=false;
 
 }
 
-function priceChanged(){
+window.priceChanged = function(){
 
 let input =
 document.getElementById("propertyPrice");
@@ -679,21 +689,16 @@ document.getElementById("negotiablePrice").checked=false;
 input.disabled=false;
 
 }
-function formatSqft(input){
+window.formatSqft = function(input){
 
-let value =
-input.value.replace(/\D/g,"");
+    let value = input.value.replace(/\D/g,"");
 
-if(value===""){
+    if(value===""){
+        input.value="";
+        return;
+    }
 
-input.value="";
-
-return;
-
-}
-
-input.value =
-Number(value).toLocaleString();
+    input.value = Number(value).toLocaleString();
 
 }
         let selectedImages = [];
@@ -1263,7 +1268,7 @@ Vavuniya: [
 ]
             
         };
-       function updateCities(){
+      window.updateCities = function(){
         let district= 
         document.getElementById(
             "district"
@@ -1287,274 +1292,376 @@ Vavuniya: [
         });
         }
        }
-        function addProperty(){
-            let name=
-            document.getElementById(
-                "propertyName"
-            ).value;
-              if(name === ""){
-        alert("Please type the Property name");
-        return;
-       }     
-           let negotiable =
+       window.addProperty = async function () {
+const btn = document.querySelector(".post-property-btn");
+const user = auth.currentUser;
+btn.disabled = true;
+
+btn.innerHTML = "Posting Property...";
+
+try{
+
+let name =
+document.getElementById("propertyName").value.trim();
+
+if(name===""){
+
+showAlert(
+"Property Name Missing",
+"Please enter a name for your property."
+);
+
+btn.disabled=false;
+
+btn.innerHTML="Post Property";
+
+return;
+
+}
+
+let negotiable =
 document.getElementById("negotiablePrice").checked;
-          let priceText =
+
+let priceText =
 document.getElementById("propertyPrice").value;
 
 let price =
-parseInt(
-priceText.replace(/,/g,"")
-) || null;
+parseInt(priceText.replace(/,/g,"")) || null;
 
 if(price===null && !negotiable){
 
-alert("Enter a price or choose Negotiable.");
+showAlert(
+"Price Required",
+"Enter a property price or select 'Price Negotiable'."
+);
+
+btn.disabled=false;
+
+btn.innerHTML="Post Property";
 
 return;
 
 }
-            let propertyType= 
-            document.getElementById(
-                "propertyType"
-            ).value;
-              if(propertyType === ""){
-        alert("Please select Property type");
-        return;
-       }
-            let district= 
-            document.getElementById("district").value;
-            let city = 
-            document.getElementById(
-                "city"
-            ).value;
-            let address = 
-            document.getElementById(
-                "address"
-            ).value;
-            let bedrooms=
-            document.getElementById(
-                "bedrooms"
-            ).value;
-            let bathrooms=
-            document.getElementById(
-                "bathrooms"
-            ).value;
-            let perches= 
-            parseFloat(
-                document.getElementById("perches").value
-            ) || 0;
-             let squareFeet =
-parseInt(
-document.getElementById("squareFeet").value.replace(/,/g,"")
-) || 0;
-            let amenities=[];
-            document.querySelectorAll(
-                ".amenity:checked"
-            ).forEach(function(item){
-                amenities.push(
-                    item.value
-                );
-            });
-             let propertyView=[];
-            document.querySelectorAll(
-                ".propertyView:checked"
-            ).forEach(function(item){
-                propertyView.push(
-                    item.value
-                );
-            });
-            let description=
-            document.getElementById(
-                "description"
-            ).value;
-            let imageFiles = selectedImages;
-             if(district === ""){
-        alert("Please select a district");
-        return;
-       }
-        if(city === ""){
-        alert("Please select a city");
-        return;
-       }
-        let phone =
+
+let propertyType =
+document.getElementById("propertyType").value;
+
+let district =
+document.getElementById("district").value;
+
+if(propertyType===""){
+
+showAlert(
+"Property Type Required",
+"Please select your property type."
+);
+
+btn.disabled=false;
+
+btn.innerHTML="Post Property";
+
+return;
+
+}
+
+if(district===""){
+
+showAlert(
+"District Required",
+"Please select the property district."
+);
+
+btn.disabled=false;
+
+btn.innerHTML="Post Property";
+
+return;
+
+}
+
+let city = document.getElementById("city").value;
+
+if(city===""){
+
+showAlert(
+"City Required",
+"Please select the property city."
+);
+
+btn.disabled=false;
+btn.innerHTML="Post Property";
+
+return;
+
+}
+
+let address =
+document.getElementById("address").value.trim();
+if(address===""){
+
+showAlert(
+"Property Address Required",
+"Please enter your property address."
+);
+
+btn.disabled=false;
+
+btn.innerHTML="Post Property";
+
+return;
+
+}
+let bedrooms =
+parseInt(document.getElementById("bedrooms").value)||0;
+
+let bathrooms =
+parseInt(document.getElementById("bathrooms").value)||0;
+
+let perches =
+parseFloat(document.getElementById("perches").value)||0;
+
+let squareFeet =
+parseInt(document.getElementById("squareFeet").value.replace(/,/g,""))||0;
+
+let description =
+document.getElementById("description").value.trim();
+
+if(description===""){
+
+showAlert(
+"Property Description Required",
+"Please enter a property description."
+);
+
+btn.disabled=false;
+
+btn.innerHTML="Post Property";
+
+return;
+
+}
+let status =
+document.getElementById("status").value;
+
+let phone =
+"94"+document.getElementById("phone").value.trim();
+
+const phoneInput =
 document.getElementById("phone").value.trim();
 
-if(phone.length !== 9){
+if(!/^7\d{8}$/.test(phoneInput)){
 
-alert("Please enter a valid Sri Lankan mobile number.");
+    showAlert(
+        "Invalid Phone Number",
+        "Enter a valid mobile number."
+    );
 
-return;
+    btn.disabled=false;
+    btn.innerHTML="Post Property";
+    return;
 
 }
-
-phone = "94" + phone;
-
-             let mapLink =
+let mapLink =
 document.getElementById("mapLink").value.trim();
 if(
-    mapLink !== "" &&
-    !mapLink.includes("google.com") &&
-    !mapLink.includes("goo.gl/maps") &&
-    !mapLink.includes("maps.app.goo.gl")
+mapLink &&
+!mapLink.includes("google.com") &&
+!mapLink.includes("maps.app.goo.gl")
 ){
-    alert("Please paste a valid Google Maps link.");
+
+showAlert(
+"Invalid Link",
+"Please enter a valid Google Maps link."
+);
+
+ btn.disabled=false;
+    btn.innerHTML="Post Property";
     return;
-}
-    
-         if(imageFiles.length === 0){
-            alert("Please select atleast one image.");
-            return;
-         }
-            let images = [];
-            for(let i=0;
-            i < imageFiles.length;
-            i++
-            ){
-                let reader = new FileReader();
-                reader.onload = function(e){
-                   images.push(e.target.result);
-                   if(images.length === imageFiles.length){
-            let property={
-            id:Date.now(),
-            name:name,
-            views: 0,
-            price: price,
-            negotiable: negotiable,
-            propertyType:document.getElementById("propertyType").value,
-            status:
-            document.getElementById("status").value,
-            district:district,
-            city:city,
-            address:address,
-            bedrooms:bedrooms,
-            bathrooms:bathrooms,
-            perches:perches,
-            squareFeet:squareFeet,
-            amenities: amenities,
-            propertyView: propertyView,
-            description:description,
-            images:images,
-            phone:phone,
-
-             owner:
-            localStorage.getItem(
-                "currentUser"
-            ),
-            createdAt:
-            Date.now(),
-            
-           mapLink: mapLink,
-            approved:true
-             };
-             localStorage.setItem(
-                property.name,
-                JSON.stringify(property)
-             );
-             localStorage.setItem(
-"selectedBoostProperty",
-property.id
-);
-           localStorage.setItem(
-    "lastPostedProperty",
-    property.id
-);
-           showBoostPopup();
-        }
-          
-    };
-        reader.readAsDataURL(imageFiles[i]);
-}
-        }
-        function previewImages(){
-
-let input =
-document.getElementById("propertyImages");
-
-selectedImages =
-Array.from(input.files);
-
-refreshPreview();
-let preview =
-document.getElementById("imagePreview");
-
-preview.innerHTML="";
-preview.innerHTML=
-
-"<p style='width:100%;font-weight:bold;'>"+
-files.length+
-" image(s) selected</p>";
-
-for(let i=0;i<files.length;i++){
-
-let reader=new FileReader();
-
-reader.onload=function(e){
-
-preview.innerHTML+=`
-
-<div
-style="
-position:relative;
-display:inline-block;
-">
-
-<img
-src="${e.target.result}"
-style="
-width:150px;
-height:110px;
-object-fit:cover;
-border-radius:10px;
-box-shadow:0 2px 8px rgba(0,0,0,.2);
-">
-
-<button
-onclick="removeSelectedImage(${i})"
-style="
-position:absolute;
-top:6px;
-right:6px;
-width:26px;
-height:26px;
-border:none;
-border-radius:50%;
-background:red;
-color:white;
-cursor:pointer;
-font-weight:bold;
-">
-✕
-</button>
-
-</div>
-
-`;
-
-};
-
-reader.readAsDataURL(files[i]);
 
 }
+let amenities=[];
 
-}
+document.querySelectorAll(".amenity:checked").forEach(function(item){
 
-function removeSelectedImage(index){
-
-selectedImages.splice(index,1);
-
-let dataTransfer =
-new DataTransfer();
-
-selectedImages.forEach(function(file){
-
-dataTransfer.items.add(file);
+amenities.push(item.value);
 
 });
 
-document.getElementById("propertyImages").files =
-dataTransfer.files;
+let propertyView=[];
+
+document.querySelectorAll(".propertyView:checked").forEach(function(item){
+
+propertyView.push(item.value);
+
+});
+
+if(selectedImages.length===0){
+
+showAlert(
+"Images Required",
+"Please upload at least one property image."
+);
+
+btn.disabled=false;
+
+btn.innerHTML="Post Property";
+
+return;
+
+}
+
+if(selectedImages.length > 20){
+
+showAlert(
+"Maximum Images Reached",
+"You can upload a maximum of 20 images.",
+"warning"
+);
+
+btn.disabled=false;
+
+btn.innerHTML="Post Property";
+
+return;
+
+}
+const imageUrls = [];
+
+for(const file of selectedImages){
+
+const imageRef = ref(
+
+storage,
+
+"properties/"+crypto.randomUUID()+"_"+file.name
+
+);
+
+await uploadBytes(imageRef,file);
+
+const url = await getDownloadURL(imageRef);
+
+imageUrls.push(url);
+
+}
+await addDoc(
+collection(db,"properties"),
+{
+
+ownerUid:user.uid,
+
+ownerEmail:user.email,
+
+name:name,
+
+price:price,
+
+negotiable:negotiable,
+
+propertyType:propertyType,
+
+district:district,
+
+city:city,
+
+address:address,
+
+bedrooms:bedrooms,
+
+bathrooms:bathrooms,
+
+perches:perches,
+
+squareFeet:squareFeet,
+
+description:description,
+
+status:status,
+
+phone:phone,
+
+mapLink:mapLink,
+
+amenities:amenities,
+
+propertyView:propertyView,
+
+images:imageUrls,
+
+views:0,
+
+approved:true,
+
+createdAt:serverTimestamp()
+
+});;
+
+showBoostPopup();
+
+document.getElementById("propertyForm").reset();
+
+selectedImages = [];
 
 refreshPreview();
+
+}
+catch(error){
+
+showAlert(
+"Something Went Wrong",
+error.message,
+"error"
+);
+
+}
+
+btn.disabled=false;
+
+btn.innerHTML="Post Property";
+
+}
+     window.previewImages = function(){
+
+    let input = document.getElementById("propertyImages");
+
+    selectedImages = Array.from(input.files);
+
+    if(selectedImages.length > 20){
+
+        showAlert(
+            "Maximum Images Reached",
+            "You can upload a maximum of 20 images."
+        );
+
+        selectedImages = selectedImages.slice(0,20);
+
+        let dataTransfer = new DataTransfer();
+
+        selectedImages.forEach(file=>{
+            dataTransfer.items.add(file);
+        });
+
+        input.files = dataTransfer.files;
+    }
+
+    refreshPreview();
+
+}
+
+window.removeSelectedImage = function(index){
+
+    selectedImages.splice(index,1);
+
+    const dataTransfer = new DataTransfer();
+
+    selectedImages.forEach(file=>{
+        dataTransfer.items.add(file);
+    });
+
+    document.getElementById("propertyImages").files =
+        dataTransfer.files;
+
+    refreshPreview();
 
 }
 function refreshPreview(){
@@ -1640,6 +1747,48 @@ function goToBoost(){
 window.location.href="boost.html";
 
 }
+
+window.goToBoost=function(){
+
+window.location.href="boost.html";
+
+}
+
+
+window.skipBoost=function(){
+
+window.location.href="index.html";
+
+}
+window.showAlert = function(title,message,type="warning"){
+
+let icon="⚠️";
+
+if(type==="error"){
+icon="❌";
+}
+
+if(type==="success"){
+icon="✅";
+}
+
+document.getElementById("alertIcon").innerHTML=icon;
+
+document.getElementById("alertTitle").innerHTML=title;
+
+document.getElementById("alertMessage").innerHTML=message;
+
+document.getElementById("customAlert").style.display="flex";
+
+}
+
+
+window.closeAlert=function(){
+
+document.getElementById("customAlert").style.display="none";
+
+}
+
       </script>
 <div
 id="boostPopup"
@@ -1844,6 +1993,77 @@ font-size:25px;
 cursor:pointer;
 ">
 Skip for now →
+</button>
+
+</div>
+
+</div>
+<div id="customAlert"
+style="
+display:none;
+position:fixed;
+top:0;
+left:0;
+width:100%;
+height:100%;
+background:rgba(0,0,0,.45);
+backdrop-filter:blur(4px);
+justify-content:center;
+align-items:center;
+z-index:99999;
+">
+
+<div
+style="
+background:white;
+width:90%;
+max-width:380px;
+padding:25px;
+border-radius:20px;
+text-align:center;
+box-shadow:0 15px 40px rgba(0,0,0,.25);
+">
+
+<div id="alertIcon"
+style="
+font-size:45px;
+margin-bottom:10px;
+">
+⚠️
+</div>
+
+<h2 id="alertTitle"
+style="
+margin:10px 0;
+color:#222;
+">
+Warning
+</h2>
+
+<p id="alertMessage"
+style="
+color:#030101;
+font-size:19px;
+line-height:1.5;
+">
+Message
+</p>
+
+<button
+onclick="closeAlert()"
+style="
+margin-top:20px;
+width:100%;
+padding:13px;
+border:none;
+border-radius:12px;
+background:#8b008b;
+color:white;
+font-size:17px;
+font-weight:bold;
+cursor:pointer;
+">
+OK
 </button>
 
 </div>
