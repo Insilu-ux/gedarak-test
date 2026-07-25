@@ -332,20 +332,21 @@ Saved Properties:
 
 </h3>
 
-<div>
+<div
+style="
+display:flex;
+align-items:center;
+gap:10px;
+flex-wrap:wrap;
+">
 
 <input
-
 id="searchFavourite"
-
 placeholder="Search favourites..."
-
 onkeyup="searchFavourite()">
 
 <select
-
 id="sortFavourite"
-
 onchange="sortFavourite()">
 
 <option value="newest">
@@ -378,102 +379,121 @@ Highest Price
 
 </div>
       <div id="favouritesContainer"></div>
-      <script>
-        let currentUser = 
-        localStorage.getItem("currentUser");
-        if(!currentUser){
-            document.getElementById(
-                "favouritesContainer"
-            ).innerHTML = `
-            <div style="text-align:center;padding:70px;">
+    <script type="module">
+        import { auth, db } from "./firebase-config.js";
 
-<h2>
+import {
+collection,
+getDocs,
+doc,
+updateDoc
+}
+from "https://www.gstatic.com/firebasejs/12.16.0/firebase-firestore.js";
 
-Please log in first.
+import {
+onAuthStateChanged
+}
+from "https://www.gstatic.com/firebasejs/12.16.0/firebase-auth.js";
+    
+let currentUser = null;
 
-</h2>
+let favouriteIds = [];
 
-<p>
+let favourites = [];
 
-Your favourite properties are securely linked to your account.
+let allFavouriteProperties = [];
 
-</p>
+onAuthStateChanged(auth, async function(user){
+
+if(!user){
+
+document.getElementById("favouritesContainer").innerHTML = `
+<div style="text-align:center;padding:70px;">
+
+<h2>Please log in first.</h2>
+
+<p>Your favourite properties are securely linked to your account.</p>
 
 <br>
 
 <button
-
-onclick="window.location.href='login.html'">
-
+onclick="window.location.href='login.html'"
+style="
+padding:14px 28px;
+border:none;
+border-radius:12px;
+background:#2563eb;
+color:white;
+font-size:16px;
+font-weight:700;
+cursor:pointer;
+">
 Login
-
 </button>
 
-</div>`;
-            throw new Error("No user");
-        }
-        let favouriteIds = 
-        JSON.parse(
-            localStorage.getItem(
-                "favourites_" + currentUser
-            )
-        ) || [];
-        let favourites = [];
-        let allFavouriteProperties=[];
-        for(
-            let i=0;
-            i<localStorage.length;
-            i++
-        ){
-            let key = 
-            localStorage.key(i);
-            try{
-                let property = 
-                JSON.parse(
-                    localStorage.getItem(key)
-                );
-               if(
-    property &&
-    property.id &&
-    favouriteIds.includes(String(property.id))
-){
+</div>
+`;
 
-    let alreadyExists = favourites.some(function(item){
-
-        return String(item.id) === String(property.id);
-
-    });
-
-
-    if(!alreadyExists){
-
-        favourites.push(property);
-
-    }
+return;
 
 }
-            }
-            catch(e){}
-        }
-        if(
-            favourites.length===0
-        ){
-            document.getElementById(
-                "favouritesContainer"
-            ).innerHTML= `
-            <div style="text-align:center;padding:70px;">
 
-<h2>
+currentUser = user;
 
-❤ No favourite properties yet
+let userDoc = await getDocs(collection(db,"users"));
 
-</h2>
+userDoc.forEach(function(d){
 
-<p>
+if(d.id===user.uid){
 
-Tap the heart icon on any property to save it here.
+let data = d.data();
 
-</p>
+favouriteIds = data.favourites || [];
+
+}
+
+});
+
+loadFavourites();
+
+});
+        async function loadFavourites(){
+
+favourites = [];
+
+const snapshot = await getDocs(collection(db,"properties"));
+
+snapshot.forEach(function(docSnap){
+
+let property = {
+
+id:docSnap.id,
+
+...docSnap.data()
+
+};
+
+if(favouriteIds.includes(String(property.id))){
+
+favourites.push(property);
+
+}
+
+});
+
+allFavouriteProperties = favourites;
+
+document.getElementById("favouriteCount").innerHTML =
+favourites.length;
+
+if(favourites.length===0){
+
+document.getElementById("favouritesContainer").innerHTML = `
+<div style="text-align:center;padding:70px;">
+
+<h2>❤ No favourite properties yet</h2>
+
+<p>Tap the heart icon on any property to save it here.</p>
 
 <br>
 
@@ -488,17 +508,20 @@ color:white;
 font-size:16px;
 font-weight:700;
 cursor:pointer;
-box-shadow:0 4px 10px rgba(37,99,235,.25);
-transition:.25s;
 ">
 🏠 Browse Properties
 </button>
 
-</div>`;
-        }
-         else{
-           renderFavourites(favourites);
-         }
+</div>
+`;
+
+return;
+
+}
+
+renderFavourites(favourites);
+
+}
            function renderFavourites(list){
 
 let html="";
@@ -561,7 +584,7 @@ property.propertyType === "Land"
    <div class="buttonRow">
 
 <button
-onclick="viewProperty(${property.id})"
+onclick="viewProperty('${property.id}')"
 style="
 padding:13px;
 border:none;
@@ -578,7 +601,7 @@ transition:.25s;
 </button>
 
 <button
-onclick="removeFavourite(${property.id})"
+onclick="removeFavourite('${property.id}')"
 style="
 padding:13px;
 border:none;
@@ -603,39 +626,33 @@ transition:.25s;
                 "favouritesContainer"
             ).innerHTML = html;
         }
-        allFavouriteProperties=favourites;
 
-document.getElementById(
+      function viewProperty(id){
 
-"favouriteCount"
+window.location.href =
+`property.html?id=${id}`;
 
-).innerHTML=favourites.length;
+}
+       async function removeFavourite(id){
 
-        function viewProperty(id){
-            localStorage.setItem(
-                "selectedProperty",
-                id 
-            );
-            window.location.href= 
-            "property.html";
-        }
-        function removeFavourite(id){
-            let favourites = 
-            JSON.parse(
-                localStorage.getItem(
-                   "favourites_" + currentUser
-                )
-            ) || [];
-            favourites = 
-            favourites.filter(
-                item=>item!==String(id) 
-            );
-            localStorage.setItem(
-                "favourites_" + currentUser ,
-                JSON.stringify(favourites)
-            );
-            location.reload();
-        }
+favouriteIds =
+favouriteIds.filter(x=>x!==String(id));
+
+await updateDoc(
+
+doc(db,"users",currentUser.uid),
+
+{
+
+favourites:favouriteIds
+
+}
+
+);
+
+loadFavourites();
+
+}
          function searchFavourite(){
 
 let text=
@@ -722,6 +739,15 @@ new Date(b.createdAt)
 renderFavourites(sorted);
 
 }
+window.viewProperty = viewProperty;
+
+window.removeFavourite = removeFavourite;
+
+window.searchFavourite = searchFavourite;
+
+window.sortFavourite = sortFavourite;
+
+window.renderFavourites = renderFavourites;
       </script>
     </body>
 </html>
