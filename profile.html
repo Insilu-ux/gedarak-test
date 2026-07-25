@@ -266,6 +266,137 @@ color:#666;
 margin-bottom:25px;
 
 }
+#gedarakModal{
+
+position:fixed;
+
+top:0;
+left:0;
+
+width:100%;
+height:100%;
+
+background:rgba(0,0,0,.45);
+
+display:none;
+
+align-items:center;
+justify-content:center;
+
+z-index:999999;
+
+}
+
+
+.modal-box{
+
+background:white;
+
+width:90%;
+max-width:420px;
+
+padding:35px;
+
+border-radius:20px;
+
+text-align:center;
+
+box-shadow:0 15px 40px rgba(0,0,0,.3);
+
+animation:popup .25s ease;
+
+}
+
+
+.modal-box h2{
+
+margin:0 0 15px;
+
+font-size:26px;
+
+}
+
+
+.modal-box p{
+
+font-size:22px;
+
+font-weight:600;
+
+color:#333;
+
+line-height:1.5;
+
+}
+
+
+.modal-buttons{
+
+display:flex;
+
+gap:12px;
+
+justify-content:center;
+
+margin-top:25px;
+
+}
+
+
+.modal-buttons button{
+
+padding:12px 25px;
+
+border:none;
+
+border-radius:12px;
+
+font-size:16px;
+
+font-weight:bold;
+
+cursor:pointer;
+
+}
+
+
+.modal-ok{
+
+background:#16a34a;
+
+color:white;
+
+}
+
+
+.modal-later{
+
+background:#e5e7eb;
+
+color:#333;
+
+}
+
+
+@keyframes popup{
+
+from{
+
+transform:scale(.8);
+
+opacity:0;
+
+}
+
+to{
+
+transform:scale(1);
+
+opacity:1;
+
+}
+
+}
         </style>
         <link rel="stylesheet" href="style.css">
     </head>
@@ -275,6 +406,36 @@ margin-bottom:25px;
         💒 Home
     </button>
 </a>
+<div id="gedarakModal">
+
+    <div class="modal-box">
+
+        <h2 id="modalTitle">
+            Gedarak.lk
+        </h2>
+
+        <p id="modalMessage">
+        </p>
+
+        <div class="modal-buttons">
+
+            <button 
+            id="modalOk"
+            class="modal-ok">
+                OK
+            </button>
+
+            <button
+            id="modalLater"
+            class="modal-later">
+                Later
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
    <header class="pageHeader">
 
 <a href="index.html" class="logoLink">
@@ -328,7 +489,7 @@ margin-bottom:8px;
 <h2
 
 style="
-
+text-align: center;
 font-size:28px;
 
 margin-top:30px;
@@ -368,6 +529,7 @@ style="
 font-size:28px;
 
 margin-top:35px;
+text-align: center;
 
 ">
 
@@ -381,9 +543,9 @@ margin-top:35px;
 <button>🏠 My Properties</button>
 </a>
 
-<a href="postproperty.html">
-<button>➕ Post Property</button>
-</a>
+
+<button onclick="openPostProperty()">➕ Post Property</button>
+
 
 <a href="favourites.html">
 <button>💗 My Favourites</button>
@@ -393,6 +555,16 @@ margin-top:35px;
 🚪 Logout
 </button>
 </div>
+<p
+id="userEmail"
+style="
+text-align: center;
+margin-top:18px;
+font-size:17px;
+font-weight:600;
+color:#555;
+">
+</p>
 <footer
 
 style="
@@ -424,78 +596,153 @@ gedarak.lk@gmail.com
         <p>Phone: +94 771 234 567</p>
         <p>&copy; 2026 Gedarak.lk</p>
       </footer>
-            <script>
-            let user=
-            localStorage.getItem(
-                "currentUser"
-            );
-            let listings=0;
+            <script type="module">
+                import { auth, db } from "./firebase-config.js";
+
+import {
+onAuthStateChanged,
+signOut
+}
+from "https://www.gstatic.com/firebasejs/12.16.0/firebase-auth.js";
+
+import {
+    doc,
+    getDoc,
+    collection,
+    getDocs,
+    query,
+    where
+} from "https://www.gstatic.com/firebasejs/12.16.0/firebase-firestore.js";
+
+ let listings=0;
 let totalViews=0;
 let totalSaves=0;
-let totalMessages=0;
-let enquiries =
+            let currentUser = null;
+            let username = "";
 
-JSON.parse(
+onAuthStateChanged(auth, async function(user){
 
-localStorage.getItem("enquiries")
 
-|| "[]"
+    currentUser = user;
 
-);
-           if(user){
+    const userDoc =
+    await getDoc(doc(db,"users",user.uid));
 
-document.getElementById("userName").innerHTML =
-"Welcome back,<br>" + user;
+    if(userDoc.exists()){
 
-}else{
+        const data = userDoc.data();
 
-document.getElementById("userName").innerHTML =
-"Welcome back";
+       username = data.username;
+
+        document.getElementById("userName").innerHTML =
+        "Welcome back,<br>" + data.username;
+
+        let joined = "";
+
+        if(data.createdAt){
+
+            joined =
+            data.createdAt.toDate().toLocaleDateString();
+
+        }else{
+
+            joined = "Recently";
+
+        }
+
+        document.getElementById("joinedDate").innerHTML =
+        "📅 Member since " + joined;
+
+        document.getElementById("userEmail").innerHTML =
+        "📧 " + data.email;
+
+    }
+await loadUserStats();
+
+});
+           async function loadUserStats(){
+
+    listings = 0;
+    totalViews = 0;
+    totalSaves = 0;
+
+
+    // GET ALL PROPERTIES POSTED BY THIS USER
+
+    const propertySnapshot =
+    await getDocs(collection(db,"properties"));
+
+
+    propertySnapshot.forEach(function(propertyDoc){
+
+        let property =
+        propertyDoc.data();
+
+
+        if(
+            String(property.ownerUid) === 
+            String(currentUser.uid)
+        ){
+
+            listings++;
+
+            totalViews += 
+            property.views || 0;
+
+        }
+
+
+    });
+
+
+
+    // GET USER SAVES
+
+    const userSnapshot =
+    await getDoc(
+        doc(db,"users",currentUser.uid)
+    );
+
+
+    if(userSnapshot.exists()){
+
+    const data = userSnapshot.data();
+
+    const favouriteIds = data.favourites || [];
+
+    totalSaves = 0;
+
+    for(const propertyId of favouriteIds){
+
+        const propertyDoc = await getDoc(
+            doc(db,"properties",propertyId)
+        );
+
+        if(propertyDoc.exists()){
+
+            totalSaves++;
+
+        }
+
+    }
 
 }
-           for(let i=0;i<localStorage.length;i++){
 
-let key=localStorage.key(i);
 
-try{
 
-let property=
-JSON.parse(localStorage.getItem(key));
+    document.getElementById("listingCount").innerText =
+    listings;
 
-if(
-property &&
-String(property.owner).trim().toLowerCase() ===
-String(user).trim().toLowerCase()
-){
 
-listings++;
+    document.getElementById("totalViews").innerText =
+    totalViews.toLocaleString();
 
-totalViews += property.views || 0;
 
+    document.getElementById("totalSaves").innerText =
+    totalSaves.toLocaleString();
 
 
 }
-
-}
-catch(e){}
-
-}
-// USER'S TOTAL SAVED PROPERTIES
-let mySavedProperties =
-JSON.parse(
-    localStorage.getItem(
-        "favourites_" + user
-    ) || "[]"
-);
-
-totalSaves = mySavedProperties.length;
-
-enquiries.filter(function(item){
-
-return String(item.owner).trim().toLowerCase() ===
-String(user).trim().toLowerCase();
-
-}).length;
 
             document.getElementById("listingCount").innerText=
 listings;
@@ -507,60 +754,68 @@ document.getElementById("totalSaves").innerText=
 totalSaves.toLocaleString();
 
 
+            window.logout = function(){
 
-let joined =
+    showAlert(
+        "Are you sure you want to log out?",
+        async function(){
 
-localStorage.getItem(
+            await signOut(auth);
 
-"joined_"+user
+            window.location.href="login.html";
 
-);
-
-if(!joined){
-
-joined =
-
-new Date().toLocaleDateString();
-
-localStorage.setItem(
-
-"joined_"+user,
-
-joined
-
-);
+        }
+    );
 
 }
+            window.showAlert = function(message, okAction){
 
-document.getElementById("joinedDate").innerHTML =
+let modal =
+document.getElementById("gedarakModal");
 
-"📅 Member since " + joined;
-             function logout(){
-                if(
+let msg =
+document.getElementById("modalMessage");
 
-!confirm(
+msg.textContent = message;
 
-"You sure you want to Log Out?"
+modal.style.display="flex";
 
-)
 
-){
+document.getElementById("modalOk").onclick=function(){
 
-return;
+modal.style.display="none";
+
+if(okAction){
+    okAction();
+}
+
+};
+
+
+document.getElementById("modalLater").onclick=function(){
+
+modal.style.display="none";
+
+};
 
 }
-                localStorage.removeItem(
-                    "loggedIn"
-                );
-                localStorage.removeItem(
-                    "currentUser"
-                );
-                alert(
-                    "Logged out"
-                );
-              window.location.href=
-              "login.html";
-            }
+window.openPostProperty = function(){
+
+    if(!auth.currentUser){
+
+        showAlert("Please login first",function(){
+
+            window.location.href="login.html";
+
+        });
+
+        return;
+
+    }
+
+    window.location.href="postproperty.html";
+
+}
         </script>
     </body>
 </html>
