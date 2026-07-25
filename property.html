@@ -335,6 +335,15 @@ background:#dc2626;
 transform:scale(.96);
 
 }
+@media(min-width:768px){
+
+#mainImage{
+
+height:520px;
+
+}
+
+}
      </style>
     </head>
     <body>
@@ -372,63 +381,96 @@ Sri Lanka's Property Marketplace
 <h2 style="text-align: center;">Property Details</h2>
 <br>
        <div id="propertyDetails"></div>
-<script>
+ <script type="module">
+    import { auth, db } from "./firebase-config.js"
+
+import {
+
+collection,
+getDocs,
+getDoc,
+doc,
+updateDoc
+
+}
+from "https://www.gstatic.com/firebasejs/12.16.0/firebase-firestore.js";
+
+import {
+onAuthStateChanged
+}
+from "https://www.gstatic.com/firebasejs/12.16.0/firebase-auth.js";
+
+let touchStartX = 0;
+let touchEndX = 0;
     let viewerProperty = null;
     let viewerIndex = 0;   
     let currentProperty = null;
      let property =null;
      let allProperties=[];
+    window.favourites = [];
 
-for(let i=0;i<localStorage.length;i++){
+onAuthStateChanged(auth, async(user)=>{
 
-    let key=localStorage.key(i);
+if(!user) return;
 
-    try{
+const userSnap=await getDoc(doc(db,"users",user.uid));
 
-        let item=
-        JSON.parse(localStorage.getItem(key));
+if(userSnap.exists()){
 
-        if(item && item.hidden!==true){
+window.favourites=
 
-            allProperties.push(item);
+userSnap.data().favourites||[];
 
-        }
+updatePropertyHeart();
 
-    }catch(e){}
+loadSimilarProperties(currentProperty);
 
 }
-    let propertyId=
-    localStorage.getItem(
-        "selectedProperty"
-    );
- for(
-    let i = 0;
-    i < localStorage.length;
-    i++
- ){
-    let key = 
-    localStorage.key(i);
-    let data = 
-    localStorage.getItem(key);
-    try{
-        let p = 
-        JSON.parse(data);
-        if(
-            p &&
-            String(p.id) === propertyId
-        ){
-            property = p;
-            break;
-        }
-    }catch(error){}
- }
+
+});
+
+const snapshot = await getDocs(collection(db,"properties"));
+
+const params =
+new URLSearchParams(window.location.search);
+
+snapshot.forEach(function(doc){
+
+    let p = {
+
+        id: doc.id,
+
+        ...doc.data()
+
+    };
+
+    if(p.hidden !== true){
+
+        allProperties.push(p);
+
+    }
+
+});
+
+const propertyId =
+params.get("id");
+ property =
+allProperties.find(p=>p.id===propertyId);
     if(property){
-        property.views = 
-        (property.views || 0) + 1;
-        localStorage.setItem(
-            property.name,
-            JSON.stringify(property)
-        );
+        property.views =
+(property.views||0)+1;
+
+await updateDoc(
+
+doc(db,"properties",property.id),
+
+{
+
+views:property.views
+
+}
+
+);
           let galleryHTML ="";
  if(property.images &&
     property.images.length > 0) {
@@ -488,7 +530,7 @@ padding:15px;">
                   <img
 id="mainImage"
 src="${property.images[0]}"
-onclick="openImageViewer(currentImage)"
+onclick="openImageViewer(0)"
 style="
 width:100%;
 height:320px;
@@ -496,15 +538,6 @@ object-fit:cover;
 border-radius:14px;
 display:block;
 margin:auto;
-@media(min-width:768px){
-
-#mainImage{
-
-height:520px;
-
-}
-
-}
 display:block;
 margin:auto;
 cursor:zoom-in;
@@ -630,47 +663,64 @@ ${property.status}
             </p>
             
             </div>
-           <div class="facts-grid">
+         <div class="facts-grid">
 
+${
+property.propertyType !== "Land"
+
+?
+
+`
 <div class="fact-box">
 
 🛏<br><br>
 
-${property.bedrooms}
+${property.bedrooms || 0}
 
 Bedrooms
 
 </div>
 
+
 <div class="fact-box">
 
 🛁<br><br>
 
-${property.bathrooms}
+${property.bathrooms || 0}
 
 Bathrooms
 
 </div>
 
+
 <div class="fact-box">
 
 📐<br><br>
 
-${property.squareFeet}
+${Number(property.squareFeet || 0).toLocaleString()}
 
-sqft
+Sqft
 
 </div>
+`
+
+:
+
+""
+
+}
+
 
 <div class="fact-box">
 
 🌳<br><br>
 
-${property.perches}
+${property.perches || 0}
 
 Perches
 
 </div>
+
 
 </div>
                <div class="section-card">
@@ -725,7 +775,20 @@ color:#666;
 <span>
 
 📅 Posted:
-                    ${new Date(property.createdAt).toLocaleDateString()}
+                   ${property.createdAt
+? new Date(
+
+property.createdAt?.toMillis
+?
+
+property.createdAt.toMillis()
+
+:
+
+property.createdAt
+
+).toLocaleDateString()
+: "Unknown"}
 
 </span>
 <span>
@@ -801,7 +864,7 @@ align-items:center;
         
                              <button  class="action-btn contact-btn"
                              onclick="openContactPopup(
-'${property.owner}',
+'${property.ownerUsername}',
 '${property.phone}',
 '${property.name}',
 ${property.price},
@@ -843,8 +906,13 @@ margin-top:18px;
                                   `;
                                   currentProperty = property;
                     
-                                 updatePropertyHeart();
-                                  loadSimilarProperties(property);
+                                 setTimeout(() => {
+
+    updatePropertyHeart();
+
+    loadSimilarProperties(property);
+
+},0);
                                   checkDescriptionLength();
                                
                                   }
@@ -1087,7 +1155,7 @@ similar.push(remaining[i]);
         similar.forEach(property=>{
             container.innerHTML +=`
             <div
-            onclick="openProperty(${property.id})";
+            onclick="openProperty('${property.id}')"
             style="
             position:relative;
             width:100%;
@@ -1101,7 +1169,25 @@ similar.push(remaining[i]);
             flex-direction:column;
             height:100%;
             ">
-            ${(Date.now()-property.createdAt)<604800000?`
+            ${(
+Date.now()-
+
+(
+
+property.createdAt?.toMillis
+
+?
+
+property.createdAt.toMillis()
+
+:
+
+property.createdAt
+
+)
+
+)<604800000?`
+
 <div
 style="
 position:absolute;
@@ -1120,7 +1206,7 @@ NEW
 `:""}
             <img
             src="${property.images[0]}"
-            onclick="openProperty(${property.id})"
+            onclick="openProperty('${property.id}')"
             style="
             width:100%;
             height:150px;
@@ -1137,9 +1223,9 @@ flex:1;
              onclick="
              event.stopPropagation();
              toggleFavourite(
-            ${property.id},
-            this
-             );
+'${property.id}',
+this
+);
              "
             style="
             position:absolute;
@@ -1169,13 +1255,68 @@ margin:4px 0 8px 0;
 📅 Posted:
 ${timeAgo(property.createdAt)}
 </p>
-            <h3
-            style="cursor:pointer;"
-            onclick="openProperty(${property.id})">${property.name}</h3>
-            <p>Property Type: ${property.propertyType}</p>
-            <p>${property.city}, ${property.district}</p>
-            <p>🛏 ${property.bedrooms} Beds | 🛁 ${property.bathrooms} Baths</p>
-           ${
+           <h3
+style="cursor:pointer;"
+onclick="openProperty('${property.id}')">${property.name}</h3>
+
+<p>Property Type: ${property.propertyType}</p>
+
+<p>${property.city}, ${property.district}</p>
+
+
+${
+property.propertyType === "Land"
+
+?
+
+`
+<p>
+🌳 ${property.perches || 0} Perches
+</p>
+`
+
+:
+
+property.propertyType === "Hotel"
+
+?
+
+`
+<p>
+🛏 ${property.bedrooms || 0} Rooms
+|
+📐 ${Number(property.squareFeet || 0).toLocaleString()} Sqft
+</p>
+`
+
+:
+
+["Office","Shop","Warehouse","Building","Commercial"].includes(property.propertyType)
+
+?
+
+`
+<p>
+📐 ${Number(property.squareFeet || 0).toLocaleString()} Sqft 
+|
+🌳 ${property.perches || 0} Perches
+</p>
+`
+
+:
+
+`
+<p>
+🛏 ${property.bedrooms || 0} Beds 
+|
+🛁 ${property.bathrooms || 0} Baths
+</p>
+`
+
+}
+
+
+${
 property.negotiable
 ?
 "💬 Negotiable"
@@ -1192,7 +1333,7 @@ margin-top:6px;
 </p>
             <button
             onclick="
-            event.stopPropagation();openProperty(${property.id});"
+            event.stopPropagation();openProperty('${property.id}');"
      style="
 margin-top:auto;
 padding:12px;
@@ -1221,76 +1362,95 @@ margin-bottom:4px;
         );
         updatePropertyHeart();
     }
-    function toggleFavourite(id, heart){
-            let currentUser = 
-            localStorage.getItem("currentUser");
-            let property = 
-            allProperties.find(p => String(p.id) === String(id));
-            if(!currentUser){
-                alert("Please log in first");
-                window.location.href="login.html";
-                return;
-            }
-            let favourites = 
-            JSON.parse(
-                localStorage.getItem(
-                    "favourites_" + currentUser
-                ) || "[]"
-            );
-            if(favourites.includes(String(id))){
-                favourites = 
-                favourites.filter(
-                    x => x !== String(id)
-                );
-                heart.innerHTML = "🤍";
-                heart.style.color = "white";
-               showNotification(
-                "✔ Removed: " + property.name
-               )
-            }
-            else{
-                favourites.push(String(id));
-                heart.innerHTML = "💗";
-                heart.style.color = "red";
-                showNotification(
-                "✔ Saved: " + property.name
-               )
-            }
-            localStorage.setItem("favourites_" + currentUser,JSON.stringify(favourites));
-            if(favourites.includes(String(id))){
+ async function toggleFavourite(id, heart){
 
-property.saves = Math.max(
-0,
-(property.saves || 0)-1
-);
+    let currentUser =
+    auth.currentUser;
+
+    if(!currentUser){
+
+        showAlert("Please log in first", function(){
+
+            window.location.href="login.html";
+
+        });
+
+        return;
+
+    }
+
+    let property =
+    allProperties.find(p => String(p.id) === String(id));
+
+    if(!property) return;
+
+    let favourites = [...window.favourites];
+
+    if(favourites.includes(String(id))){
+
+        favourites =
+        favourites.filter(x => x !== String(id));
+
+        heart.innerHTML = "🤍";
+        heart.style.color = "white";
+
+        property.saves =
+        Math.max(0,(property.saves || 0)-1);
+
+        showNotification(
+            "✔ Removed: " + property.name
+        );
+
+    }
+
+    else{
+
+        favourites.push(String(id));
+
+        heart.innerHTML = "💗";
+        heart.style.color = "red";
+
+        property.saves =
+        (property.saves || 0)+1;
+
+        showNotification(
+            "✔ Saved: " + property.name
+        );
+
+    }
+
+    await updateDoc(
+
+        doc(db,"users",currentUser.uid),
+
+        {
+            favourites:favourites
+        }
+
+    );
+
+window.favourites = favourites;
+
+loadSimilarProperties(currentProperty);
+
+updatePropertyHeart();
+
+    await updateDoc(
+
+        doc(db,"properties",property.id),
+
+        {
+            saves:property.saves
+        }
+
+    );
 
 }
-else{
+      function isFavourite(id){
 
-property.saves =
-(property.saves || 0)+1;
+    return window.favourites.includes(String(id));
 
 }
-
-localStorage.setItem(
-property.name,
-JSON.stringify(property)
-);
-        }
-        function isFavourite(id){
-            let currentUser = 
-            localStorage.getItem("currentUser");
-            if(!currentUser){
-                return false;
-            }
-            let favourites = 
-            JSON.parse(
-                localStorage.getItem(
-                    "favourites_" + currentUser
-                ) || "[]"
-            );
-            return favourites.includes(String(id));
-        }
         function updatePropertyHeart(){
 
     let heart = document.getElementById("propertyHeart");
@@ -1457,23 +1617,37 @@ updateViewerImage();
             },2000);
         }
       function openProperty(id){
-        localStorage.setItem(
-            "selectedProperty",
-            String(id)
-      );
-      window.location.href="property.html";
-      }
-      function timeAgo(date){
+
+window.location.href=
+`property.html?id=${id}`;
+
+}
+      function timeAgo(createdAt){
+
+    if(!createdAt) return "Unknown";
+
+    let posted =
+new Date(
+
+createdAt?.toMillis
+
+?
+
+createdAt.toMillis()
+
+:
+
+createdAt
+
+);
 
     let now = new Date();
 
-    let posted = new Date(date);
-
     let diff = now - posted;
 
-    let days = Math.floor(diff / (1000*60*60*24));
+    let days = Math.floor(diff/(1000*60*60*24));
 
-    if(days === 0){
+    if(days <= 0){
         return "Today";
     }
 
@@ -1491,15 +1665,14 @@ updateViewerImage();
 
     return posted.toLocaleDateString();
 
-      }
-      
-  function openContactPopup(owner, phone, property, price, negotiable){
+}
+      function openContactPopup(ownerUsername, phone, property, price, negotiable){
 
 document.getElementById("contactPopup").style.display="flex";
 
 let localPhone = phone.replace(/^94/, "0");
 
-document.getElementById("popupOwner").innerHTML=owner;
+document.getElementById("popupOwner").innerHTML=ownerUsername;
 
 document.getElementById("popupCall").onclick=function(){
 
@@ -1542,6 +1715,7 @@ window.open(
 };
 
 }
+
 function closeContactPopup(){
 
 document.getElementById("contactPopup").style.display="none";
@@ -1591,6 +1765,7 @@ if(event.target===gallery){
 closeGallery();
 
 }
+});
 const viewerImage = document.getElementById("viewerImage");
 
 viewerImage.addEventListener("touchstart", function(e){
@@ -1600,8 +1775,6 @@ viewerImage.addEventListener("touchstart", function(e){
 viewerImage.addEventListener("touchend", function(e){
     touchEndX = e.changedTouches[0].screenX;
     handleSwipe();
-});
-
 });
 
 function handleSwipe(){
@@ -1730,6 +1903,38 @@ function toggleDescription(){
     }
 
 }
+window.togglePropertyFavourite = togglePropertyFavourite;
+window.toggleFavourite = toggleFavourite;
+window.isFavourite = isFavourite;
+window.updatePropertyHeart = updatePropertyHeart;
+
+window.changeImage = changeImage;
+window.nextImage = nextImage;
+window.previousImage = previousImage;
+window.changeImage = changeImage;
+window.openImageViewer = openImageViewer;
+window.closeImageViewer = closeImageViewer;
+window.nextViewerImage = nextViewerImage;
+window.previousViewerImage = previousViewerImage;
+
+window.showAllImages = showAllImages;
+window.closeGallery = closeGallery;
+
+window.shareCurrentProperty = shareCurrentProperty;
+window.shareProperty = shareProperty;
+
+window.openProperty = openProperty;
+
+window.openContactPopup = openContactPopup;
+window.closeContactPopup = closeContactPopup;
+
+window.reportProperty = reportProperty;
+
+window.toggleDescription = toggleDescription;
+
+window.showNotification = showNotification;
+window.checkDescriptionLength = checkDescriptionLength;
+window.timeAgo = timeAgo;
 </script>
 <div id="notification"
       style="
