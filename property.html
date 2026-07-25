@@ -344,6 +344,137 @@ height:520px;
 }
 
 }
+#gedarakModal{
+
+position:fixed;
+
+top:0;
+left:0;
+
+width:100%;
+height:100%;
+
+background:rgba(0,0,0,.45);
+
+display:none;
+
+align-items:center;
+justify-content:center;
+
+z-index:999999;
+
+}
+
+
+.modal-box{
+
+background:white;
+
+width:90%;
+max-width:420px;
+
+padding:35px;
+
+border-radius:20px;
+
+text-align:center;
+
+box-shadow:0 15px 40px rgba(0,0,0,.3);
+
+animation:popup .25s ease;
+
+}
+
+
+.modal-box h2{
+
+margin:0 0 15px;
+
+font-size:26px;
+
+}
+
+
+.modal-box p{
+
+font-size:22px;
+
+font-weight:600;
+
+color:#333;
+
+line-height:1.5;
+
+}
+
+
+.modal-buttons{
+
+display:flex;
+
+gap:12px;
+
+justify-content:center;
+
+margin-top:25px;
+
+}
+
+
+.modal-buttons button{
+
+padding:12px 25px;
+
+border:none;
+
+border-radius:12px;
+
+font-size:16px;
+
+font-weight:bold;
+
+cursor:pointer;
+
+}
+
+
+.modal-ok{
+
+background:#16a34a;
+
+color:white;
+
+}
+
+
+.modal-later{
+
+background:#e5e7eb;
+
+color:#333;
+
+}
+
+
+@keyframes popup{
+
+from{
+
+transform:scale(.8);
+
+opacity:0;
+
+}
+
+to{
+
+transform:scale(1);
+
+opacity:1;
+
+}
+
+}
      </style>
     </head>
     <body>
@@ -352,6 +483,36 @@ height:520px;
         💒 Home
         </button>
     </a>
+     <div id="gedarakModal">
+
+    <div class="modal-box">
+
+        <h2 id="modalTitle">
+            Gedarak.lk
+        </h2>
+
+        <p id="modalMessage">
+        </p>
+
+        <div class="modal-buttons">
+
+            <button 
+            id="modalOk"
+            class="modal-ok">
+                OK
+            </button>
+
+            <button
+            id="modalLater"
+            class="modal-later">
+                Later
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
        <header class="pageHeader">
 
 <a href="index.html" class="logoLink">
@@ -1903,6 +2064,37 @@ function toggleDescription(){
     }
 
 }
+function showAlert(message, okAction){
+
+let modal =
+document.getElementById("gedarakModal");
+
+let msg =
+document.getElementById("modalMessage");
+
+msg.textContent = message;
+
+modal.style.display="flex";
+
+
+document.getElementById("modalOk").onclick=function(){
+
+modal.style.display="none";
+
+if(okAction){
+    okAction();
+}
+
+};
+
+
+document.getElementById("modalLater").onclick=function(){
+
+modal.style.display="none";
+
+};
+
+}
 window.togglePropertyFavourite = togglePropertyFavourite;
 window.toggleFavourite = toggleFavourite;
 window.isFavourite = isFavourite;
@@ -1935,6 +2127,7 @@ window.toggleDescription = toggleDescription;
 window.showNotification = showNotification;
 window.checkDescriptionLength = checkDescriptionLength;
 window.timeAgo = timeAgo;
+window.showAlert = showAlert;
 </script>
 <div id="notification"
       style="
