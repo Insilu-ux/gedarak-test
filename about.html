@@ -546,7 +546,7 @@ modern platform.
 </p>
 
 <p>
-📍 Sri Lanka
+📍 Colombo, Sri Lanka
 </p>
 
 </div>
@@ -578,31 +578,41 @@ Helping Sri Lanka Find Home.
 </p>
 
 </footer>
-        <script>
+     <script type="module">
+
+import { db } from "./firebase-config.js";
+
+import {
+collection,
+getDocs
+} from "https://www.gstatic.com/firebasejs/12.16.0/firebase-firestore.js";
+
+async function loadStatistics(){
 
 let totalProperties = 0;
-
 let totalViews = 0;
-
 let totalFavourites = 0;
-
-for(let i=0;i<localStorage.length;i++){
-
-let key = localStorage.key(i);
 
 try{
 
-let item = JSON.parse(localStorage.getItem(key));
+const snapshot = await getDocs(
+collection(db,"properties")
+);
 
-if(item && item.approved===true){
+snapshot.forEach((doc)=>{
+
+const property = doc.data();
 
 totalProperties++;
 
-totalViews += item.views || 0;
+totalViews += property.views || 0;
+
+});
 
 }
+catch(error){
 
-}catch(e){}
+console.error(error);
 
 }
 
@@ -612,20 +622,43 @@ let key = localStorage.key(i);
 
 if(key.startsWith("favourites_")){
 
-let favs = JSON.parse(localStorage.getItem(key));
+try{
+
+let favs = JSON.parse(localStorage.getItem(key)) || [];
 
 totalFavourites += favs.length;
 
 }
+catch(e){}
 
 }
 
-document.getElementById("totalProperties").innerHTML = totalProperties;
+}
 
-document.getElementById("totalViews").innerHTML = totalViews;
+document.getElementById("totalProperties").textContent = totalProperties;
 
-document.getElementById("totalFavourites").innerHTML = totalFavourites;
+const viewsElement =
+document.getElementById("totalViews");
+
+if(viewsElement){
+
+viewsElement.textContent = totalViews;
+
+}
+
+const favouritesElement =
+document.getElementById("totalFavourites");
+
+if(favouritesElement){
+
+favouritesElement.textContent = totalFavourites;
+
+}
+
+}
+
+loadStatistics();
 
 </script>
-    </body>
+</body>
 </html>
