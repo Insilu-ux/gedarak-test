@@ -187,6 +187,63 @@ textarea:focus{
     padding-bottom:8px;
     border-bottom:2px solid #e8e8e8;
 }
+.mainImageNotice{
+
+display:flex;
+
+align-items:center;
+
+gap:15px;
+
+background:#fff8dc;
+
+border:2px solid #ffd54f;
+
+padding:18px;
+
+border-radius:14px;
+
+margin-bottom:18px;
+
+}
+
+.noticeIcon{
+
+font-size:34px;
+
+width:55px;
+
+height:55px;
+
+display:flex;
+
+align-items:center;
+
+justify-content:center;
+
+background:#ffeb99;
+
+border-radius:50%;
+
+flex-shrink:0;
+
+}
+
+.mainImageNotice b{
+
+color:#222;
+
+}
+
+.mainImageNotice div{
+
+font-size:15px;
+
+line-height:1.5;
+
+color:#555;
+
+}
      </style>
         <title>Post Property</title>
     </head>
@@ -348,6 +405,7 @@ Buyers can view your property's location directly in Google Maps.
           <input type="number"
           class="formInput"
           id="bedrooms"
+          min="0"
         placeholder="Bedrooms">
            </div>
          <br>
@@ -355,6 +413,7 @@ Buyers can view your property's location directly in Google Maps.
                   <label>Number of Bathrooms </label>
           <input type="number"
           class="formInput"
+          min="0"
           id="bathrooms"
         placeholder="Bathrooms">
          </div>
@@ -362,6 +421,7 @@ Buyers can view your property's location directly in Google Maps.
          <label>Land Size(Perches)</label>
          <input
          type="number"
+         min="0"
          class="formInput"
          id="perches"
          placeholder="Example: 15">
@@ -371,6 +431,7 @@ Buyers can view your property's location directly in Google Maps.
          <input
          class="formInput"
 type="text"
+min="0"
 id="squareFeet"
 placeholder="Example: 2,500"
 inputmode="numeric"
@@ -454,7 +515,25 @@ oninput="formatSqft(this)">
 <span>Forest View</span>
 </label>
           <br></br>
-         <label>Property Images</label>
+         <h3 class="sectionHeading">📷 Property Images</h3>
+
+<div class="mainImageNotice">
+
+<div class="noticeIcon">
+⭐
+</div>
+
+<div>
+
+<b>Main Cover Photo</b><br>
+
+The <b>first image</b> you upload will be shown on the homepage, search results, and property listings.
+
+Choose your best photo first.
+
+</div>
+
+</div>
 <input
 class="formInput"
 type="file"
@@ -598,7 +677,9 @@ import {
 import {
 collection,
 addDoc,
-serverTimestamp
+serverTimestamp,
+getDoc,
+doc
 }
 from "https://www.gstatic.com/firebasejs/12.16.0/firebase-firestore.js";
 
@@ -1294,10 +1375,14 @@ Vavuniya: [
        }
        window.addProperty = async function () {
 const btn = document.querySelector(".post-property-btn");
-const user = auth.currentUser;
-btn.disabled = true;
 
+if(btn.disabled) return;
+
+btn.disabled = true;
 btn.innerHTML = "Posting Property...";
+
+const user = auth.currentUser;
+
 
 try{
 
@@ -1464,20 +1549,18 @@ if(!/^7\d{8}$/.test(phoneInput)){
 let mapLink =
 document.getElementById("mapLink").value.trim();
 if(
-mapLink &&
-!mapLink.includes("google.com") &&
-!mapLink.includes("maps.app.goo.gl")
+    mapLink !== "" &&
+    !mapLink.includes("maps.google") &&
+    !mapLink.includes("goo.gl/maps") &&
+    !mapLink.includes("maps.app.goo.gl")
 ){
-
-showAlert(
-"Invalid Link",
-"Please enter a valid Google Maps link."
+    showAlert(
+    "Invalid Google Maps Link",
+    "Please paste a valid Google Maps location."
 );
-
- btn.disabled=false;
-    btn.innerHTML="Post Property";
+btn.disabled = false;
+btn.innerHTML = "Post Property";
     return;
-
 }
 let amenities=[];
 
@@ -1529,6 +1612,18 @@ const imageUrls = [];
 
 for(const file of selectedImages){
 
+     if(file.size > 5 * 1024 * 1024){
+
+        showAlert(
+            "Image too large",
+            "Each image must be under 5 MB."
+        );
+
+        btn.disabled = false;
+        btn.innerHTML = "Post Property";
+        return;
+    }
+
 const imageRef = ref(
 
 storage,
@@ -1544,13 +1639,21 @@ const url = await getDownloadURL(imageRef);
 imageUrls.push(url);
 
 }
+const userDoc = await getDoc(
+doc(db, "users", user.uid)
+);
+
+const username = userDoc.data().username;
+
 await addDoc(
 collection(db,"properties"),
 {
 
-ownerUid:user.uid,
+ownerUid: user.uid,
 
-ownerEmail:user.email,
+ownerUsername: username,
+
+ownerEmail: user.email,
 
 name:name,
 
@@ -1624,7 +1727,10 @@ btn.innerHTML="Post Property";
 
     let input = document.getElementById("propertyImages");
 
-    selectedImages = Array.from(input.files);
+    selectedImages = [
+...selectedImages,
+...Array.from(input.files)
+];
 
     if(selectedImages.length > 20){
 
@@ -1682,7 +1788,7 @@ let reader=new FileReader();
 
 reader.onload=function(e){
 
-preview.innerHTML +=`
+preview.innerHTML += `
 
 <div
 style="
@@ -1690,6 +1796,30 @@ position:relative;
 display:inline-block;
 margin:6px;
 ">
+
+${
+index===0
+?
+`
+<div
+style="
+position:absolute;
+top:8px;
+left:8px;
+background:#ff9800;
+color:white;
+padding:5px 10px;
+border-radius:20px;
+font-size:13px;
+font-weight:bold;
+z-index:5;
+">
+⭐ Cover Photo
+</div>
+`
+:
+""
+}
 
 <img
 src="${e.target.result}"
