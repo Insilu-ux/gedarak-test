@@ -69,11 +69,191 @@ border-radius:8px;
 
 margin:2px;
 
+background:#009688;
+
+color:white;
+
+font-weight:bold;
+
+transition:.2s;
+
+}
+
+button:hover{
+
+background:#00796b;
+
 }
 
 textarea{
 
 width:100%;
+
+}
+
+#gedarakModal{
+
+position:fixed;
+
+top:0;
+left:0;
+
+width:100%;
+height:100%;
+
+background:rgba(0,0,0,.45);
+
+display:none;
+
+align-items:center;
+justify-content:center;
+
+z-index:999999;
+
+}
+
+
+.modal-box{
+
+background:white;
+
+width:90%;
+max-width:420px;
+
+padding:35px;
+
+border-radius:20px;
+
+text-align:center;
+
+box-shadow:0 15px 40px rgba(0,0,0,.3);
+
+animation:popup .25s ease;
+
+}
+
+
+.modal-box h2{
+
+margin:0 0 15px;
+
+font-size:26px;
+
+}
+
+
+.modal-box p{
+
+font-size:22px;
+
+font-weight:600;
+
+color:#333;
+
+line-height:1.5;
+
+}
+
+
+.modal-buttons{
+
+display:flex;
+
+gap:12px;
+
+justify-content:center;
+
+margin-top:25px;
+
+}
+
+
+.modal-buttons button{
+
+padding:12px 25px;
+
+border:none;
+
+border-radius:12px;
+
+font-size:16px;
+
+font-weight:bold;
+
+cursor:pointer;
+
+}
+
+
+.modal-ok{
+
+background:#16a34a;
+
+color:white;
+
+}
+
+
+.modal-later{
+
+background:#e5e7eb;
+
+color:#333;
+
+}
+
+
+@keyframes popup{
+
+from{
+
+transform:scale(.8);
+
+opacity:0;
+
+}
+
+to{
+
+transform:scale(1);
+
+opacity:1;
+
+}
+
+}
+.report-search{
+
+width:420px;
+
+height:45px;
+
+padding:0 15px;
+
+font-size:17px;
+
+border:1px solid #ccc;
+
+border-radius:10px;
+
+outline:none;
+
+}
+.report-filter{
+
+width:220px;
+
+height:42px;
+
+padding:0 12px;
+
+font-size:16px;
+
+border-radius:10px;
+
+border:1px solid #ccc;
+
+cursor:pointer;
 
 }
 
@@ -105,7 +285,9 @@ id="searchReport"
 
 placeholder="Search reports..."
 
-onkeyup="loadReports()">
+onkeyup="loadReports()"
+
+class="report-search">
 
 <br><br>
 
@@ -113,7 +295,9 @@ onkeyup="loadReports()">
 
 id="statusFilter"
 
-onchange="loadReports()">
+onchange="loadReports()"
+
+class="report-filter">
 
 <option value="">
 
@@ -165,22 +349,103 @@ Solved
 </tbody>
 
 </table>
+     <div id="gedarakModal">
 
-<script>
+<div class="modal-box">
+
+<h2 id="modalTitle">
+Gedarak.lk
+</h2>
+
+<p id="modalMessage"></p>
+
+<div class="modal-buttons">
+
+<button
+id="modalOk"
+class="modal-ok">
+OK
+</button>
+
+<button
+id="modalLater"
+class="modal-later">
+Cancel
+</button>
+
+</div>
+
+</div>
+
+</div>
+
+<script type="module">
+
+    import { auth, db } from "./firebase-config.js";
+
+import {
+collection,
+getDocs,
+updateDoc,
+deleteDoc,
+doc,
+getDoc
+}
+from "https://www.gstatic.com/firebasejs/12.16.0/firebase-firestore.js";
+
+import {
+onAuthStateChanged
+}
+from "https://www.gstatic.com/firebasejs/12.16.0/firebase-auth.js";
+
+onAuthStateChanged(auth,async(user)=>{
+
+if(!user){
+
+location.href="login.html";
+return;
+
+}
+
+const userSnap =
+await getDoc(doc(db,"users",user.uid));
+
+if(!userSnap.exists() ||
+userSnap.data().role!=="Admin"){
+
+showAlert(
+"⛔ Access Denied.\n\nOnly administrators can access this page.",
+function(){
+location.href="index.html";
+},
+true
+);
+return;
+
+}
 
 loadReports();
 
-function loadReports(){
+});
 
-let reports=
+async function loadReports(){
 
-JSON.parse(
+const snapshot =
 
-localStorage.getItem("reports")||
+await getDocs(collection(db,"reports"));
 
-"[]"
+const reports=[];
 
-);
+snapshot.forEach(d=>{
+
+reports.push({
+
+docId:d.id,
+...d.data()
+
+});
+
+});
 
 let search=
 
@@ -280,7 +545,11 @@ ${report.email}
 
 style="
 
-padding:6px 10px;
+display:inline-block;
+
+max-width:150px;
+
+padding:8px 12px;
 
 border-radius:8px;
 
@@ -301,6 +570,12 @@ report.type=="Suggestion"
 ?"#b6d7ff":
 
 "#dddddd"};
+
+word-break:break-word;
+
+white-space:normal;
+
+text-align:center;
 
 ">
 
@@ -400,18 +675,15 @@ ${report.status || "Pending"}
 <td>
 
 <button
-
-onclick="solveReport(${index})">
-
+style="background:#2e7d32;color:white;"
+onclick="solveReport('${report.docId}')">
 ✔ Mark Solved
-
 </button>
 
 <button
-onclick="deleteReport(${index})">
-
-Delete
-
+style="background:#d32f2f;color:white;"
+onclick="deleteReport('${report.docId}')">
+🗑 Delete
 </button>
 
 </td>
@@ -424,119 +696,103 @@ Delete
 
 }
 
-function solveReport(index){
+async function solveReport(docId){
 
-let reports=
+await updateDoc(
 
-JSON.parse(
+doc(db,"reports",docId),
 
-localStorage.getItem("reports")
-
-);
-
-reports[index].status="Solved";
-
-localStorage.setItem(
-
-"reports",
-
-JSON.stringify(reports)
+{
+status:"Solved"
+}
 
 );
 
 loadReports();
 
+showAlert(
 
+"✅ Report marked as solved.",
 
-}
+null,
 
-function deleteReport(index){
+true,
 
-if(confirm("Delete report?")){
-
-let reports=
-
-JSON.parse(
-
-localStorage.getItem("reports")
+"Success"
 
 );
 
-reports.splice(index,1);
+}
 
-localStorage.setItem(
+async function deleteReport(docId){
 
-"reports",
+showAlert(
 
-JSON.stringify(reports)
+"🗑 Delete this report permanently?",
 
+async function(){
+
+await deleteDoc(
+doc(db,"reports",docId)
 );
 
 loadReports();
 
-}
+showAlert(
 
-}
+"🗑 Report deleted successfully.",
 
-function findProperty(name){
+null,
 
-for(
+true,
 
-let i=0;
-
-i<localStorage.length;
-
-i++
-
-){
-
-let key=
-
-localStorage.key(i);
-
-try{
-
-let property=
-
-JSON.parse(
-
-localStorage.getItem(key)
+"Deleted"
 
 );
+
+},
+
+false,
+
+"Delete Report"
+
+);
+
+}
+async function findProperty(name){
+
+const snapshot =
+await getDocs(collection(db,"properties"));
+
+let found=false;
+
+snapshot.forEach(d=>{
+
+const p=d.data();
 
 if(
-
-property &&
-
-property.name==name
-
+(p.name || "").trim().toLowerCase() ===
+(name || "").trim().toLowerCase()
 ){
 
-localStorage.setItem(
-
-"selectedProperty",
-
-property.id
-
-);
+found=true;
 
 window.location.href=
-
-"property.html";
-
-return;
+"property.html?id="+d.id;
 
 }
 
-}catch(e){}
+});
 
-}
+if(!found){
 
-alert(
-
-"Property not found."
-
+showAlert(
+"🏠 Property not found.",
+null,
+true
 );
+
+}
 
 }
 
@@ -554,9 +810,16 @@ document.getElementById(
 
 function closeImage(){
 
-document.getElementById(
-"imagePopup"
-).style.display="none";
+document.getElementById("imagePopup").style.display="none";
+
+const image =
+document.getElementById("popupImage");
+
+image.style.transform="scale(1)";
+
+image.style.cursor="zoom-in";
+
+zoomed=false;
 
 }
 let zoomed = false;
@@ -584,6 +847,60 @@ zoomed = false;
 }
 
 }
+
+ window.showAlert = function(
+    message,
+    okAction,
+    hideLater = false,
+    title = "Gedarak.lk"
+){
+
+    const modal =
+    document.getElementById("gedarakModal");
+
+    document.getElementById("modalTitle").textContent =
+    title;
+
+    document.getElementById("modalMessage").textContent =
+    message;
+
+    const laterBtn =
+    document.getElementById("modalLater");
+
+    laterBtn.style.display =
+    hideLater ? "none" : "inline-block";
+
+    modal.style.display = "flex";
+
+    document.getElementById("modalOk").onclick = function(){
+
+        modal.style.display = "none";
+
+        if(okAction){
+
+            okAction();
+
+        }
+
+    };
+
+    laterBtn.onclick = function(){
+
+        modal.style.display = "none";
+
+    };
+
+}
+
+
+window.solveReport = solveReport;
+window.deleteReport = deleteReport;
+window.findProperty = findProperty;
+window.openImage = openImage;
+window.closeImage = closeImage;
+window.zoomImage = zoomImage;
+window.loadReports = loadReports;
+
 </script>
 
 <div
