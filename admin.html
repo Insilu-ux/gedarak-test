@@ -82,6 +82,138 @@ border:none;
 border-radius:10px;
 
 }
+
+#gedarakModal{
+
+position:fixed;
+
+top:0;
+left:0;
+
+width:100%;
+height:100%;
+
+background:rgba(0,0,0,.45);
+
+display:none;
+
+align-items:center;
+justify-content:center;
+
+z-index:999999;
+
+}
+
+
+.modal-box{
+
+background:white;
+
+width:90%;
+max-width:420px;
+
+padding:35px;
+
+border-radius:20px;
+
+text-align:center;
+
+box-shadow:0 15px 40px rgba(0,0,0,.3);
+
+animation:popup .25s ease;
+
+}
+
+
+.modal-box h2{
+
+margin:0 0 15px;
+
+font-size:26px;
+
+}
+
+
+.modal-box p{
+
+font-size:22px;
+
+font-weight:600;
+
+color:#333;
+
+line-height:1.5;
+
+}
+
+
+.modal-buttons{
+
+display:flex;
+
+gap:12px;
+
+justify-content:center;
+
+margin-top:25px;
+
+}
+
+
+.modal-buttons button{
+
+padding:12px 25px;
+
+border:none;
+
+border-radius:12px;
+
+font-size:16px;
+
+font-weight:bold;
+
+cursor:pointer;
+
+}
+
+
+.modal-ok{
+
+background:#16a34a;
+
+color:white;
+
+}
+
+
+.modal-later{
+
+background:#e5e7eb;
+
+color:#333;
+
+}
+
+
+@keyframes popup{
+
+from{
+
+transform:scale(.8);
+
+opacity:0;
+
+}
+
+to{
+
+transform:scale(1);
+
+opacity:1;
+
+}
+
+}
         </style>
     </head>
    <body>
@@ -179,110 +311,178 @@ Management
 
 </div>
 
-<script>
+     <div id="gedarakModal">
+
+<div class="modal-box">
+
+<h2 id="modalTitle">
+Gedarak.lk
+</h2>
+
+<p id="modalMessage"></p>
+
+<div class="modal-buttons">
+
+<button
+id="modalOk"
+class="modal-ok">
+OK
+</button>
+
+<button
+id="modalLater"
+class="modal-later">
+Cancel
+</button>
+
+</div>
+
+</div>
+
+</div>
+
+<script type="module">
+
+    import { auth, db } from "./firebase-config.js";
+
+import {
+collection,
+getDocs,
+doc,
+getDoc
+}
+from "https://www.gstatic.com/firebasejs/12.16.0/firebase-firestore.js";
+
+import {
+onAuthStateChanged
+}
+from "https://www.gstatic.com/firebasejs/12.16.0/firebase-auth.js";
+
+onAuthStateChanged(auth, async(user)=>{
+
+if(!user){
+
+window.location.href="login.html";
+
+return;
+
+}
+
+const userDoc = await getDoc(
+doc(db,"users",user.uid)
+);
+
+if(
+!userDoc.exists() ||
+userDoc.data().role !== "Admin"
+){
+
+showAlert(
+"⛔ Access Denied.\n\nOnly administrators can access this page.",
+function(){
+location.href="index.html";
+},
+true
+);
+return;
+
+}
 
 updateDashboard();
 
-function updateDashboard(){
+});
 
-let properties=0;
+async function updateDashboard(){
 
-let live=0;
-
-let users=0;
-
-for(
-
-let i=0;
-
-i<localStorage.length;
-
-i++
-
-){
-
-let key=
-
-localStorage.key(i);
-
-try{
-
-let item=
-
-JSON.parse(localStorage.getItem(key));
-
-if(
-item &&
-item.username &&
-item.password
-){
-    users++;
-}
-
-if(item){
-
-if(item.id){
-
-    properties++;
-
-    if(
-
-        item.hidden !== true &&
-
-        item.approved !== false
-
-    ){
-
-        live++;
-
-    }
-
-}
-
-}
-
-}catch(e){}
-
-}
-
-let reports=
-
-JSON.parse(
-
-localStorage.getItem("reports")||"[]"
-
+const propertySnap =
+await getDocs(
+collection(db,"properties")
 );
 
-document.getElementById(
+const userSnap =
+await getDocs(
+collection(db,"users")
+);
 
-"totalReports"
+const reportSnap =
+await getDocs(
+collection(db,"reports")
+);
 
-).innerHTML=
+let properties = 0;
+let live = 0;
 
-reports.length;
+propertySnap.forEach(doc=>{
 
-document.getElementById(
+properties++;
 
-"totalProperties"
+const p = doc.data();
 
-).innerHTML=
+if(p.hidden !== true){
 
-properties;
-
-document.getElementById(
-
-"liveProperties"
-
-).innerHTML=
-
-live;
-
-document.getElementById(
-"totalUsers"
-).innerHTML =
-users;
+live++;
 
 }
+
+});
+
+document.getElementById("totalProperties").innerHTML =
+properties;
+
+document.getElementById("liveProperties").innerHTML =
+live;
+
+document.getElementById("totalUsers").innerHTML =
+userSnap.size;
+
+document.getElementById("totalReports").innerHTML =
+reportSnap.size;
+
+}
+window.showAlert = function(
+    message,
+    okAction,
+    hideLater = false,
+    title = "Gedarak.lk"
+){
+
+    const modal =
+    document.getElementById("gedarakModal");
+
+    document.getElementById("modalTitle").textContent =
+    title;
+
+    document.getElementById("modalMessage").textContent =
+    message;
+
+    const laterBtn =
+    document.getElementById("modalLater");
+
+    laterBtn.style.display =
+    hideLater ? "none" : "inline-block";
+
+    modal.style.display = "flex";
+
+    document.getElementById("modalOk").onclick = function(){
+
+        modal.style.display = "none";
+
+        if(okAction){
+
+            okAction();
+
+        }
+
+    };
+
+    laterBtn.onclick = function(){
+
+        modal.style.display = "none";
+
+    };
+
+}
+
 
 </script>
 
