@@ -127,6 +127,137 @@ font-size:14px;
 color:#666;
 
 }
+#gedarakModal{
+
+position:fixed;
+
+top:0;
+left:0;
+
+width:100%;
+height:100%;
+
+background:rgba(0,0,0,.45);
+
+display:none;
+
+align-items:center;
+justify-content:center;
+
+z-index:999999;
+
+}
+
+
+.modal-box{
+
+background:white;
+
+width:90%;
+max-width:420px;
+
+padding:35px;
+
+border-radius:20px;
+
+text-align:center;
+
+box-shadow:0 15px 40px rgba(0,0,0,.3);
+
+animation:popup .25s ease;
+
+}
+
+
+.modal-box h2{
+
+margin:0 0 15px;
+
+font-size:26px;
+
+}
+
+
+.modal-box p{
+
+font-size:22px;
+
+font-weight:600;
+
+color:#333;
+
+line-height:1.5;
+
+}
+
+
+.modal-buttons{
+
+display:flex;
+
+gap:12px;
+
+justify-content:center;
+
+margin-top:25px;
+
+}
+
+
+.modal-buttons button{
+
+padding:12px 25px;
+
+border:none;
+
+border-radius:12px;
+
+font-size:16px;
+
+font-weight:bold;
+
+cursor:pointer;
+
+}
+
+
+.modal-ok{
+
+background:#16a34a;
+
+color:white;
+
+}
+
+
+.modal-later{
+
+background:#e5e7eb;
+
+color:#333;
+
+}
+
+
+@keyframes popup{
+
+from{
+
+transform:scale(.8);
+
+opacity:0;
+
+}
+
+to{
+
+transform:scale(1);
+
+opacity:1;
+
+}
+
+}
 </style>
         <title>Report a Problem</title>
         <link rel="stylesheet" href="style.css">
@@ -186,6 +317,7 @@ fake listings or other issues.
 type="text"
 id="reportName"
 placeholder="Your Name"
+maxlength="100"
 required>
 
 <br><br>
@@ -210,7 +342,13 @@ id="reportPhone"
 placeholder="771234567"
 maxlength="9"
 inputmode="numeric"
-oninput="this.value=this.value.replace(/[^0-9]/g,'');"
+oninput="
+this.value=this.value.replace(/[^0-9]/g,'');
+
+if(this.value.length>0 && this.value.charAt(0)!=='7'){
+this.value='7'+this.value.substring(1);
+}
+"
 style="
 border-radius:0 8px 8px 0;
 width:110px;
@@ -272,6 +410,7 @@ required>
 <input
 type="text"
 id="propertyID"
+maxlength="100"
 placeholder="
 Property Name - 
 
@@ -454,12 +593,65 @@ line-height:2;
 <li>Suggestion for improving Gedarak.lk</li>
 
 </ul>
+     <div id="gedarakModal">
 
+<div class="modal-box">
+
+<h2 id="modalTitle">
+Gedarak.lk
+</h2>
+
+<p id="modalMessage"></p>
+
+<div class="modal-buttons">
+
+<button
+id="modalOk"
+class="modal-ok">
+OK
+</button>
+
+<button
+id="modalLater"
+class="modal-later">
+Later
+</button>
+
+</div>
+
+</div>
+
+</div>
     <footer>
         <p>&copy; 2026 Gedarak.lk</p>
     </footer>
-    <script>
-        function submitReport(){
+    <script type="module">
+
+        import { db } from "./firebase-config.js";
+
+import {
+collection,
+addDoc
+}
+from "https://www.gstatic.com/firebasejs/12.16.0/firebase-firestore.js";
+
+let isSubmitting = false;
+
+        async function submitReport(){
+
+            if(isSubmitting){
+    return;
+}
+
+isSubmitting = true;
+
+const submitBtn =
+document.querySelector(
+'button[onclick="submitReport()"]'
+);
+
+submitBtn.disabled = true;
+submitBtn.innerHTML = "⏳ Reporting...";
 
 let name=
 document.getElementById("reportName").value.trim();
@@ -468,14 +660,21 @@ let email=
 document.getElementById("reportEmail").value.trim();
 
 let emailPattern =
-
-/^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+/^[^\s@]+@([gG][mM][aA][iI][lL])\.com$/;
 
 if(!emailPattern.test(email)){
 
-    alert("Please enter a valid email address.");
+    showAlert(
+"Please enter a valid Gmail address.",
+null,
+true
+);
+isSubmitting = false;
 
-    return;
+submitBtn.disabled = false;
+
+submitBtn.innerHTML = "🚩 Report Issue";
+return;
 
 }
 
@@ -497,14 +696,20 @@ document.getElementById("reportPhone")
 .value
 .trim();
 
-let phonePattern = /^[0-9]{9}$/;
+let phonePattern = /^7[0-9]{8}$/;
 
 if(!phonePattern.test(phone)){
 
-alert(
-"Please enter a valid Sri Lankan mobile number."
+showAlert(
+"Please enter a valid Sri Lankan mobile number.\n\nExample:\n771234567",
+null,
+true
 );
+isSubmitting = false;
 
+submitBtn.disabled = false;
+
+submitBtn.innerHTML = "🚩 Report Issue";
 return;
 
 }
@@ -516,29 +721,25 @@ type==""||
 message==""
 ){
 
-alert("Please complete all required fields.");
+showAlert(
+"Please complete all required fields.",
+null,
+true
+);
+isSubmitting = false;
 
+submitBtn.disabled = false;
+
+submitBtn.innerHTML = "🚩 Report Issue";
 return;
 
 }
-let reportNumber =
-parseInt(
-localStorage.getItem("lastReportNumber") || "0"
-) + 1;
-
-localStorage.setItem(
-"lastReportNumber",
-reportNumber
-);
-
-let reportID =
-"REP-" +
-String(reportNumber).padStart(6,"0");
 
 
-let report={
 
-id:reportID,
+const report={
+
+id:"REP-"+Date.now(),
 
 name:name,
 
@@ -564,32 +765,74 @@ date:new Date().toLocaleString()
 
 };
 
-let reports=
-JSON.parse(
-localStorage.getItem("reports")||"[]"
+try{
+
+showAlert(
+"Please wait while we securely submit your report.",
+null,
+true,
+"📤 Reporting Issue...",
+true
 );
 
-reports.push(report);
-
-localStorage.setItem(
-"reports",
-JSON.stringify(reports)
+await addDoc(
+collection(db,"reports"),
+report
 );
 
+showAlert(
 
-showNotification(
+"🎉 Thank you for helping improve Gedarak.lk!\n\n" +
 
-"✅ Thank you for helping improve Gedarak.lk.\n\n" +
+"━━━━━━━━━━━━━━━━\n\n" +
 
-"Your report has been received.\n" +
+"🆔 Reference ID\n" +
 
-"Reference: " + reportID
+report.id +
 
-);
+"\n\n━━━━━━━━━━━━━━━━\n\n" +
+
+"📋 Our team will review your report shortly.",
+
+function(){
 
 document.getElementById("reportForm").reset();
-
 removeReportImage();
+
+},
+
+true,
+
+"✅ Report Submitted"
+
+);
+
+}
+catch(error){
+
+showAlert(
+
+"Unable to submit your report.\n\nPlease check your internet connection and try again.",
+
+null,
+
+true,
+
+"❌ Submission Failed"
+
+);
+
+}
+finally{
+
+isSubmitting = false;
+
+submitBtn.disabled = false;
+
+submitBtn.innerHTML="🚩 Report Issue";
+
+}
+
 
 }
 function showNotification(message){
@@ -634,20 +877,71 @@ document.getElementById(
 reader.readAsDataURL(file);
 
 }
+window.showAlert = function(
+message,
+okAction,
+hideLater=false,
+title="⚠️",
+hideButtons=false
+){
 
-function removeReportImage(){
+    const modal =
+    document.getElementById("gedarakModal");
 
-document.getElementById("reportImage").value="";
+    const buttons =
+document.querySelector(".modal-buttons");
 
-document.getElementById(
-"reportPreviewContainer"
-).style.display="none";
+buttons.style.display =
+hideButtons ? "none" : "flex";
 
-document.getElementById(
-"reportPreview"
-).src="";
+    document.getElementById("modalTitle").textContent =
+    title;
+
+    document.getElementById("modalMessage").textContent =
+    message;
+
+    const laterBtn =
+    document.getElementById("modalLater");
+
+    laterBtn.style.display =
+    hideLater ? "none" : "inline-block";
+
+    modal.style.display = "flex";
+
+    document.getElementById("modalOk").onclick = function(){
+
+        modal.style.display = "none";
+
+        if(okAction){
+
+            okAction();
+
+        }
+
+    };
+
+    laterBtn.onclick = function(){
+
+        modal.style.display = "none";
+
+    };
 
 }
+function removeReportImage(){
+
+const input = document.getElementById("reportImage");
+const preview = document.getElementById("reportPreview");
+const container = document.getElementById("reportPreviewContainer");
+
+input.value = "";
+preview.removeAttribute("src");
+container.style.display = "none";
+
+}
+
+window.previewReportImage = previewReportImage;
+window.removeReportImage = removeReportImage;
+window.submitReport = submitReport;
     </script>
    <div id="notification"
 
