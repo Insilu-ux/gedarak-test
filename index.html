@@ -1309,6 +1309,48 @@ onAuthStateChanged
 }
 from "https://www.gstatic.com/firebasejs/12.16.0/firebase-auth.js";
 
+onAuthStateChanged(auth, async(user)=>{
+
+const adminBox =
+document.getElementById("adminLink");
+
+if(!user){
+
+adminBox.innerHTML = "";
+
+return;
+
+}
+
+const userDoc = await getDoc(
+doc(db,"users",user.uid)
+);
+
+if(
+userDoc.exists() &&
+userDoc.data().role === "Admin"
+){
+
+adminBox.innerHTML = `
+
+<hr>
+
+<a href="admin.html">
+
+🛠️ Admin Dashboard
+
+</a>
+
+`;
+
+}
+else{
+
+adminBox.innerHTML = "";
+
+}
+
+});
         let selectedOtherType ="";
 let selectedRentalType = "";
         let currentPage = 1;
