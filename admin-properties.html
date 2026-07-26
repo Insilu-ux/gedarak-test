@@ -93,6 +93,138 @@ font-size:16px;
 
 }
 
+#gedarakModal{
+
+position:fixed;
+
+top:0;
+left:0;
+
+width:100%;
+height:100%;
+
+background:rgba(0,0,0,.45);
+
+display:none;
+
+align-items:center;
+justify-content:center;
+
+z-index:999999;
+
+}
+
+
+.modal-box{
+
+background:white;
+
+width:90%;
+max-width:420px;
+
+padding:35px;
+
+border-radius:20px;
+
+text-align:center;
+
+box-shadow:0 15px 40px rgba(0,0,0,.3);
+
+animation:popup .25s ease;
+
+}
+
+
+.modal-box h2{
+
+margin:0 0 15px;
+
+font-size:26px;
+
+}
+
+
+.modal-box p{
+
+font-size:22px;
+
+font-weight:600;
+
+color:#333;
+
+line-height:1.5;
+
+}
+
+
+.modal-buttons{
+
+display:flex;
+
+gap:12px;
+
+justify-content:center;
+
+margin-top:25px;
+
+}
+
+
+.modal-buttons button{
+
+padding:12px 25px;
+
+border:none;
+
+border-radius:12px;
+
+font-size:16px;
+
+font-weight:bold;
+
+cursor:pointer;
+
+}
+
+
+.modal-ok{
+
+background:#16a34a;
+
+color:white;
+
+}
+
+
+.modal-later{
+
+background:#e5e7eb;
+
+color:#333;
+
+}
+
+
+@keyframes popup{
+
+from{
+
+transform:scale(.8);
+
+opacity:0;
+
+}
+
+to{
+
+transform:scale(1);
+
+opacity:1;
+
+}
+
+}
+
 </style>
 
 </head>
@@ -199,94 +331,119 @@ Actions
 
 </table>
 
-<script>
+   <div id="gedarakModal">
 
-loadProperties();
+<div class="modal-box">
 
-function loadProperties(){
+<h2 id="modalTitle">
+Gedarak.lk
+</h2>
 
-let table=
+<p id="modalMessage"></p>
 
-document.getElementById(
+<div class="modal-buttons">
 
-"propertyTable"
+<button
+id="modalOk"
+class="modal-ok">
+OK
+</button>
 
-);
+<button
+id="modalLater"
+class="modal-later">
+Cancel
+</button>
 
-table.innerHTML="";
+</div>
 
-let search=
+</div>
 
-document.getElementById(
+</div>
 
-"search"
+<script type="module">
 
-).value.toLowerCase();
+    import { auth, db } from "./firebase-config.js";
 
-for(
+import {
+collection,
+getDocs,
+deleteDoc,
+doc,
+getDoc
+}
+from "https://www.gstatic.com/firebasejs/12.16.0/firebase-firestore.js";
 
-let i=0;
+import {
+onAuthStateChanged
+}
+from "https://www.gstatic.com/firebasejs/12.16.0/firebase-auth.js";
 
-i<localStorage.length;
+onAuthStateChanged(auth, async(user)=>{
 
-i++
+if(!user){
 
-){
-
-let key=
-
-localStorage.key(i);
-
-try{
-
-let p=
-
-JSON.parse(
-
-localStorage.getItem(key)
-
-);
-
-if(
-
-!p ||
-
-!p.id ||
-
-!p.images
-
-){
-
-continue;
+window.location.href="login.html";
+return;
 
 }
 
-let searchable =
+const userSnap =
+await getDoc(doc(db,"users",user.uid));
 
-(
+if(!userSnap.exists() ||
+userSnap.data().role !== "Admin"){
 
-p.name+" "+
+showAlert(
 
-p.city+" "+
+"⛔ Access Denied.\n\nOnly administrators can access this page.",
 
-p.district+" "+
+function(){
 
-p.propertyType+" "+
+window.location.href="index.html";
 
-p.status
+},
 
-)
+true
 
-.toLowerCase();
+);
 
-if(
+return;
 
-!searchable.includes(search)
+}
 
-){
+loadProperties();
 
-continue;
+});
 
+async function loadProperties(){
+
+const snapshot = await getDocs(collection(db,"properties"));
+
+let table = document.getElementById("propertyTable");
+
+table.innerHTML = "";
+
+let search =
+document.getElementById("search").value.toLowerCase();
+
+snapshot.forEach((document)=>{
+
+const p = {
+id: document.id,
+...document.data()
+};
+
+let searchable = (
+(p.name || "") + " " +
+(p.city || "") + " " +
+(p.district || "") + " " +
+(p.propertyType || "") + " " +
+(p.status || "")
+).toLowerCase();
+
+if(!searchable.includes(search)){
+return;
 }
 
 table.innerHTML += `
@@ -294,34 +451,16 @@ table.innerHTML += `
 <tr>
 
 <td>
-
-<img src="${p.images[0]}">
-
+<img src="${p.images?.[0] || ''}">
 </td>
 
-<td>
+<td>${p.name}</td>
 
-${p.name}
+<td>${p.district}</td>
 
-</td>
+<td>${p.city}</td>
 
-<td>
-
-${p.district}
-
-</td>
-
-<td>
-
-${p.city}
-
-</td>
-
-<td>
-
-${p.propertyType}
-
-</td>
+<td>${p.propertyType}</td>
 
 <td>
 
@@ -338,17 +477,11 @@ p.negotiable
 <td>
 
 <span style="
-
 font-weight:bold;
-
 color:
-
 ${p.status=="For Sale"?"green":
-
 p.status=="For Rent"?"blue":
-
 "orange"};
-
 ">
 
 ${p.status}
@@ -365,132 +498,179 @@ ${p.views || 0}
 
 <td>
 
-${new Date(p.createdAt).toLocaleDateString()}
-
-</td>
-
-<td>
-
-<button
-onclick="viewProperty('${p.id}')">
-
-View
-
-</button>
-
-<button
-onclick="editProperty('${p.id}')">
-
-Edit
-
-</button>
-
-<button
-onclick="toggleHide('${key}')">
-
-${p.hidden ? "Unhide" : "Hide"}
-
-</button>
-
-<button
-onclick="deleteProperty('${key}')">
-
-Delete
-
-</button>
-
-</td>
-
-<td>
-
 ${
-p.hidden
+p.createdAt
 ?
-"🔴 Hidden"
+new Date(
+p.createdAt.toMillis()
+).toLocaleDateString()
 :
-"🟢 Live"
+"-"
 }
 
 </td>
+
+<td>
+
+<button
+style="background:#1976d2;color:white;"
+onclick="viewProperty('${p.id}')">
+👁 View
+</button>
+
+<button
+style="background:#2e7d32;color:white;"
+onclick="editProperty('${p.id}')">
+✏ Edit
+</button>
+
+<button
+style="background:#d32f2f;color:white;"
+onclick="deleteProperty('${p.id}')">
+🗑 Delete
+</button>
+
+</td>
+
 </tr>
 
 `;
 
-}
-
-catch(e){}
+});
 
 }
 
-}
+async function deleteProperty(id){
 
-function deleteProperty(key){
+showAlert(
 
-if(
+"🗑 Delete this property permanently?",
 
-confirm(
+async function(){
 
-"Delete this property?"
-
-)
-
-){
-
-localStorage.removeItem(key);
-
-loadProperties();
-
-}
-
-}
-
-function toggleHide(key){
-
-let property =
-JSON.parse(localStorage.getItem(key));
-
-property.hidden =
-!property.hidden;
-
-localStorage.setItem(
-key,
-JSON.stringify(property)
+await deleteDoc(
+doc(db,"properties",id)
 );
 
 loadProperties();
 
+showAlert(
+
+"✅ Property deleted successfully.",
+
+null,
+
+true,
+
+"Deleted"
+
+);
+
+},
+
+false,
+
+"Delete Property"
+
+);
+
 }
 
-function editProperty(id){
 
-localStorage.setItem(
+window.editProperty = function(id){
 
-"editProperty",
-
+sessionStorage.setItem(
+"editPropertyId",
 id
-
 );
+
+showAlert(
+
+"✏ Opening the property editor...",
+
+function(){
 
 window.location.href =
-"postproperty.html";
+"editproperty.html";
 
-}
+},
 
-function viewProperty(id){
+true,
 
-localStorage.setItem(
-
-"selectedProperty",
-
-id
+"Edit Property"
 
 );
 
-window.location.href=
+}
+function viewProperty(id){
 
-"property.html";
+showAlert(
+
+"🏠 Opening property...",
+
+function(){
+
+window.location.href =
+"property.html?id=" + id;
+
+},
+
+true,
+
+"View Property"
+
+);
+}
+
+ window.showAlert = function(
+    message,
+    okAction,
+    hideLater = false,
+    title = "Gedarak.lk"
+){
+
+    const modal =
+    document.getElementById("gedarakModal");
+
+    document.getElementById("modalTitle").textContent =
+    title;
+
+    document.getElementById("modalMessage").textContent =
+    message;
+
+    const laterBtn =
+    document.getElementById("modalLater");
+
+    laterBtn.style.display =
+    hideLater ? "none" : "inline-block";
+
+    modal.style.display = "flex";
+
+    document.getElementById("modalOk").onclick = function(){
+
+        modal.style.display = "none";
+
+        if(okAction){
+
+            okAction();
+
+        }
+
+    };
+
+    laterBtn.onclick = function(){
+
+        modal.style.display = "none";
+
+    };
 
 }
+
+
+window.deleteProperty = deleteProperty;
+window.editProperty = editProperty;
+window.viewProperty = viewProperty;
+window.loadProperties = loadProperties;
 
 </script>
 
