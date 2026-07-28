@@ -694,6 +694,167 @@ opacity:1;
 }
 
 }
+.main-footer{
+
+background:#111827;
+color:white;
+margin-top:80px;
+padding:55px 25px 25px;
+
+}
+
+
+.footer-container{
+
+max-width:1200px;
+margin:auto;
+
+display:grid;
+grid-template-columns:
+1.5fr 1fr 1fr 1.2fr;
+
+gap:50px;
+
+}
+
+
+.footer-section h2{
+
+font-size:30px;
+margin:0 0 15px;
+
+color:white;
+
+}
+
+
+.footer-section h3{
+
+font-size:17px;
+margin-bottom:18px;
+
+color:white;
+
+}
+
+
+.footer-section p{
+
+color:#cbd5e1;
+line-height:1.7;
+margin:8px 0;
+
+}
+
+
+
+.footer-section a{
+
+display:block;
+
+color:#cbd5e1;
+
+text-decoration:none;
+
+margin:10px 0;
+
+transition:.25s;
+
+}
+
+
+
+.footer-section a:hover{
+
+color:#38bdf8;
+
+transform:translateX(4px);
+
+}
+
+
+
+.social-icons a{
+
+display:inline-block;
+
+margin-top:10px;
+
+background:#2563eb;
+
+color:white;
+
+padding:8px 18px;
+
+border-radius:20px;
+
+}
+
+
+
+.footer-bottom{
+
+max-width:1200px;
+
+margin:45px auto 0;
+
+padding-top:20px;
+
+border-top:1px solid rgba(255,255,255,.15);
+
+display:flex;
+
+justify-content:space-between;
+
+align-items:center;
+
+flex-wrap:wrap;
+
+gap:10px;
+
+color:#94a3b8;
+
+}
+
+
+
+.footer-bottom a{
+
+color:#94a3b8;
+
+text-decoration:none;
+
+}
+
+
+
+.footer-bottom a:hover{
+
+color:white;
+
+}
+
+
+
+@media(max-width:800px){
+
+.footer-container{
+
+grid-template-columns:1fr;
+
+gap:30px;
+
+}
+
+.footer-bottom{
+
+flex-direction:column;
+
+text-align:center;
+
+}
+
+}
 </style>
     <title>Gedarak.lk</title>
     
@@ -1255,42 +1416,98 @@ transition:.2s;
 </select>
         </div>
     </section>
+    <div id="platinumProperties"></div>
      <div id="newProperties">
      </div>
      <div id="resultsInfo"></div>
 
 <div id="pagination"></div>
-    <footer
+   <footer class="main-footer">
 
-style="
+<div class="footer-container">
 
-text-align:center;
 
-margin-top:60px;
+<div class="footer-section brand">
 
-padding-top:25px;
+<h2 style="text-align: center;">
+Gedarak.lk
+</h2>
 
-border-top:1px solid #ddd;
+<p style="text-align: center;">
+Sri Lanka's trusted platform to buy, sell, and rent properties.
+Find your dream home with confidence.
+</p>
 
-line-height:1.9;
+</div>
 
-">
-        <h3>Gedarak.lk</h3>
-        <p>Find your dream property</p>
-       <p>
 
-Email:
 
-<a href="mailto:gedarak.lk@gmail.com">
+<div class="footer-section">
 
-gedarak.lk@gmail.com
+<h3>Explore</h3>
 
+<a href="index.html">Home</a>
+<a onclick="openPostProperty()">Post Property</a>
+
+</div>
+
+
+
+<div class="footer-section">
+
+<h3>Support</h3>
+
+<a href="help.html">Help Center</a>
+<a href="contact.html">Contact Us</a>
+<a href="report.html">Report Property</a>
+
+</div>
+
+
+
+<div class="footer-section">
+
+<h3>Contact</h3>
+
+<p>
+📧 gedarak.lk@gmail.com
+</p>
+
+<p>
+📍 Serving properties across Sri Lanka
+</p>
+
+<div class="social-icons">
+
+<a href="#">
+Facebook
 </a>
 
+</div>
+
+</div>
+
+
+</div>
+
+
+
+<div class="footer-bottom">
+
+<p>
+© 2026 Gedarak.lk. All rights reserved.
 </p>
-        <p>Phone: +94 771 234 567</p>
-        <p>&copy; 2026 Gedarak.lk</p>
-      </footer>
+
+<div>
+<a href="#">Privacy Policy</a>
+<span>|</span>
+<a href="#">Terms & Conditions</a>
+</div>
+
+</div>
+
+
+</footer>
     <script type="module">
         import { auth, db } from "./firebase-config.js"
 
@@ -1400,6 +1617,25 @@ await new Promise((resolve)=>{
     });
 
 });
+const platinumContainer =
+document.getElementById("platinumProperties");
+
+const normalContainer =
+document.getElementById("newProperties");
+
+function shuffleArray(array){
+
+    for(let i=array.length-1;i>0;i--){
+
+        let j=Math.floor(Math.random()*(i+1));
+
+        [array[i],array[j]]=[array[j],array[i]];
+
+    }
+
+    return array;
+
+}
 function formatPriceInput(input){
 
 let value = input.value.replace(/,/g,"");
@@ -3678,10 +3914,43 @@ document.getElementById("typeFilter").value.toLowerCase();
                 document.getElementById(
                     "propertyViewFilter"
                 ).value;
-            let cards=
-            document.querySelectorAll(
-                ".property-card"
-            );
+            let cards =
+
+document.querySelectorAll(
+
+"#platinumProperties .property-card, #newProperties .property-card"
+
+);
+cards.forEach(function(card){
+
+    card.style.display = "none";
+
+});
+
+let searching =
+
+processedSearchText.trim() !== "" ||
+
+document.getElementById("districtFilter").value !== "" ||
+
+document.getElementById("cityFilter").value !== "" ||
+
+document.getElementById("typeFilter").value !== "" ||
+
+document.getElementById("rentOnlyFilter").checked ||
+
+selectedRentalType !== "" ||
+
+selectedOtherType !== "" ||
+
+selectedBedroom !== "" ||
+
+selectedBathroom !== "" ||
+
+selectedAmenity !== "" ||
+
+selectedpropertyView !== "";
+
            if(
 searchText==="" &&
 propertyType==="" &&
@@ -3696,7 +3965,11 @@ selectedRentalType==="" &&
 selectedOtherType===""
 ){
 
-document.querySelectorAll(".property-card")
+document.querySelectorAll(
+
+"#platinumProperties .property-card, #newProperties .property-card"
+
+)
 .forEach(function(card){
 
 card.style.display="";
@@ -3706,7 +3979,7 @@ card.dataset.searchScore = 0;
 });
 
 let totalProperties =
-document.querySelectorAll(".property-card").length;
+normalContainer.querySelectorAll(".property-card").length;
 
 let totalPages =
 Math.ceil(totalProperties / propertiesPerPage);
@@ -3718,7 +3991,17 @@ let end =
 start + propertiesPerPage;
 
 let cards =
-Array.from(document.querySelectorAll(".property-card"));
+Array.from(
+normalContainer.querySelectorAll(".property-card")
+);
+
+platinumContainer
+.querySelectorAll(".property-card")
+.forEach(function(card){
+
+    card.style.display = "none";
+
+});
 
 cards.forEach(card=>card.style.display="none");
 
@@ -3729,6 +4012,8 @@ card.style.display="";
 updateResultsInfo(totalProperties,start,end);
 
 renderPagination(totalPages);
+
+showHomepagePlatinum();
 
 return;
 
@@ -3945,7 +4230,7 @@ propertyPrice <= maxPrice
                      let matchesOtherType =
                      selectedOtherType === "" ||
                     cardType === selectedOtherType.toLowerCase();
-               if(
+      if(
 (words.length === 0 || words.every(word => searchableText.includes(word))) &&
 matchesDistrict &&
 matchesCity &&
@@ -3962,27 +4247,21 @@ matchesRentOnly &&
 matchesOtherType
 ){
 
-let score =
-calculateSearchScore(card,words);
+    let score = calculateSearchScore(card, words);
 
+    searchRanking.push({
+        card: card,
+        score: score
+    });
 
-searchRanking.push({
+    card.dataset.searchScore = score;
 
-card:card,
-
-score:score
-
-});
-
-
-card.style.display="";
-card.dataset.searchScore = score;
+    card.style.display = "";
 
 }
-
 else{
 
-card.style.display="none";
+    card.style.display = "none";
 
 }
             });
@@ -3995,17 +4274,28 @@ return b.score-a.score;
 
 searchRanking.forEach(function(item){
 
-newContainer.appendChild(item.card);
+    if(item.card.closest("#platinumProperties")){
+
+        platinumContainer.appendChild(item.card);
+
+    }
+    else{
+
+        normalContainer.appendChild(item.card);
+
+    }
 
 });
 
-sortBoostedProperties();
+
 sortSearchResults();
 sortProperties();
 
-           let visibleCards =
-Array.from(document.querySelectorAll(".property-card"))
-.filter(card => card.style.display !== "none");
+let visibleCards =
+Array.from(
+normalContainer.querySelectorAll(".property-card")
+)
+.filter(card=>card.style.display!="none");
 
 // Pagination
 
@@ -4233,7 +4523,11 @@ return;
 
 let suggestions=[];
 
-document.querySelectorAll(".property-card")
+document.querySelectorAll(
+
+"#platinumProperties .property-card, #newProperties .property-card"
+
+)
 .forEach(function(card){
 
 [
@@ -4519,44 +4813,7 @@ snapshot.forEach(function(doc){
     }
 
 });
-          allProperties.sort(function(a,b){
-
-function boostScore(property){
-
-if(
-!property.boost ||
-property.boost.status !== "Active" ||
-property.boost.endDate < Date.now()
-){
-return 0;
-}
-
-if(property.boost.package==="Platinum") return 3;
-
-if(property.boost.package==="Premium") return 2;
-
-if(property.boost.package==="Basic") return 1;
-
-return 0;
-
-}
-
-let scoreA = boostScore(a);
-
-let scoreB = boostScore(b);
-
-if(scoreA !== scoreB){
-
-return scoreB-scoreA;
-
-}
-
-// same boost level → newest first
-
-return b.createdAt-a.createdAt;
-
-});
-sortProperties();
+       
 
 
             allProperties.forEach(
@@ -4651,7 +4908,7 @@ margin:4px 0;">
 `;
 
 }
-            newContainer.innerHTML += `
+            let html = `
             <div class="property-card"
             data-type="${property.propertyType}"
              data-status="${property.status}"
@@ -4670,7 +4927,7 @@ margin:4px 0;">
               data-sqft="${property.squareFeet}"
               data-address="${property.address}"
             data-description="${property.description}"
-            data-boost="${property.boost ? JSON.stringify(property.boost) : ''}">
+            data-boost='${property.boost ? JSON.stringify(property.boost) : ""}'>
                  <div 
                 id="heart${property.id}"
             onclick="event.stopPropagation();toggleFavourite('${property.id}',this)"
@@ -4686,11 +4943,15 @@ margin:4px 0;">
                 ${isFavourite(property.id) ? "💗" : "🤍"}
                 </div>
             <div class="property-image">
-${(Date.now()-property.createdAt)<604800000?`
+${(
+    Date.now() - property.createdAt.toMillis()
+) < 604800000 ? `
 
 <div
 style="
 position:absolute;
+top:5px;
+left:5px;
 background:#16a34a;
 color:white;
 padding:5px 12px;
@@ -4730,42 +4991,29 @@ ${property.negotiable}
 
 </div>
                 
-                    ${(() => {
+               ${(() => {
 
-let boostInfo = getBoostInfo(property);
+const boostInfo = getBoostInfo(property);
 
-if(!boostInfo) return "";
-
-let bg="#64748b";
-let icon="⭐";
-
-if(boostInfo.package==="Premium"){
-bg="#f59e0b";
-icon="⭐⭐";
-}
-
-if(boostInfo.package==="Platinum"){
-bg="#7c3aed";
-icon="👑";
-}
+if(!boostInfo || boostInfo.package !== "Platinum") return "";
 
 return `
 
 <div
 style="
 position:absolute;
-bottom:-40px;
-right:12px;
-background:${bg};
+top:4px;
+left:2px;
+background:#0077ff;
 color:white;
-padding:8px 18px;
-border-radius:999px;
+padding:5px 12px;
+border-radius:18px;
 font-size:13px;
 font-weight:bold;
-box-shadow:0 8px 18px rgba(0,0,0,.25);
+box-shadow:0 4px 12px rgba(0,0,0,.25);
 z-index:50;
 ">
-${icon} ${boostInfo.package}
+💎 Platinum
 </div>
 
 `;
@@ -4836,12 +5084,60 @@ property.negotiable
 
 </div>
                     `;
-                    }
+const wrapper =
+document.createElement("div");
+
+wrapper.innerHTML = html;
+
+const card =
+wrapper.firstElementChild;
+let boost = property.boost;
+
+let isActivePlatinum =
+
+boost &&
+boost.active === true &&
+boost.package === "Platinum" &&
+boost.endDate > Date.now();
+if(isActivePlatinum){
+
+platinumContainer.appendChild(card);
+
+}
+
+else{
+
+normalContainer.appendChild(card);
+
+}
+}
                     
             );
-    currentPage = 1;
+currentPage = 1;
+
 searchProperty();
 
+showHomepagePlatinum();
+
+function showHomepagePlatinum(){
+
+    let cards = Array.from(
+        platinumContainer.querySelectorAll(".property-card")
+    );
+
+    shuffleArray(cards);
+
+    cards.forEach(function(card){
+        card.style.display = "none";
+    });
+
+    cards
+    .slice(0,6)
+    .forEach(function(card){
+        card.style.display = "";
+    });
+
+}
 function handleSwipe(){
 
     let distance = touchEndX - touchStartX;
@@ -5067,71 +5363,12 @@ closeContactPopup();
 
 });
 
-function sortBoostedProperties(){
 
-let container =
-document.getElementById("newProperties");
-
-let cards =
-Array.from(container.querySelectorAll(".property-card"));
-
-cards.sort(function(a,b){
-
-let boostA = null;
-
-try{
-    boostA = a.dataset.boost
-        ? JSON.parse(a.dataset.boost)
-        : null;
-}
-catch(e){
-    boostA = null;
-}
-let boostB = null;
-
-try{
-    boostB = b.dataset.boost
-        ? JSON.parse(b.dataset.boost)
-        : null;
-}
-catch(e){
-    boostB = null;
-}
-
-function score(boost){
-
-if(!boost) return 0;
-
-if(boost.status !== "Active") return 0;
-
-if(boost.endDate < Date.now()) return 0;
-
-if(boost.package === "Platinum") return 3;
-
-if(boost.package === "Premium") return 2;
-
-if(boost.package === "Basic") return 1;
-
-return 0;
-
-}
-
-return score(boostB) - score(boostA);
-
-});
-
-cards.forEach(function(card){
-
-container.appendChild(card);
-
-});
-
-}
 function getBoostInfo(property){
 
 if(
 !property.boost ||
-property.boost.status !== "Active"
+property.boost.active !== true
 ){
 return null;
 }
@@ -5190,7 +5427,9 @@ let container =
 document.getElementById("newProperties");
 
 let cards =
-Array.from(container.getElementsByClassName("property-card"));
+Array.from(
+container.querySelectorAll(".property-card")
+);
 
 let sort =
 document.getElementById("sortFilter").value;
@@ -5384,7 +5623,8 @@ color:#0a8d48;"
 id="popupPrice">
 </p>
 
-<p style="font-size:20px;font-weight:600;">
+<p style="font-size:20px;font-weight:600;
+text-align: center;">
 
 👤
 
