@@ -692,6 +692,57 @@ box-sizing:border-box;
             Post Property
         </button>
         </form>
+        </div>
+<div id="loadingPopup"
+style="
+display:none;
+position:fixed;
+top:0;
+left:0;
+width:100%;
+height:100%;
+background:rgba(0,0,0,.45);
+backdrop-filter:blur(4px);
+justify-content:center;
+align-items:center;
+z-index:99998;
+">
+
+<div
+style="
+background:white;
+width:90%;
+max-width:380px;
+padding:30px;
+border-radius:20px;
+text-align:center;
+box-shadow:0 15px 40px rgba(0,0,0,.25);
+">
+
+<div
+style="
+font-size:55px;
+animation:spin 1s linear infinite;
+">
+⏳
+</div>
+
+<h2 style="margin-top:15px;color:#222;">
+Posting Your Property...
+</h2>
+
+<p style="
+font-size:18px;
+color:#555;
+line-height:1.5;
+margin-top:10px;
+">
+Please wait while we securely upload your property and images.
+</p>
+
+</div>
+
+</div>
       <script type="module">
         import { auth, db, storage } from "./firebase-config.js";
 
@@ -815,6 +866,73 @@ window.numbersOnly = function(input){
 
 }
         let selectedImages = [];
+        async function compressImage(file){
+
+    return new Promise((resolve)=>{
+
+        const img = new Image();
+
+        img.onload = ()=>{
+
+            let canvas = document.createElement("canvas");
+
+            const MAX_WIDTH = 1600;
+            const MAX_HEIGHT = 1600;
+
+            let width = img.width;
+            let height = img.height;
+
+            if(width > height){
+
+                if(width > MAX_WIDTH){
+
+                    height *= MAX_WIDTH / width;
+                    width = MAX_WIDTH;
+
+                }
+
+            }else{
+
+                if(height > MAX_HEIGHT){
+
+                    width *= MAX_HEIGHT / height;
+                    height = MAX_HEIGHT;
+
+                }
+
+            }
+
+            canvas.width = width;
+            canvas.height = height;
+
+            const ctx = canvas.getContext("2d");
+
+            ctx.drawImage(img,0,0,width,height);
+
+            canvas.toBlob((blob)=>{
+
+                resolve(
+
+                    new File(
+                        [blob],
+                        file.name,
+                        {
+                            type:"image/jpeg",
+                            lastModified:Date.now()
+                        }
+                    )
+
+                );
+
+            },"image/jpeg",0.8);
+
+        };
+
+        img.src = URL.createObjectURL(file);
+
+    });
+
+}
         const districtCities= {
           Colombo: [
 "Angoda",
@@ -1644,19 +1762,13 @@ const imageUrls = [];
 
 showLoading();
 
+await new Promise(resolve => {
+    requestAnimationFrame(() => {
+        setTimeout(resolve, 300);
+    });
+});
+
 for(const file of selectedImages){
-
-     if(file.size > 5 * 1024 * 1024){
-
-        showAlert(
-            "Image too large",
-            "Each image must be under 5 MB."
-        );
-
-        btn.disabled = false;
-        btn.innerHTML = "Post Property";
-        return;
-    }
 
 const imageRef = ref(
 
@@ -1679,7 +1791,7 @@ doc(db, "users", user.uid)
 
 const username = userDoc.data().username;
 
-await addDoc(
+const newProperty = await addDoc(
 collection(db,"properties"),
 {
 
@@ -1731,17 +1843,22 @@ approved:true,
 
 createdAt:serverTimestamp()
 
-});;
+});
+
+sessionStorage.setItem(
+"selectedBoostProperty",
+newProperty.id
+);
 
 hideLoading();
-
-showBoostPopup();
 
 document.getElementById("propertyForm").reset();
 
 selectedImages = [];
 
 refreshPreview();
+
+showBoostPopup();
 
 }
 catch(error){
@@ -1764,30 +1881,30 @@ btn.innerHTML="Post Property";
 
     let input = document.getElementById("propertyImages");
 
-    selectedImages = [
-...selectedImages,
-...Array.from(input.files)
-];
+    (async()=>{
 
-    if(selectedImages.length > 20){
+        for(const file of input.files){
 
-        showAlert(
-            "Maximum Images Reached",
-            "You can upload a maximum of 20 images."
-        );
+            const compressed = await compressImage(file);
 
-        selectedImages = selectedImages.slice(0,20);
+            selectedImages.push(compressed);
 
-        let dataTransfer = new DataTransfer();
+        }
 
-        selectedImages.forEach(file=>{
-            dataTransfer.items.add(file);
-        });
+        if(selectedImages.length>20){
 
-        input.files = dataTransfer.files;
-    }
+            showAlert(
+                "Maximum Images Reached",
+                "You can upload a maximum of 20 images."
+            );
 
-    refreshPreview();
+            selectedImages=selectedImages.slice(0,20);
+
+        }
+
+        refreshPreview();
+
+    })();
 
 }
 
@@ -1967,7 +2084,78 @@ document.getElementById("loadingPopup").style.display="none";
 
 }
       </script>
-     
+    
+<div id="customAlert"
+style="
+display:none;
+position:fixed;
+top:0;
+left:0;
+width:100%;
+height:100%;
+background:rgba(0,0,0,.45);
+backdrop-filter:blur(4px);
+justify-content:center;
+align-items:center;
+z-index:99999;
+">
+
+<div
+style="
+background:white;
+width:90%;
+max-width:380px;
+padding:25px;
+border-radius:20px;
+text-align:center;
+box-shadow:0 15px 40px rgba(0,0,0,.25);
+">
+
+<div id="alertIcon"
+style="
+font-size:45px;
+margin-bottom:10px;
+">
+⚠️
+</div>
+
+<h2 id="alertTitle"
+style="
+margin:10px 0;
+color:#222;
+">
+Warning
+</h2>
+
+<p id="alertMessage"
+style="
+color:#030101;
+font-size:19px;
+line-height:1.5;
+">
+Message
+</p>
+
+<button
+onclick="closeAlert()"
+style="
+margin-top:20px;
+width:100%;
+padding:13px;
+border:none;
+border-radius:12px;
+background:#8b008b;
+color:white;
+font-size:17px;
+font-weight:bold;
+cursor:pointer;
+">
+OK
+</button>
+
+</div>
+
+</div>
 <div
 id="boostPopup"
 style="
@@ -2181,127 +2369,5 @@ Skip for Now →
 
 </div>
 
-</div>
-<div id="loadingPopup"
-style="
-display:none;
-position:fixed;
-top:0;
-left:0;
-width:100%;
-height:100%;
-background:rgba(0,0,0,.45);
-backdrop-filter:blur(4px);
-justify-content:center;
-align-items:center;
-z-index:99998;
-">
-
-<div
-style="
-background:white;
-width:90%;
-max-width:380px;
-padding:30px;
-border-radius:20px;
-text-align:center;
-box-shadow:0 15px 40px rgba(0,0,0,.25);
-">
-
-<div
-style="
-font-size:55px;
-animation:spin 1s linear infinite;
-">
-⏳
-</div>
-
-<h2 style="margin-top:15px;color:#222;">
-Posting Your Property...
-</h2>
-
-<p style="
-font-size:18px;
-color:#555;
-line-height:1.5;
-margin-top:10px;
-">
-Please wait while we securely upload your property and images.
-</p>
-
-</div>
-
-</div>
-<div id="customAlert"
-style="
-display:none;
-position:fixed;
-top:0;
-left:0;
-width:100%;
-height:100%;
-background:rgba(0,0,0,.45);
-backdrop-filter:blur(4px);
-justify-content:center;
-align-items:center;
-z-index:99999;
-">
-
-<div
-style="
-background:white;
-width:90%;
-max-width:380px;
-padding:25px;
-border-radius:20px;
-text-align:center;
-box-shadow:0 15px 40px rgba(0,0,0,.25);
-">
-
-<div id="alertIcon"
-style="
-font-size:45px;
-margin-bottom:10px;
-">
-⚠️
-</div>
-
-<h2 id="alertTitle"
-style="
-margin:10px 0;
-color:#222;
-">
-Warning
-</h2>
-
-<p id="alertMessage"
-style="
-color:#030101;
-font-size:19px;
-line-height:1.5;
-">
-Message
-</p>
-
-<button
-onclick="closeAlert()"
-style="
-margin-top:20px;
-width:100%;
-padding:13px;
-border:none;
-border-radius:12px;
-background:#8b008b;
-color:white;
-font-size:17px;
-font-weight:bold;
-cursor:pointer;
-">
-OK
-</button>
-
-</div>
-
-</div>
     </body>
 </html>
