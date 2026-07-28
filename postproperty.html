@@ -403,6 +403,7 @@ color:#777;
 ">
 Open Google Maps → Find your property → Share → Copy Link → Paste here.
 </p>
+</p>
 <p style="
 font-size:15px;
 color:#330808;
@@ -814,73 +815,6 @@ window.numbersOnly = function(input){
 
 }
         let selectedImages = [];
-        async function compressImage(file){
-
-    return new Promise((resolve)=>{
-
-        const img = new Image();
-
-        img.onload = ()=>{
-
-            let canvas = document.createElement("canvas");
-
-            const MAX_WIDTH = 1600;
-            const MAX_HEIGHT = 1600;
-
-            let width = img.width;
-            let height = img.height;
-
-            if(width > height){
-
-                if(width > MAX_WIDTH){
-
-                    height *= MAX_WIDTH / width;
-                    width = MAX_WIDTH;
-
-                }
-
-            }else{
-
-                if(height > MAX_HEIGHT){
-
-                    width *= MAX_HEIGHT / height;
-                    height = MAX_HEIGHT;
-
-                }
-
-            }
-
-            canvas.width = width;
-            canvas.height = height;
-
-            const ctx = canvas.getContext("2d");
-
-            ctx.drawImage(img,0,0,width,height);
-
-            canvas.toBlob((blob)=>{
-
-                resolve(
-
-                    new File(
-                        [blob],
-                        file.name,
-                        {
-                            type:"image/jpeg",
-                            lastModified:Date.now()
-                        }
-                    )
-
-                );
-
-            },"image/jpeg",0.8);
-
-        };
-
-        img.src = URL.createObjectURL(file);
-
-    });
-
-}
         const districtCities= {
           Colombo: [
 "Angoda",
@@ -1481,18 +1415,7 @@ btn.innerHTML = "Posting Property...";
 
 const user = auth.currentUser;
 
-if(!user){
 
-    showAlert(
-        "Login Required",
-        "Please log in before posting a property."
-    );
-
-    btn.disabled = false;
-    btn.innerHTML = "Post Property";
-
-    return;
-}
 try{
 
 let name =
@@ -1721,14 +1644,19 @@ const imageUrls = [];
 
 showLoading();
 
-document.querySelector("#loadingPopup h2").textContent =
-"Posting Your Property...";
-
-document.querySelector("#loadingPopup p").textContent =
-"Please wait while we securely upload your property and images.";
-
 for(const file of selectedImages){
 
+     if(file.size > 5 * 1024 * 1024){
+
+        showAlert(
+            "Image too large",
+            "Each image must be under 5 MB."
+        );
+
+        btn.disabled = false;
+        btn.innerHTML = "Post Property";
+        return;
+    }
 
 const imageRef = ref(
 
@@ -1803,15 +1731,9 @@ approved:true,
 
 createdAt:serverTimestamp()
 
-});
+});;
 
 hideLoading();
-
-document.querySelector("#loadingPopup h2").textContent =
-"Loading Property Form...";
-
-document.querySelector("#loadingPopup p").textContent =
-"Please wait a moment...";
 
 showBoostPopup();
 
@@ -1826,12 +1748,6 @@ catch(error){
 
 hideLoading();
 
-document.querySelector("#loadingPopup h2").textContent =
-"Loading Property Form...";
-
-document.querySelector("#loadingPopup p").textContent =
-"Please wait a moment...";
-
 showAlert(
 "Something Went Wrong",
 error.message,
@@ -1844,34 +1760,34 @@ btn.disabled=false;
 btn.innerHTML="Post Property";
 
 }
-    window.previewImages = function(){
+     window.previewImages = function(){
 
     let input = document.getElementById("propertyImages");
 
-    (async()=>{
+    selectedImages = [
+...selectedImages,
+...Array.from(input.files)
+];
 
-        for(const file of input.files){
+    if(selectedImages.length > 20){
 
-            const compressed = await compressImage(file);
+        showAlert(
+            "Maximum Images Reached",
+            "You can upload a maximum of 20 images."
+        );
 
-            selectedImages.push(compressed);
+        selectedImages = selectedImages.slice(0,20);
 
-        }
+        let dataTransfer = new DataTransfer();
 
-        if(selectedImages.length>20){
+        selectedImages.forEach(file=>{
+            dataTransfer.items.add(file);
+        });
 
-            showAlert(
-                "Maximum Images Reached",
-                "You can upload a maximum of 20 images."
-            );
+        input.files = dataTransfer.files;
+    }
 
-            selectedImages=selectedImages.slice(0,20);
-
-        }
-
-        refreshPreview();
-
-    })();
+    refreshPreview();
 
 }
 
@@ -2050,17 +1966,6 @@ function hideLoading(){
 document.getElementById("loadingPopup").style.display="none";
 
 }
-window.addEventListener("load",()=>{
-
-showLoading();
-
-setTimeout(()=>{
-
-hideLoading();
-
-},400);
-
-});
       </script>
      
 <div
@@ -2312,7 +2217,7 @@ animation:spin 1s linear infinite;
 </div>
 
 <h2 style="margin-top:15px;color:#222;">
-Loading Property Form...
+Posting Your Property...
 </h2>
 
 <p style="
@@ -2321,7 +2226,7 @@ color:#555;
 line-height:1.5;
 margin-top:10px;
 ">
-Please wait a moment...
+Please wait while we securely upload your property and images.
 </p>
 
 </div>
