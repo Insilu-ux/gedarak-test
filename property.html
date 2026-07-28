@@ -785,7 +785,7 @@ transition:.25s;
         <div class="property-page">
                ${galleryHTML}
                <div class="section-card">
-               <h1 style="text-align:center;">${property.name}</h1>
+               <h1 style="text-align: center;">${property.name}</h1>
              <h2>
 ${
 property.negotiable
@@ -1088,10 +1088,15 @@ currentProperty.city;
         document.getElementById("similarProperties")
         container.innerHTML="";
        let similar = allProperties
-       .filter(function(p){
-        return p.id !== currentProperty.id &&
-        p.propertyType === currentProperty.propertyType;
-       })
+      .filter(function(p){
+
+    return (
+        p.id !== currentProperty.id &&
+        p.propertyType === currentProperty.propertyType &&
+        p.city === currentProperty.city
+    );
+
+})
 .map(function(p){
 
    let score = 100;
@@ -1273,15 +1278,14 @@ allProperties
 
 .filter(function(p){
 
-return p.id!==currentProperty.id &&
-
-p.propertyType===currentProperty.propertyType &&
-
-!similar.some(function(x){
-
-return x.id===p.id;
-
-});
+return (
+    p.id !== currentProperty.id &&
+    p.propertyType === currentProperty.propertyType &&
+    p.city === currentProperty.city &&
+    !similar.some(function(x){
+        return x.id === p.id;
+    })
+);
 
 })
 
