@@ -280,6 +280,7 @@ color:#666;
 }
 </style>
         <title>My Favourites</title>
+        <link rel="preload" href="Frame 1.png" as="image">
         </head>
         <body>
     <a href="index.html">
@@ -386,6 +387,7 @@ import {
 collection,
 getDocs,
 doc,
+getDoc,
 updateDoc
 }
 from "https://www.gstatic.com/firebasejs/12.16.0/firebase-firestore.js";
@@ -440,22 +442,17 @@ return;
 
 currentUser = user;
 
-let userDoc = await getDocs(collection(db,"users"));
+const userSnap = await getDoc(
+    doc(db,"users",user.uid)
+);
 
-userDoc.forEach(function(d){
+if(userSnap.exists()){
 
-if(d.id===user.uid){
-
-let data = d.data();
-
-favouriteIds = data.favourites || [];
+    favouriteIds = userSnap.data().favourites || [];
 
 }
 
-});
-
 loadFavourites();
-
 });
         async function loadFavourites(){
 
@@ -711,13 +708,8 @@ sorted.sort((a,b)=>b.price-a.price);
 if(value=="newest"){
 
 sorted.sort(
-
 (a,b)=>
-
-new Date(b.createdAt)-
-
-new Date(a.createdAt)
-
+b.createdAt?.seconds - a.createdAt?.seconds
 );
 
 }
@@ -725,13 +717,8 @@ new Date(a.createdAt)
 if(value=="oldest"){
 
 sorted.sort(
-
 (a,b)=>
-
-new Date(a.createdAt)-
-
-new Date(b.createdAt)
-
+a.createdAt?.seconds - b.createdAt?.seconds
 );
 
 }
