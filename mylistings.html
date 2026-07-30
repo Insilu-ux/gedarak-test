@@ -251,6 +251,7 @@ opacity:1;
 
 }
 </style>
+  <link rel="preload" href="Frame 1.png" as="image">
     </head>
     <body>
         <a href="index.html">
@@ -341,7 +342,6 @@ Later
          <p>Email: <a href="mailto:gedarak.lk@gmail.com">
 gedarak.lk@gmail.com
 </a></p>
-        <p>Phone: +94 771 234 567</p>
         <p>&copy; 2026 Gedarak.lk</p>
       </footer>
         <script type="module">
@@ -360,6 +360,8 @@ import {
     doc,
     getDoc
 } from "https://www.gstatic.com/firebasejs/12.16.0/firebase-firestore.js";
+
+import { deletePropertyCompletely } from "./delete-property.js";
 
             let totalListings = 0;
             let totalViews = 0;
@@ -810,9 +812,7 @@ border-radius:10px;
     "Delete this property permanently?",
     async function(){
 
-        await deleteDoc(
-            doc(db,"properties",key)
-        );
+        await deletePropertyCompletely(key);
 
         showAlert(
             "Property deleted successfully.",
