@@ -666,44 +666,32 @@ await loadUserStats();
 
 
 
-    // GET USER SAVES
+// GET USER SAVES
 
-    const userSnapshot =
-    await getDoc(
-        doc(db,"users",currentUser.uid)
-    );
+const userSnapshot =
+await getDoc(
+    doc(db,"users",currentUser.uid)
+);
 
+if(userSnapshot.exists()){
 
-    if(userSnapshot.exists()){
+    const existingProperties = new Set();
 
-   const existingProperties = new Set();
+    propertySnapshot.forEach(function(propertyDoc){
 
-propertySnapshot.forEach(function(propertyDoc){
+        existingProperties.add(propertyDoc.id);
 
-    existingProperties.add(propertyDoc.id);
+    });
 
-    let property = propertyDoc.data();
+    const data = userSnapshot.data();
 
-    if(String(property.ownerUid) === String(currentUser.uid)){
+    const favouriteIds = data.favourites || [];
 
-        listings++;
-
-        totalViews += property.views || 0;
-
-    }
-
-});
-
-const data = userSnapshot.data();
-
-const favouriteIds = data.favourites || [];
-
-totalSaves = favouriteIds.filter(id =>
-    existingProperties.has(id)
-).length;
+    totalSaves = favouriteIds.filter(id =>
+        existingProperties.has(id)
+    ).length;
 
 }
-
     document.getElementById("listingCount").innerText =
     listings;
 
