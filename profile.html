@@ -676,11 +676,31 @@ await loadUserStats();
 
     if(userSnapshot.exists()){
 
-    const data = userSnapshot.data();
+   const existingProperties = new Set();
 
-    const favouriteIds = data.favourites || [];
+propertySnapshot.forEach(function(propertyDoc){
 
-    totalSaves = favouriteIds.length;
+    existingProperties.add(propertyDoc.id);
+
+    let property = propertyDoc.data();
+
+    if(String(property.ownerUid) === String(currentUser.uid)){
+
+        listings++;
+
+        totalViews += property.views || 0;
+
+    }
+
+});
+
+const data = userSnapshot.data();
+
+const favouriteIds = data.favourites || [];
+
+totalSaves = favouriteIds.filter(id =>
+    existingProperties.has(id)
+).length;
 
 }
 
