@@ -476,6 +476,7 @@ opacity:1;
 
 }
      </style>
+     <link rel="preload" href="Frame 1.png" as="image">
     </head>
     <body>
         <a href="index.html">
@@ -551,7 +552,9 @@ collection,
 getDocs,
 getDoc,
 doc,
-updateDoc
+updateDoc,
+query,
+where
 
 }
 from "https://www.gstatic.com/firebasejs/12.16.0/firebase-firestore.js";
@@ -584,54 +587,53 @@ userSnap.data().favourites||[];
 
 updatePropertyHeart();
 
-loadSimilarProperties(currentProperty);
-
 }
 
 });
-
-const snapshot = await getDocs(collection(db,"properties"));
 
 const params =
 new URLSearchParams(window.location.search);
 
-snapshot.forEach(function(doc){
+const propertyId =
+params.get("id");
 
-    let p = {
 
-        id: doc.id,
+const propertySnap =
+await getDoc(
+    doc(db,"properties",propertyId)
+);
 
-        ...doc.data()
+
+if(propertySnap.exists()){
+
+    property = {
+
+        id: propertySnap.id,
+
+        ...propertySnap.data()
 
     };
 
-    if(p.hidden !== true){
-
-        allProperties.push(p);
-
-    }
-
-});
-
-const propertyId =
-params.get("id");
- property =
-allProperties.find(p=>p.id===propertyId);
-    if(property){
-        property.views =
-(property.views||0)+1;
-
-await updateDoc(
-
-doc(db,"properties",property.id),
-
-{
-
-views:property.views
-
 }
 
-);
+   if(property){
+
+    property.views =
+    (property.views||0)+1;
+
+
+    updateDoc(
+
+        doc(db,"properties",property.id),
+
+        {
+
+            views:property.views
+
+        }
+
+    );
+
           let galleryHTML ="";
  if(property.images &&
     property.images.length > 0) {
@@ -1065,20 +1067,53 @@ margin-top:18px;
 </div>
                                 </div>
                                   `;
-                                  currentProperty = property;
-                    
-                                 setTimeout(() => {
+currentProperty = property;
+
+setTimeout(async()=>{
 
     updatePropertyHeart();
 
+
+    const similarQuery = query(
+        collection(db,"properties"),
+        where("city","==",property.city),
+        where("propertyType","==",property.propertyType)
+    );
+
+
+    const similarSnapshot = await getDocs(similarQuery);
+
+
+    allProperties = [];
+
+
+    similarSnapshot.forEach(function(doc){
+
+        let p = {
+            id:doc.id,
+            ...doc.data()
+        };
+
+
+        if(p.hidden !== true){
+
+            allProperties.push(p);
+
+        }
+
+    });
+
+
     loadSimilarProperties(property);
 
-},0);
+
+},100);
                                   checkDescriptionLength();
                                
                                   }
                                   
-     function loadSimilarProperties(currentProperty){
+    async function loadSimilarProperties(currentProperty){
+
         document.getElementById("similarHeading").innerHTML =
 "More " +
 currentProperty.propertyType.toLowerCase() +
@@ -1087,6 +1122,7 @@ currentProperty.city;
         let container= 
         document.getElementById("similarProperties")
         container.innerHTML="";
+
        let similar = allProperties
       .filter(function(p){
 
