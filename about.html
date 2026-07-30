@@ -342,7 +342,7 @@ color:#666;
 }
         </style>
         <title>About Gedarak.lk</title>
-        <link rel="stylesheet" href="style.css">
+       <link rel="preload" href="Frame 1.png" as="image">
     </head>
     <body>
         <a href="index.html">
@@ -580,30 +580,21 @@ import { db } from "./firebase-config.js";
 
 import {
 collection,
-getDocs
+getCountFromServer
 } from "https://www.gstatic.com/firebasejs/12.16.0/firebase-firestore.js";
 
 async function loadStatistics(){
 
 let totalProperties = 0;
-let totalViews = 0;
-let totalFavourites = 0;
+
 
 try{
 
-const snapshot = await getDocs(
+const snapshot = await getCountFromServer(
 collection(db,"properties")
 );
 
-snapshot.forEach((doc)=>{
-
-const property = doc.data();
-
-totalProperties++;
-
-totalViews += property.views || 0;
-
-});
+totalProperties = snapshot.data().count;
 
 }
 catch(error){
@@ -612,44 +603,9 @@ console.error(error);
 
 }
 
-for(let i=0;i<localStorage.length;i++){
 
-let key = localStorage.key(i);
-
-if(key.startsWith("favourites_")){
-
-try{
-
-let favs = JSON.parse(localStorage.getItem(key)) || [];
-
-totalFavourites += favs.length;
-
-}
-catch(e){}
-
-}
-
-}
 
 document.getElementById("totalProperties").textContent = totalProperties;
-
-const viewsElement =
-document.getElementById("totalViews");
-
-if(viewsElement){
-
-viewsElement.textContent = totalViews;
-
-}
-
-const favouritesElement =
-document.getElementById("totalFavourites");
-
-if(favouritesElement){
-
-favouritesElement.textContent = totalFavourites;
-
-}
 
 }
 
