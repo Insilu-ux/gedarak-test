@@ -379,6 +379,8 @@ onAuthStateChanged
 }
 from "https://www.gstatic.com/firebasejs/12.16.0/firebase-auth.js";
 
+import { deletePropertyCompletely } from "./delete-property.js";
+
 onAuthStateChanged(auth, async(user)=>{
 
 if(!user){
@@ -548,9 +550,7 @@ showAlert(
 
 async function(){
 
-await deleteDoc(
-doc(db,"properties",id)
-);
+await deletePropertyCompletely(id);
 
 loadProperties();
 
