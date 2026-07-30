@@ -399,7 +399,7 @@ opacity:1;
 }
 
         </style>
-        <link rel="stylesheet" href="style.css">
+         <link rel="preload" href="Frame 1.png" as="image">
     </head>
     <body>
     <a href="index.html">
@@ -522,7 +522,6 @@ margin-top:30px;
 </div>
 
 <hr>
-
 <h2
 
 style="
@@ -681,25 +680,9 @@ await loadUserStats();
 
     const favouriteIds = data.favourites || [];
 
-    totalSaves = 0;
-
-    for(const propertyId of favouriteIds){
-
-        const propertyDoc = await getDoc(
-            doc(db,"properties",propertyId)
-        );
-
-        if(propertyDoc.exists()){
-
-            totalSaves++;
-
-        }
-
-    }
+    totalSaves = favouriteIds.length;
 
 }
-
-
 
     document.getElementById("listingCount").innerText =
     listings;
@@ -714,15 +697,6 @@ await loadUserStats();
 
 
 }
-
-            document.getElementById("listingCount").innerText=
-listings;
-
-document.getElementById("totalViews").innerText=
-totalViews.toLocaleString();
-
-document.getElementById("totalSaves").innerText=
-totalSaves.toLocaleString();
 
 
             window.logout = function(){
@@ -787,6 +761,7 @@ window.openPostProperty = function(){
     window.location.href="postproperty.html";
 
 }
+
         </script>
     </body>
 </html>
