@@ -857,7 +857,7 @@ text-align:center;
 }
 </style>
     <title>Gedarak.lk</title>
-    
+    <link rel="preload" href="Frame 1.png" as="image">
 </head>
 
 <body>
@@ -1483,7 +1483,6 @@ Find your dream home with confidence.
 Facebook
 </a>
 
-
 </div>
 
 </div>
@@ -1500,9 +1499,9 @@ Facebook
 </p>
 
 <div>
-<a href="#">Privacy Policy</a>
+<a href="privacy.html">Privacy Policy</a>
 <span>|</span>
-<a href="#">Terms & Conditions</a>
+<a href="terms.html">Terms & Conditions</a>
 </div>
 
 </div>
@@ -1518,7 +1517,10 @@ getDocs,
 getDoc,
 doc,
 updateDoc,
-deleteDoc
+deleteDoc,
+query,
+orderBy,
+limit
 }
 from "https://www.gstatic.com/firebasejs/12.16.0/firebase-firestore.js";
 
@@ -3298,8 +3300,7 @@ let betweenMatch =
 text.match(
 /between\s+(\d+(?:\.\d+)?)\s*(lakh|lakhs|crore|crores|million|millions)?\s*(?:and|to|-)\s*(\d+(?:\.\d+)?)\s*(lakh|lakhs|crore|crores|million|millions)?/
 );
-console.log("SEARCH TEXT:",text);
-console.log("BETWEEN MATCH:",betweenMatch);
+
 if(betweenMatch){
 
 let min =
@@ -4326,12 +4327,7 @@ renderPagination(totalPages);
 
 let noResult = document.getElementById("noResults");
 
-console.log(
-"Search:",
-searchText,
-"Results:",
-visibleCards.length
-);
+
 
 if(visibleCards.length === 0){
 
@@ -4504,7 +4500,7 @@ Next →
 }
     
         function updateSuggestions(){
-console.log("updateSuggestions called");
+
 let input =
 document.getElementById("searchInput")
 .value
@@ -4790,8 +4786,13 @@ saves: property.saves
             }
         }
 
-const snapshot =
-await getDocs(collection(db,"properties"));
+const q = query(
+    collection(db,"properties"),
+    orderBy("createdAt","desc"),
+    limit(30)
+);
+
+const snapshot = await getDocs(q);
 
 snapshot.forEach(function(doc){
 
@@ -4818,7 +4819,11 @@ snapshot.forEach(function(doc){
 
 
             allProperties.forEach(
-                property=>{
+property=>{
+
+if(property.hidden === true){
+    return;
+}
             
             let roomInfo = "";
 
@@ -4969,7 +4974,10 @@ NEW
                <img
 id="images${property.id}"
 src="${property.images[0]}"
+loading="lazy"
+decoding="async"
 onclick="event.stopPropagation();openImageViewer('${property.id}')">
+
 <div class="property-buttons-left">
 
 <button
