@@ -857,6 +857,35 @@ text-align:center;
 }
 
 }
+#clearSearch{
+
+display:none;
+position:absolute;
+right:15px;
+top:50%;
+transform:translateY(-50%);
+
+font-size:28px;
+font-weight:bold;
+
+color:#777;
+cursor:pointer;
+
+user-select:none;
+
+}
+
+#clearSearch:hover{
+
+color:black;
+
+}
+
+.search-container{
+
+position:relative;
+
+}
 </style>
     <title>Gedarak.lk</title>
 <!-- Basic SEO -->
@@ -1071,6 +1100,7 @@ Version 1.0
         <h2>Find Your Perfect Property</h2>
 <div class="search-row">
     <div class="search-input-wrapper">
+        <div class="search-container">
        <input
 type="text"
 id="searchInput"
@@ -1079,6 +1109,14 @@ oninput="
 intelligentSearch();
 updateSuggestions();
 ">
+<span 
+id="clearSearch"
+onclick="clearSearchBox()"
+>
+×
+</span>
+
+</div>
 <div id="searchSuggestions">
 </div>
     </div>
@@ -4719,11 +4757,16 @@ document.getElementById("searchInput")
 .addEventListener("input", function () {
 
 
-if(this.value.trim()===""){
+if(this.value.trim()!==""){
+
+document.getElementById("clearSearch").style.display="block";
+
+}
+else{
+
+document.getElementById("clearSearch").style.display="none";
 
 showSearchHistory();
-
-return;
 
 }
 
@@ -5573,6 +5616,27 @@ modal.style.display="none";
 };
 
 }
+function clearSearchBox(){
+
+let input = document.getElementById("searchInput");
+
+input.value="";
+
+document.getElementById("clearSearch").style.display="none";
+
+processedSearchText="";
+
+currentPage=1;
+
+
+// IMPORTANT: trigger the same event as typing/backspace
+
+input.dispatchEvent(new Event("input", {
+    bubbles:true
+}));
+
+}
+
 window.openMenu = openMenu;
 window.closeMenu = closeMenu;
 window.toggleFilters = toggleFilters;
@@ -5603,6 +5667,7 @@ window.showNotification = showNotification;
 window.showAlert = showAlert;
 window.sortProperties = sortProperties;
 window.favourites = favourites;
+window.clearSearchBox = clearSearchBox;
       </script>
       <div id="notification"
       onclick="event.stopPropagation()"
