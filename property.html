@@ -475,91 +475,74 @@ opacity:1;
 }
 
 }
-/* ================================
-   GEDARAK IMAGE WATERMARK
-================================ */
-
-.watermark-container{
+.watermarked-image-wrapper{
     position:relative;
+    width:100%;
     overflow:hidden;
+    border-radius:14px;
 }
 
-.watermark-container img{
+.watermarked-image-wrapper img{
     display:block;
+    width:100%;
 }
 
 .image-watermark{
     position:absolute;
-    top:50%;
     left:50%;
+    top:50%;
     transform:translate(-50%,-50%) rotate(-25deg);
-
-    color:rgba(255,255,255,0.55);
-
+    color:rgba(255,255,255,.55);
     font-size:28px;
     font-weight:bold;
-
     letter-spacing:2px;
-
-    text-shadow:
-        0 1px 3px rgba(0,0,0,.65);
-
+    text-shadow:0 2px 5px rgba(0,0,0,.65);
     pointer-events:none;
     user-select:none;
-
     white-space:nowrap;
-
-    z-index:20;
+    z-index:10;
 }
 
-/* Slightly smaller watermark on phones */
+.viewer-image-wrapper{
+    position:relative;
+    width:100%;
+    height:75vh;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+}
+
+.viewer-image-wrapper img{
+    width:100%;
+    height:100%;
+    object-fit:contain;
+    user-select:none;
+}
+
+.viewer-watermark{
+    position:absolute;
+    left:50%;
+    top:50%;
+    transform:translate(-50%,-50%) rotate(-25deg);
+    color:rgba(255,255,255,.55);
+    font-size:32px;
+    font-weight:bold;
+    letter-spacing:2px;
+    text-shadow:0 2px 6px rgba(0,0,0,.7);
+    pointer-events:none;
+    user-select:none;
+    white-space:nowrap;
+    z-index:10;
+}
 
 @media(max-width:600px){
 
     .image-watermark{
         font-size:20px;
-        letter-spacing:1px;
     }
 
-}
-
-/* Fullscreen viewer watermark */
-
-.viewer-watermark{
-    position:absolute;
-
-    top:50%;
-    left:50%;
-
-    transform:
-        translate(-50%,-50%)
-        rotate(-25deg);
-
-    color:rgba(255,255,255,.45);
-
-    font-size:38px;
-
-    font-weight:bold;
-
-    letter-spacing:3px;
-
-    text-shadow:
-        0 2px 5px rgba(0,0,0,.8);
-
-    pointer-events:none;
-
-    user-select:none;
-
-    white-space:nowrap;
-
-    z-index:100000;
-}
-
-@media(max-width:600px){
-
     .viewer-watermark{
-        font-size:24px;
-        letter-spacing:2px;
+        font-size:22px;
     }
 
 }
@@ -827,24 +810,24 @@ padding:15px;">
             🤍
             </div>
             
-           <div class="watermark-container"
+                 <div class="watermarked-image-wrapper"
 style="
-width:100%;
-border-radius:14px;
-">
+height:320px;
+cursor:zoom-in;
+"
+onclick="openImageViewer(0)"
+>
 
 <img
 id="mainImage"
 src="${property.images[0]}"
-onclick="openImageViewer(0)"
 style="
 width:100%;
-height:320px;
+height:100%;
 object-fit:cover;
 border-radius:14px;
 display:block;
 margin:auto;
-cursor:zoom-in;
 ">
 
 <div class="image-watermark">
@@ -2572,22 +2555,13 @@ cursor:pointer;
 ❮
 </button>
 
-<div
-style="
-position:relative;
-width:100%;
-height:75vh;
-display:flex;
-justify-content:center;
-align-items:center;
-">
+<div class="viewer-image-wrapper">
 
 <img
 id="viewerImage"
 style="
 width:100%;
-height:75vh;
-max-width:100%;
+height:100%;
 object-fit:contain;
 user-select:none;
 ">
