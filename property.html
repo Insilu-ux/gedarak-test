@@ -506,6 +506,45 @@ opacity:1;
     user-select:none;
     white-space:nowrap;
 }
+.main-image-wrapper{
+    position:relative;
+    width:100%;
+    max-width:100%;
+    margin:auto;
+}
+
+.main-image-wrapper #mainImage{
+    width:100%;
+    height:320px;
+    object-fit:cover;
+    border-radius:14px;
+    display:block;
+    cursor:zoom-in;
+}
+
+.main-watermark{
+    position:absolute;
+    top:50%;
+    left:50%;
+    transform:translate(-50%,-50%);
+    font-size:28px;
+    font-weight:800;
+    letter-spacing:2px;
+    color:white;
+    opacity:.16;
+    text-shadow:0 0 8px rgba(0,0,0,.6);
+    pointer-events:none;
+    user-select:none;
+    white-space:nowrap;
+}
+
+@media(max-width:600px){
+
+    .main-watermark{
+        font-size:22px;
+    }
+
+}
      </style>
      <!-- Basic SEO -->
 <meta name="description" content="Gedarak.lk - Sri Lanka's property marketplace. Buy, sell and discover houses, apartments, lands and properties easily.">
@@ -770,21 +809,19 @@ padding:15px;">
             🤍
             </div>
             
-                  <img
-id="mainImage"
-src="${property.images[0]}"
-onclick="openImageViewer(0)"
-style="
-width:100%;
-height:320px;
-object-fit:cover;
-border-radius:14px;
-display:block;
-margin:auto;
-display:block;
-margin:auto;
-cursor:zoom-in;
-">
+                  <div class="main-image-wrapper">
+
+    <img
+    id="mainImage"
+    src="${property.images[0]}"
+    onclick="openImageViewer(0)"
+    >
+
+    <div class="main-watermark">
+        Gedarak.lk
+    </div>
+
+</div>
                     <div
                     style="
                     margin-top:15px;
