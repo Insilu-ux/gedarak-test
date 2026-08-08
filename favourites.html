@@ -278,6 +278,50 @@ font-size:14px;
 color:#666;
 
 }
+.propertyImageWrapper{
+    position:relative;
+    width:100%;
+    height:320px;
+    overflow:hidden;
+}
+
+.propertyWatermarkText{
+
+position:absolute;
+
+top:50%;
+
+left:50%;
+
+transform:translate(-50%,-50%);
+
+font-size:34px;
+
+font-weight:800;
+
+letter-spacing:3px;
+
+color:white;
+
+opacity:.14;
+
+text-shadow:
+0 0 10px rgba(0,0,0,.6);
+
+pointer-events:none;
+
+user-select:none;
+
+white-space:nowrap;
+
+}
+
+.propertyImageWrapper img{
+    width:100%;
+    height:100%;
+    display:block;
+    object-fit:cover;
+}
 </style>
         <title>My Favourites</title>
        <!-- Basic SEO -->
@@ -577,14 +621,17 @@ list.forEach(function(property){
 html+=`
                 <div class="favouriteCard">
 <div class="cardBody">
-    <img
-    src="${property.images[0]}"
-    style="
-    width: 100%;
-    height: 300px;
-    object-fit: cover;
-    border-radius: 10px;
-    ">
+    <div class="propertyImageWrapper">
+
+<img
+src="${property.images[0]}"
+alt="${property.name}">
+
+<div class="propertyWatermarkText">
+    Gedarak.lk
+</div>
+</div>
+
     <h2>${property.name}</h2>
     <p>Property Type: ${property.propertyType}</p>
     <h3>
