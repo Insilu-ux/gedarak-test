@@ -475,6 +475,94 @@ opacity:1;
 }
 
 }
+/* ================================
+   GEDARAK IMAGE WATERMARK
+================================ */
+
+.watermark-container{
+    position:relative;
+    overflow:hidden;
+}
+
+.watermark-container img{
+    display:block;
+}
+
+.image-watermark{
+    position:absolute;
+    top:50%;
+    left:50%;
+    transform:translate(-50%,-50%) rotate(-25deg);
+
+    color:rgba(255,255,255,0.55);
+
+    font-size:28px;
+    font-weight:bold;
+
+    letter-spacing:2px;
+
+    text-shadow:
+        0 1px 3px rgba(0,0,0,.65);
+
+    pointer-events:none;
+    user-select:none;
+
+    white-space:nowrap;
+
+    z-index:20;
+}
+
+/* Slightly smaller watermark on phones */
+
+@media(max-width:600px){
+
+    .image-watermark{
+        font-size:20px;
+        letter-spacing:1px;
+    }
+
+}
+
+/* Fullscreen viewer watermark */
+
+.viewer-watermark{
+    position:absolute;
+
+    top:50%;
+    left:50%;
+
+    transform:
+        translate(-50%,-50%)
+        rotate(-25deg);
+
+    color:rgba(255,255,255,.45);
+
+    font-size:38px;
+
+    font-weight:bold;
+
+    letter-spacing:3px;
+
+    text-shadow:
+        0 2px 5px rgba(0,0,0,.8);
+
+    pointer-events:none;
+
+    user-select:none;
+
+    white-space:nowrap;
+
+    z-index:100000;
+}
+
+@media(max-width:600px){
+
+    .viewer-watermark{
+        font-size:24px;
+        letter-spacing:2px;
+    }
+
+}
      </style>
      <!-- Basic SEO -->
 <meta name="description" content="Gedarak.lk - Sri Lanka's property marketplace. Buy, sell and discover houses, apartments, lands and properties easily.">
@@ -739,7 +827,13 @@ padding:15px;">
             🤍
             </div>
             
-                  <img
+           <div class="watermark-container"
+style="
+width:100%;
+border-radius:14px;
+">
+
+<img
 id="mainImage"
 src="${property.images[0]}"
 onclick="openImageViewer(0)"
@@ -750,10 +844,14 @@ object-fit:cover;
 border-radius:14px;
 display:block;
 margin:auto;
-display:block;
-margin:auto;
 cursor:zoom-in;
 ">
+
+<div class="image-watermark">
+Gedarak.lk
+</div>
+
+</div>
                     <div
                     style="
                     margin-top:15px;
@@ -2474,6 +2572,16 @@ cursor:pointer;
 ❮
 </button>
 
+<div
+style="
+position:relative;
+width:100%;
+height:75vh;
+display:flex;
+justify-content:center;
+align-items:center;
+">
+
 <img
 id="viewerImage"
 style="
@@ -2483,6 +2591,12 @@ max-width:100%;
 object-fit:contain;
 user-select:none;
 ">
+
+<div class="viewer-watermark">
+Gedarak.lk
+</div>
+
+</div>
 <button
 onclick="nextViewerImage()"
 style="
