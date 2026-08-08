@@ -491,12 +491,28 @@ opacity:1;
     position:absolute;
     left:50%;
     top:50%;
-    transform:translate(-50%,-50%) rotate(-25deg);
+    transform:translate(-50%,-50%);
     color:rgba(255,255,255,.55);
     font-size:28px;
     font-weight:bold;
     letter-spacing:2px;
     text-shadow:0 2px 5px rgba(0,0,0,.65);
+    pointer-events:none;
+    user-select:none;
+    white-space:nowrap;
+    z-index:10;
+}
+
+.viewer-watermark{
+    position:absolute;
+    left:50%;
+    top:50%;
+    transform:translate(-50%,-50%);
+    color:rgba(255,255,255,.55);
+    font-size:32px;
+    font-weight:bold;
+    letter-spacing:2px;
+    text-shadow:0 2px 6px rgba(0,0,0,.7);
     pointer-events:none;
     user-select:none;
     white-space:nowrap;
@@ -510,6 +526,7 @@ opacity:1;
     display:flex;
     justify-content:center;
     align-items:center;
+    z-index:1;
 }
 
 .viewer-image-wrapper img{
@@ -519,27 +536,8 @@ opacity:1;
     user-select:none;
 }
 
-.viewer-watermark{
-    position:absolute;
-    left:50%;
-    top:50%;
-    transform:translate(-50%,-50%) rotate(-25deg);
-    color:rgba(255,255,255,.55);
-    font-size:32px;
-    font-weight:bold;
-    letter-spacing:2px;
-    text-shadow:0 2px 6px rgba(0,0,0,.7);
-    pointer-events:none;
-    user-select:none;
-    white-space:nowrap;
-    z-index:10;
-}
 
 @media(max-width:600px){
-
-    .image-watermark{
-        font-size:20px;
-    }
 
     .viewer-watermark{
         font-size:22px;
@@ -2546,11 +2544,20 @@ onclick="previousViewerImage()"
 style="
 position:absolute;
 left:30px;
+top:50%;
+transform:translateY(-50%);
 font-size:55px;
-background:none;
+background:rgba(0,0,0,.35);
 border:none;
 color:white;
 cursor:pointer;
+z-index:100;
+width:60px;
+height:80px;
+border-radius:12px;
+display:flex;
+align-items:center;
+justify-content:center;
 ">
 ❮
 </button>
@@ -2576,11 +2583,20 @@ onclick="nextViewerImage()"
 style="
 position:absolute;
 right:30px;
+top:50%;
+transform:translateY(-50%);
 font-size:55px;
-background:none;
+background:rgba(0,0,0,.35);
 border:none;
 color:white;
 cursor:pointer;
+z-index:100;
+width:60px;
+height:80px;
+border-radius:12px;
+display:flex;
+align-items:center;
+justify-content:center;
 ">
 ❯
 </button>
