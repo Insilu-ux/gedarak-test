@@ -1,0 +1,734 @@
+<!DOCTYPE html>
+<html>
+ 
+<head>
+  <meta charset="UTF-8">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+
+.boost-grid{
+
+display:grid;
+
+grid-template-columns:
+repeat(auto-fit,minmax(280px,1fr));
+
+gap:22px;
+
+margin-top:35px;
+
+}
+
+.boost-card{
+
+background:white;
+
+border-radius:20px;
+
+padding:28px;
+
+display:flex;
+
+flex-direction:column;
+
+box-shadow:
+0 10px 28px rgba(0,0,0,.08);
+
+transition:.25s;
+
+}
+
+.boost-card:hover{
+
+transform:translateY(-6px);
+
+box-shadow:
+0 16px 36px rgba(0,0,0,.15);
+
+}
+
+.boost-card h2{
+
+margin:0;
+
+font-size:30px;
+
+}
+
+.package-subtitle{
+
+margin-top:8px;
+
+font-size:17px;
+
+font-weight:bold;
+
+color:#555;
+
+}
+
+.feature-list{
+
+margin:20px 0;
+
+display:flex;
+
+flex-direction:column;
+
+gap:12px;
+
+}
+
+.feature{
+
+display:flex;
+
+align-items:flex-start;
+
+gap:10px;
+
+font-size:16px;
+
+line-height:1.5;
+
+}
+
+.option-box{
+
+margin-top:10px;
+
+padding:15px;
+
+border-radius:12px;
+
+background:#f7f7f7;
+
+}
+
+.option-box h3{
+
+margin:0;
+
+font-size:18px;
+
+}
+
+.option-box p{
+
+margin:8px 0;
+
+font-size:24px;
+
+font-weight:bold;
+
+}
+
+.option-box button{
+
+width:100%;
+
+padding:15px;
+
+border:none;
+
+border-radius:12px;
+
+font-size:17px;
+
+font-weight:bold;
+
+cursor:pointer;
+
+color:white;
+
+transition:.2s;
+
+}
+
+.option-box button:hover{
+
+opacity:.92;
+
+}
+
+.platinum{
+
+border:2px solid #299BFF;
+
+background:linear-gradient(180deg,#ffffff,#eef7ff);
+
+}
+
+
+
+.blue{
+
+background:#007BFF;
+
+}
+
+
+@media(max-width:700px){
+
+.boost-grid{
+
+grid-template-columns:1fr;
+
+}
+
+.boost-card{
+
+padding:22px;
+
+}
+
+.boost-card h2{
+
+font-size:27px;
+
+}
+
+.option-box p{
+
+font-size:22px;
+
+}
+
+}
+.pageHeader{
+
+display:flex;
+
+justify-content:center;
+
+align-items:center;
+
+margin-bottom:30px;
+
+padding-bottom:15px;
+
+border-bottom:1px solid #ddd;
+
+}
+
+.logoLink{
+
+display:flex;
+
+align-items:center;
+
+gap:12px;
+
+text-decoration:none;
+
+color:black;
+
+}
+
+.pageLogo{
+
+width:55px;
+
+height:55px;
+
+object-fit:contain;
+
+}
+
+.logoLink h2{
+
+margin:0;
+
+font-size:32px;
+
+font-weight:bold;
+
+color:#8b008b;
+
+}
+
+@media(max-width:600px){
+
+.pageLogo{
+
+width:42px;
+
+height:42px;
+
+}
+
+.logoLink h2{
+
+font-size:24px;
+
+}
+
+}
+.tagline{
+
+margin:0;
+
+font-size:14px;
+
+color:#666;
+
+}
+
+</style>
+<meta charset="UTF-8">
+
+<meta name="viewport"
+content="width=device-width, initial-scale=1.0">
+
+<title>
+Boost Listing | Gedarak.lk
+</title>
+
+<!-- Basic SEO -->
+<meta name="description" content="Gedarak.lk - Sri Lanka's property marketplace. Buy, sell and discover houses, apartments, lands and properties easily.">
+
+<meta name="keywords" content="Gedarak, Gedarak.lk, Sri Lanka property, houses for sale Sri Lanka, apartments, lands, real estate Sri Lanka">
+
+<meta name="author" content="Gedarak.lk">
+
+
+<!-- Browser / Mobile -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<meta name="theme-color" content="#8b008b">
+
+
+<!-- Favicon -->
+<link rel="icon" type="image/png" sizes="32x32" href="favicon.png">
+
+<link rel="icon" type="image/png" sizes="16x16" href="favicon.png">
+
+<link rel="apple-touch-icon" href="favicon.png">
+
+
+<!-- Preload important logo -->
+<link rel="preload" href="favicon.png" as="image">
+
+
+<!-- Open Graph (Facebook, WhatsApp, Messenger previews) -->
+<meta property="og:title" content="Gedarak.lk - Sri Lanka's Property Marketplace">
+
+<meta property="og:description" content="Find houses, apartments, lands and properties across Sri Lanka with Gedarak.lk">
+
+<meta property="og:type" content="website">
+
+<meta property="og:image" content="https://gedarak.lk/favicon.png">
+
+<meta property="og:url" content="https://gedarak.lk">
+
+
+<!-- Twitter / social sharing -->
+<meta name="twitter:card" content="summary">
+
+<meta name="twitter:title" content="Gedarak.lk - Sri Lanka's Property Marketplace">
+
+<meta name="twitter:description" content="Buy, sell and discover properties in Sri Lanka">
+
+<meta name="twitter:image" content="https://gedarak.lk/favicon.png">
+
+
+<!-- Canonical URL -->
+<link rel="canonical" href="https://gedarak.lk">
+
+</head>
+
+<body>
+<a href="index.html">
+        <button class="home-btn">
+        💒 Home
+        </button>
+    </a>
+       <header class="pageHeader">
+
+<a href="index.html" class="logoLink">
+
+<img
+src="favicon.png"
+class="pageLogo">
+
+<div>
+
+<h2>
+
+Gedarak.lk
+
+</h2>
+
+<p class="tagline">
+
+Sri Lanka's Property Marketplace
+
+</p>
+
+</div>
+
+</a>
+
+</header>
+<nav>
+
+<h1 style="text-align: center;">
+🚀 Boost Property
+</h1>
+
+</nav>
+
+<div
+id="boostContainer"
+style="
+max-width:900px;
+margin:40px auto;
+background:white;
+padding:30px;
+border-radius:20px;
+box-shadow:0 10px 30px rgba(0,0,0,.12);
+">
+
+<div id="propertyPreview">
+
+</div>
+
+<hr style="margin:35px 0;">
+
+<h2>
+Choose Your Boost Package
+</h2>
+
+<p style="color:#666;">
+Reach more buyers and appear higher in search results.
+</p>
+
+<div class="boost-grid">
+
+<!-- PLATINUM -->
+
+<div class="boost-card platinum">
+
+<h2>💎 Platinum</h2>
+
+<div class="package-subtitle">
+
+Maximum Exposure
+
+</div>
+
+<div class="feature-list">
+
+<div class="feature">
+🚀 Featured on the Homepage
+</div>
+
+<div class="feature">
+🏆 First in Property Categories
+</div>
+
+<div class="feature">
+📍 First in District & City Searches
+</div>
+
+<div class="feature">
+⭐ Highest Priority Placement
+</div>
+
+<div class="feature">
+👀 Maximum Buyer Visibility
+</div>
+
+</div>
+
+<div class="option-box">
+
+<h3>3 Days</h3>
+
+<p>Rs. 1,690</p>
+
+<button
+class="blue"
+onclick="buyBoost('Platinum',1690,3)">
+Continue →
+</button>
+
+</div>
+
+<div class="option-box">
+
+<h3>7 Days</h3>
+
+<p>Rs. 2,690</p>
+
+<button
+class="blue"
+onclick="buyBoost('Platinum',2690,7)">
+Continue →
+</button>
+
+</div>
+
+</div>
+
+
+
+<script type="module">
+
+  import { db } from "./firebase-config.js";
+
+import {
+doc,
+getDoc,
+updateDoc
+}
+from
+"https://www.gstatic.com/firebasejs/12.16.0/firebase-firestore.js";
+
+window.showAlert = function(
+title,
+message="",
+type="warning"
+){
+
+let icon="⚠️";
+let color="#ff9800";
+
+if(type==="error"){
+icon="❌";
+color="#e53935";
+}
+
+if(type==="success"){
+icon="✅";
+color="#16a34a";
+}
+
+if(type==="info"){
+icon="ℹ️";
+color="#0a84ff";
+}
+
+document.getElementById("alertIcon").innerHTML=icon;
+
+document.getElementById("alertIcon").style.color=color;
+
+document.getElementById("alertTitle").innerHTML=title;
+
+document.getElementById("alertMessage").innerHTML=message;
+
+document.getElementById("customAlert").style.display="flex";
+
+}
+
+window.closeAlert=function(){
+
+document.getElementById("customAlert").style.display="none";
+
+}
+const propertyId =
+sessionStorage.getItem(
+"selectedBoostProperty"
+);
+
+if(!propertyId){
+
+showAlert(
+"Property not selected",
+"Please select a property before choosing a boost package.",
+"warning"
+);
+
+setTimeout(()=>{
+location.href="profile.html";
+},1700);
+
+throw new Error("No property selected.");
+
+}
+
+const propertyRef =
+doc(db,"properties",propertyId);
+
+const propertySnap =
+await getDoc(propertyRef);
+
+if(!propertySnap.exists()){
+
+showAlert(
+"Property not found",
+"This property no longer exists or may have been removed.",
+"error"
+);
+
+setTimeout(()=>{
+location.href="profile.html";
+},1700);
+
+throw new Error("Property not found.");
+
+}
+
+const property = {
+
+id:propertySnap.id,
+
+...propertySnap.data()
+
+};
+
+window.buyBoost = function(packageName,price,days){
+
+sessionStorage.setItem(
+"boostPackage",
+packageName
+);
+
+sessionStorage.setItem(
+"boostPrice",
+price
+);
+
+sessionStorage.setItem(
+"boostDays",
+days
+);
+
+location.href="payment.html";
+
+}
+document.getElementById("propertyPreview").innerHTML=`
+
+<img
+src="${property.images[0]}"
+style="
+width:100%;
+height:320px;
+object-fit:cover;
+border-radius:18px;
+">
+
+<h2
+style="
+margin-top:20px;
+font-size:31px;
+">
+
+${property.name}
+
+</h2>
+
+<p
+style="
+font-size:21px;
+font-weight:600;
+color:#555;
+margin-top:10px;
+">
+
+📍 ${property.city}, ${property.district}
+
+</p>
+
+<p
+style="
+font-size:22px;
+font-weight:bold;
+color:#1d7701;
+margin-top:8px;
+">
+
+${
+property.negotiable
+
+?
+
+"💬 Price Negotiable"
+
+:
+
+"💸 Rs. "+Number(property.price).toLocaleString()
+
+}
+
+</p>
+
+`;
+
+
+</script>
+<div id="customAlert"
+style="
+display:none;
+position:fixed;
+top:0;
+left:0;
+width:100%;
+height:100%;
+background:rgba(0,0,0,.45);
+backdrop-filter:blur(4px);
+justify-content:center;
+align-items:center;
+z-index:99999;
+">
+
+<div
+style="
+background:white;
+width:90%;
+max-width:380px;
+padding:25px;
+border-radius:20px;
+text-align:center;
+box-shadow:0 15px 40px rgba(0,0,0,.25);
+">
+
+<div id="alertIcon"
+style="
+font-size:45px;
+margin-bottom:10px;
+">
+⚠️
+</div>
+
+<h2 id="alertTitle"
+style="
+margin:10px 0;
+color:#222;
+">
+Warning
+</h2>
+
+<p id="alertMessage"
+style="
+color:#030101;
+font-size:19px;
+line-height:1.5;
+">
+Message
+</p>
+
+<button
+onclick="closeAlert()"
+style="
+margin-top:20px;
+width:100%;
+padding:13px;
+border:none;
+border-radius:12px;
+background:#8b008b;
+color:white;
+font-size:17px;
+font-weight:bold;
+cursor:pointer;
+">
+OK
+</button>
+
+</div>
+
+</div>
+</body>
+
+</html>
