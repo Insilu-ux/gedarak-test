@@ -306,6 +306,127 @@ user-select:none;
 white-space:nowrap;
 
 }
+#myListingsLoadingOverlay{
+
+    position:fixed;
+
+    inset:0;
+
+    background:rgba(0,0,0,.45);
+
+    display:flex;
+
+    justify-content:center;
+
+    align-items:center;
+
+    z-index:9999999;
+
+}
+
+
+.my-listings-loading-box{
+
+    background:white;
+
+    width:90%;
+
+    max-width:420px;
+
+    padding:35px;
+
+    border-radius:20px;
+
+    text-align:center;
+
+    box-shadow:0 15px 40px rgba(0,0,0,.3);
+
+    animation:myListingsPopup .25s ease;
+
+}
+
+
+.my-listings-loading-logo{
+
+    font-size:38px;
+
+    margin-bottom:8px;
+
+}
+
+
+.my-listings-loading-box h2{
+
+     margin:0;
+
+    color:#8b008b;
+
+    font-size:20px;
+
+}
+
+
+.my-listings-loading-box p{
+
+    margin:8px 0 18px;
+
+    color:#0c0c0c;
+
+    font-size:18px;
+
+
+}
+
+
+.my-listings-loading-spinner{
+
+    width:28px;
+
+    height:28px;
+
+    margin:auto;
+
+    border:3px solid #e5e7eb;
+
+    border-top:3px solid #8b008b;
+
+    border-radius:50%;
+
+    animation:myListingsLoadingSpin .8s linear infinite;
+
+}
+
+
+@keyframes myListingsPopup{
+
+    from{
+
+        transform:scale(.8);
+
+        opacity:0;
+
+    }
+
+    to{
+
+        transform:scale(1);
+
+        opacity:1;
+
+    }
+
+}
+
+
+@keyframes myListingsLoadingSpin{
+
+    to{
+
+        transform:rotate(360deg);
+
+    }
+
+}
 </style>
 <!-- Basic SEO -->
 <meta name="description" content="Gedarak.lk - Sri Lanka's property marketplace. Buy, sell and discover houses, apartments, lands and properties easily.">
@@ -364,6 +485,23 @@ white-space:nowrap;
         💒 Home
         </button>
     </a>
+    <div id="myListingsLoadingOverlay">
+
+    <div class="my-listings-loading-box">
+
+        <div class="my-listings-loading-logo">
+            🏠
+        </div>
+
+        <h2>Please wait a moment.</h2>
+
+        <p>Loading your listings...</p>
+
+        <div class="my-listings-loading-spinner"></div>
+
+    </div>
+
+</div>
        <header class="pageHeader">
 
 <a href="index.html" class="logoLink">
@@ -535,6 +673,7 @@ border-radius:10px;
 
 </div> `;
 
+ hideMyListingsLoader();
         return;
     }
 
@@ -890,6 +1029,7 @@ border-radius:10px;
     (totalListings==1 ?
     " Active Listing" :
     " Active Listings");
+    hideMyListingsLoader();
 
 });
             
@@ -1058,7 +1198,18 @@ return years+
 " ago";
 
 }
+function hideMyListingsLoader(){
 
+    const loader =
+        document.getElementById("myListingsLoadingOverlay");
+
+    if(loader){
+
+        loader.style.display="none";
+
+    }
+
+}
         </script>
     </body>
 </html>
