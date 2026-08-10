@@ -322,6 +322,127 @@ white-space:nowrap;
     display:block;
     object-fit:cover;
 }
+#favouritesLoadingOverlay{
+
+    position:fixed;
+
+    inset:0;
+
+    background:rgba(0,0,0,.45);
+
+    display:flex;
+
+    justify-content:center;
+
+    align-items:center;
+
+    z-index:9999999;
+
+}
+
+
+.favourites-loading-box{
+
+    background:white;
+
+    width:90%;
+
+    max-width:420px;
+
+    padding:35px;
+
+    border-radius:20px;
+
+    text-align:center;
+
+    box-shadow:0 15px 40px rgba(0,0,0,.3);
+
+    animation:favouritesPopup .25s ease;
+
+}
+
+
+.favourites-loading-logo{
+
+    font-size:38px;
+
+    margin-bottom:8px;
+
+}
+
+
+.favourites-loading-box h2{
+
+    margin:0;
+
+    color:#8b008b;
+
+    font-size:20px;
+
+}
+
+
+.favourites-loading-box p{
+
+    margin:8px 0 18px;
+
+    color:#0c0c0c;
+
+    font-size:18px;
+
+}
+
+
+.favourites-loading-spinner{
+
+    width:28px;
+
+    height:28px;
+
+    margin:auto;
+
+    border:3px solid #e5e7eb;
+
+    border-top:3px solid #8b008b;
+
+    border-radius:50%;
+
+    animation:favouritesLoadingSpin .8s linear infinite;
+
+}
+
+
+@keyframes favouritesPopup{
+
+    from{
+
+        transform:scale(.8);
+
+        opacity:0;
+
+    }
+
+    to{
+
+        transform:scale(1);
+
+        opacity:1;
+
+    }
+
+}
+
+
+@keyframes favouritesLoadingSpin{
+
+    to{
+
+        transform:rotate(360deg);
+
+    }
+
+}
+
 </style>
         <title>My Favourites</title>
        <!-- Basic SEO -->
@@ -381,6 +502,24 @@ white-space:nowrap;
         💒 Home
         </button>
     </a>
+<div id="favouritesLoadingOverlay">
+
+    <div class="favourites-loading-box">
+
+        <div class="favourites-loading-logo">
+            💗
+        </div>
+
+        <h2>Please wait a moment.</h2>
+
+        <p>Loading your favourite properties...</p>
+
+        <div class="favourites-loading-spinner"></div>
+
+    </div>
+
+</div>
+
        <header class="pageHeader">
 
 <a href="index.html" class="logoLink">
@@ -473,23 +612,25 @@ Highest Price
 
 </div>
       <div id="favouritesContainer"></div>
-    <script type="module">
-        import { auth, db } from "./firebase-config.js";
+<script type="module">
+
+import { auth, db } from "./firebase-config.js";
 
 import {
-collection,
-getDocs,
-doc,
-getDoc,
-updateDoc
+    collection,
+    getDocs,
+    doc,
+    getDoc,
+    updateDoc
 }
 from "https://www.gstatic.com/firebasejs/12.16.0/firebase-firestore.js";
 
 import {
-onAuthStateChanged
+    onAuthStateChanged
 }
 from "https://www.gstatic.com/firebasejs/12.16.0/firebase-auth.js";
-    
+
+
 let currentUser = null;
 
 let favouriteIds = [];
@@ -498,339 +639,735 @@ let favourites = [];
 
 let allFavouriteProperties = [];
 
+
+/*
+==========================================
+AUTHENTICATION
+==========================================
+*/
+
 onAuthStateChanged(auth, async function(user){
 
-if(!user){
+    /*
+    ==========================================
+    NOT LOGGED IN
+    ==========================================
+    */
 
-document.getElementById("favouritesContainer").innerHTML = `
-<div style="text-align:center;padding:70px;">
+    if(!user){
 
-<h2>Please log in first.</h2>
+        document.getElementById(
+            "favouritesContainer"
+        ).innerHTML = `
 
-<p>Your favourite properties are securely linked to your account.</p>
+        <div
+        style="
+        text-align:center;
+        padding:70px;
+        ">
 
-<br>
+        <h2>
+        Please log in first.
+        </h2>
 
-<button
-onclick="window.location.href='login.html'"
-style="
-padding:14px 28px;
-border:none;
-border-radius:12px;
-background:#2563eb;
-color:white;
-font-size:16px;
-font-weight:700;
-cursor:pointer;
-">
-Login
-</button>
+        <p>
+        Your favourite properties are securely linked to your account.
+        </p>
 
-</div>
-`;
+        <br>
 
-return;
+        <button
+        onclick="window.location.href='login.html'"
+        style="
+        padding:14px 28px;
+        border:none;
+        border-radius:12px;
+        background:#2563eb;
+        color:white;
+        font-size:16px;
+        font-weight:700;
+        cursor:pointer;
+        ">
 
-}
+        Login
 
-currentUser = user;
+        </button>
 
-const userSnap = await getDoc(
-    doc(db,"users",user.uid)
-);
+        </div>
 
-if(userSnap.exists()){
+        `;
 
-    favouriteIds = userSnap.data().favourites || [];
+        hideFavouritesLoader();
 
-}
+        return;
+    }
 
-loadFavourites();
-});
-        async function loadFavourites(){
 
-favourites = [];
+    currentUser = user;
 
-const snapshot = await getDocs(collection(db,"properties"));
 
-snapshot.forEach(function(docSnap){
+    /*
+    ==========================================
+    LOAD USER FAVOURITES
+    ==========================================
+    */
 
-let property = {
+    try{
 
-id:docSnap.id,
+        const userSnap =
+            await getDoc(
+                doc(
+                    db,
+                    "users",
+                    user.uid
+                )
+            );
 
-...docSnap.data()
 
-};
+        if(userSnap.exists()){
 
-if(favouriteIds.includes(String(property.id))){
+            favouriteIds =
+                userSnap.data().favourites || [];
 
-favourites.push(property);
+        }
+        else{
 
-}
+            favouriteIds = [];
 
-});
-
-allFavouriteProperties = favourites;
-
-document.getElementById("favouriteCount").innerHTML =
-favourites.length;
-
-if(favourites.length===0){
-
-document.getElementById("favouritesContainer").innerHTML = `
-<div style="text-align:center;padding:70px;">
-
-<h2>❤ No favourite properties yet</h2>
-
-<p>Tap the heart icon on any property to save it here.</p>
-
-<br>
-
-<button
-onclick="window.location.href='index.html'"
-style="
-padding:14px 28px;
-border:none;
-border-radius:12px;
-background:#2563eb;
-color:white;
-font-size:16px;
-font-weight:700;
-cursor:pointer;
-">
-🏠 Browse Properties
-</button>
-
-</div>
-`;
-
-return;
-
-}
-
-renderFavourites(favourites);
-
-}
-           function renderFavourites(list){
-
-let html="";
-
-list.forEach(function(property){
-
-html+=`
-                <div class="favouriteCard">
-<div class="cardBody">
-    <div class="propertyImageWrapper">
-
-<img
-src="${property.images[0]}"
-alt="${property.name}">
-
-<div class="propertyWatermarkText">
-    Gedarak.lk
-</div>
-</div>
-
-    <h2>${property.name}</h2>
-    <p>Property Type: ${property.propertyType}</p>
-    <h3>
-        ${
-property.negotiable
-?
-"💬 Negotiable"
-:
-"💸 Rs. "+Number(property.price).toLocaleString()
-}
-    </h3>
-    <p>
-        ${property.city},
-        ${property.district}
-    </p>
-   ${
-property.propertyType === "Land"
-
-?
-
-`
-<p>
-🌳 ${property.perches || 0} Perches
-</p>
-`
-
-:
-
-`
-<p>
-🛏 ${property.bedrooms || 0} Bedrooms
-</p>
-
-<p>
-🛁 ${property.bathrooms || 0} Bathrooms
-</p>
-
-<p>
-📐 ${Number(property.squareFeet || 0).toLocaleString()} Sqft
-</p>
-`
-}
-   <div class="buttonRow">
-
-<button
-onclick="viewProperty('${property.id}')"
-style="
-padding:13px;
-border:none;
-border-radius:12px;
-background:#16a34a;
-color:white;
-font-size:16px;
-font-weight:700;
-cursor:pointer;
-box-shadow:0 4px 10px rgba(22,163,74,.25);
-transition:.25s;
-">
-👁 View Property
-</button>
-
-<button
-onclick="removeFavourite('${property.id}')"
-style="
-padding:13px;
-border:none;
-border-radius:12px;
-background:#ef4444;
-color:white;
-font-size:16px;
-font-weight:700;
-cursor:pointer;
-box-shadow:0 4px 10px rgba(239,68,68,.25);
-transition:.25s;
-">
-🤍 Remove
-</button>
-
-</div>
-    </div>
-    </div>
-
-            `});
-            document.getElementById(
-                "favouritesContainer"
-            ).innerHTML = html;
         }
 
-      function viewProperty(id){
 
-window.location.href =
-`property.html?id=${id}`;
+        await loadFavourites();
 
-}
-       async function removeFavourite(id){
+    }
 
-favouriteIds =
-favouriteIds.filter(x=>x!==String(id));
 
-await updateDoc(
+    /*
+    ==========================================
+    ERROR
+    ==========================================
+    */
 
-doc(db,"users",currentUser.uid),
+    catch(error){
 
-{
+        console.error(
+            "Error loading favourites:",
+            error
+        );
 
-favourites:favouriteIds
 
-}
+        document.getElementById(
+            "favouritesContainer"
+        ).innerHTML = `
 
-);
+        <div
+        style="
+        text-align:center;
+        padding:70px;
+        ">
 
-loadFavourites();
+        <div
+        style="
+        font-size:70px;
+        margin-bottom:15px;
+        ">
+        ⚠️
+        </div>
 
-}
-         function searchFavourite(){
 
-let text=
+        <h2>
+        Unable to Load Favourites
+        </h2>
 
-document.getElementById(
 
-"searchFavourite"
+        <p
+        style="
+        font-size:18px;
+        color:#666;
+        line-height:1.8;
+        ">
 
-).value.toLowerCase();
+        We couldn't load your favourite properties right now.
 
-let filtered=
+        Please check your internet connection and try again.
 
-allFavouriteProperties.filter(function(p){
+        </p>
 
-return(
 
-p.name.toLowerCase().includes(text)||
+        <br>
 
-p.city.toLowerCase().includes(text)||
 
-p.district.toLowerCase().includes(text)||
+        <button
+        onclick="location.reload()"
+        style="
+        padding:14px 28px;
+        border:none;
+        border-radius:12px;
+        background:#8b008b;
+        color:white;
+        font-size:16px;
+        font-weight:700;
+        cursor:pointer;
+        ">
 
-p.propertyType.toLowerCase().includes(text)
+        🔄 Try Again
 
-);
+        </button>
+
+        </div>
+
+        `;
+
+    }
+
+
+    finally{
+
+        hideFavouritesLoader();
+
+    }
 
 });
 
-renderFavourites(filtered);
+
+
+/*
+==========================================
+LOAD FAVOURITE PROPERTIES
+==========================================
+*/
+
+async function loadFavourites(){
+
+    favourites = [];
+
+
+    const snapshot =
+        await getDocs(
+            collection(
+                db,
+                "properties"
+            )
+        );
+
+
+    snapshot.forEach(function(docSnap){
+
+        const property = {
+
+            id:docSnap.id,
+
+            ...docSnap.data()
+
+        };
+
+
+        if(
+            favouriteIds.includes(
+                String(property.id)
+            )
+        ){
+
+            favourites.push(property);
+
+        }
+
+    });
+
+
+    allFavouriteProperties =
+        [...favourites];
+
+
+    document.getElementById(
+        "favouriteCount"
+    ).innerHTML =
+        favourites.length;
+
+
+    /*
+    ==========================================
+    NO FAVOURITES
+    ==========================================
+    */
+
+    if(favourites.length === 0){
+
+        document.getElementById(
+            "favouritesContainer"
+        ).innerHTML = `
+
+        <div
+        style="
+        text-align:center;
+        padding:70px;
+        ">
+
+        <h2>
+        ❤ No favourite properties yet
+        </h2>
+
+        <p>
+        Tap the heart icon on any property to save it here.
+        </p>
+
+        <br>
+
+        <button
+        onclick="window.location.href='index.html'"
+        style="
+        padding:14px 28px;
+        border:none;
+        border-radius:12px;
+        background:#2563eb;
+        color:white;
+        font-size:16px;
+        font-weight:700;
+        cursor:pointer;
+        ">
+
+        🏠 Browse Properties
+
+        </button>
+
+        </div>
+
+        `;
+
+        return;
+
+    }
+
+
+    renderFavourites(
+        favourites
+    );
 
 }
+
+
+
+/*
+==========================================
+RENDER FAVOURITES
+==========================================
+*/
+
+function renderFavourites(list){
+
+    let html = "";
+
+
+    list.forEach(function(property){
+
+        const image =
+            property.images?.[0] ||
+            "favicon.png";
+
+
+        html += `
+
+        <div class="favouriteCard">
+
+        <div class="cardBody">
+
+
+        <div class="propertyImageWrapper">
+
+        <img
+        src="${image}"
+        alt="${property.name || "Property"}">
+
+        <div class="propertyWatermarkText">
+        Gedarak.lk
+        </div>
+
+        </div>
+
+
+        <h2>
+        ${property.name || "Unnamed Property"}
+        </h2>
+
+
+        <p>
+        Property Type:
+        ${property.propertyType || "Property"}
+        </p>
+
+
+        <h3>
+
+        ${
+            property.negotiable
+
+            ?
+
+            "💬 Negotiable"
+
+            :
+
+            "💸 Rs. " +
+            Number(
+                property.price || 0
+            ).toLocaleString()
+
+        }
+
+        </h3>
+
+
+        <p>
+
+        ${property.city || ""},
+
+        ${property.district || ""}
+
+        </p>
+
+
+        ${
+            property.propertyType === "Land"
+
+            ?
+
+            `
+            <p>
+            🌳 ${property.perches || 0} Perches
+            </p>
+            `
+
+            :
+
+            `
+            <p>
+            🛏 ${property.bedrooms || 0} Bedrooms
+            </p>
+
+            <p>
+            🛁 ${property.bathrooms || 0} Bathrooms
+            </p>
+
+            <p>
+            📐 ${Number(
+                property.squareFeet || 0
+            ).toLocaleString()} Sqft
+            </p>
+            `
+        }
+
+
+        <div class="buttonRow">
+
+
+        <button
+        onclick="viewProperty('${property.id}')"
+        style="
+        padding:13px;
+        border:none;
+        border-radius:12px;
+        background:#16a34a;
+        color:white;
+        font-size:16px;
+        font-weight:700;
+        cursor:pointer;
+        box-shadow:0 4px 10px rgba(22,163,74,.25);
+        transition:.25s;
+        ">
+
+        👁 View Property
+
+        </button>
+
+
+        <button
+        onclick="removeFavourite('${property.id}')"
+        style="
+        padding:13px;
+        border:none;
+        border-radius:12px;
+        background:#ef4444;
+        color:white;
+        font-size:16px;
+        font-weight:700;
+        cursor:pointer;
+        box-shadow:0 4px 10px rgba(239,68,68,.25);
+        transition:.25s;
+        ">
+
+        🤍 Remove
+
+        </button>
+
+
+        </div>
+
+
+        </div>
+
+        </div>
+
+        `;
+
+    });
+
+
+    document.getElementById(
+        "favouritesContainer"
+    ).innerHTML =
+        html;
+
+}
+
+
+
+/*
+==========================================
+VIEW PROPERTY
+==========================================
+*/
+
+function viewProperty(id){
+
+    window.location.href =
+        `property.html?id=${id}`;
+
+}
+
+
+
+/*
+==========================================
+REMOVE FAVOURITE
+==========================================
+*/
+
+async function removeFavourite(id){
+
+    try{
+
+        favouriteIds =
+            favouriteIds.filter(
+                x =>
+                    x !== String(id)
+            );
+
+
+        await updateDoc(
+
+            doc(
+                db,
+                "users",
+                currentUser.uid
+            ),
+
+            {
+                favourites:
+                    favouriteIds
+            }
+
+        );
+
+
+        await loadFavourites();
+
+    }
+
+
+    catch(error){
+
+        console.error(
+            "Error removing favourite:",
+            error
+        );
+
+        alert(
+            "Unable to remove this favourite right now. Please try again."
+        );
+
+    }
+
+}
+
+
+
+/*
+==========================================
+SEARCH
+==========================================
+*/
+
+function searchFavourite(){
+
+    let text =
+
+        document.getElementById(
+            "searchFavourite"
+        ).value.toLowerCase();
+
+
+    let filtered =
+
+        allFavouriteProperties.filter(
+            function(p){
+
+                return(
+
+                    (p.name || "")
+                        .toLowerCase()
+                        .includes(text)
+
+                    ||
+
+                    (p.city || "")
+                        .toLowerCase()
+                        .includes(text)
+
+                    ||
+
+                    (p.district || "")
+                        .toLowerCase()
+                        .includes(text)
+
+                    ||
+
+                    (p.propertyType || "")
+                        .toLowerCase()
+                        .includes(text)
+
+                );
+
+            }
+        );
+
+
+    renderFavourites(
+        filtered
+    );
+
+}
+
+
+
+/*
+==========================================
+SORT
+==========================================
+*/
+
 function sortFavourite(){
 
-let value=
+    let value =
 
-document.getElementById(
+        document.getElementById(
+            "sortFavourite"
+        ).value;
 
-"sortFavourite"
 
-).value;
+    let sorted =
 
-let sorted=[...allFavouriteProperties];
+        [...allFavouriteProperties];
 
-if(value=="low"){
 
-sorted.sort((a,b)=>a.price-b.price);
+    if(value == "low"){
+
+        sorted.sort(
+            (a,b) =>
+                Number(a.price || 0) -
+                Number(b.price || 0)
+        );
+
+    }
+
+
+    if(value == "high"){
+
+        sorted.sort(
+            (a,b) =>
+                Number(b.price || 0) -
+                Number(a.price || 0)
+        );
+
+    }
+
+
+    if(value == "newest"){
+
+        sorted.sort(
+            (a,b) =>
+                (b.createdAt?.seconds || 0) -
+                (a.createdAt?.seconds || 0)
+        );
+
+    }
+
+
+    if(value == "oldest"){
+
+        sorted.sort(
+            (a,b) =>
+                (a.createdAt?.seconds || 0) -
+                (b.createdAt?.seconds || 0)
+        );
+
+    }
+
+
+    renderFavourites(
+        sorted
+    );
 
 }
 
-if(value=="high"){
 
-sorted.sort((a,b)=>b.price-a.price);
 
-}
+/*
+==========================================
+HIDE LOADING POPUP
+==========================================
+*/
 
-if(value=="newest"){
+function hideFavouritesLoader(){
 
-sorted.sort(
-(a,b)=>
-b.createdAt?.seconds - a.createdAt?.seconds
-);
+    const loader =
 
-}
+        document.getElementById(
+            "favouritesLoadingOverlay"
+        );
 
-if(value=="oldest"){
 
-sorted.sort(
-(a,b)=>
-a.createdAt?.seconds - b.createdAt?.seconds
-);
+    if(loader){
 
-}
+        loader.style.display =
+            "none";
 
-renderFavourites(sorted);
+    }
 
 }
-window.viewProperty = viewProperty;
 
-window.removeFavourite = removeFavourite;
 
-window.searchFavourite = searchFavourite;
 
-window.sortFavourite = sortFavourite;
+/*
+==========================================
+GLOBAL FUNCTIONS
+==========================================
+*/
 
-window.renderFavourites = renderFavourites;
-      </script>
+window.viewProperty =
+    viewProperty;
+
+window.removeFavourite =
+    removeFavourite;
+
+window.searchFavourite =
+    searchFavourite;
+
+window.sortFavourite =
+    sortFavourite;
+
+window.renderFavourites =
+    renderFavourites;
+
+</script>
     </body>
 </html>
