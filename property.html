@@ -545,6 +545,95 @@ opacity:1;
     }
 
 }
+#propertyLoadingOverlay{
+
+    position:fixed;
+
+    inset:0;
+
+    background:#f5f7fa;
+
+    display:flex;
+
+    justify-content:center;
+
+    align-items:center;
+
+    z-index:9999999;
+
+}
+
+.loading-box{
+
+    background:white;
+
+    padding:30px 35px;
+
+    border-radius:18px;
+
+    text-align:center;
+
+    box-shadow:0 8px 30px rgba(0,0,0,.12);
+
+    min-width:260px;
+
+}
+
+.loading-logo{
+
+    font-size:38px;
+
+    margin-bottom:8px;
+
+}
+
+.loading-box h2{
+
+    margin:0;
+
+    color:#8b008b;
+
+    font-size:20px;
+
+}
+
+.loading-box p{
+
+    margin:8px 0 18px;
+
+    color:#242323;
+
+    font-size:18px;
+
+}
+
+.loading-spinner{
+
+    width:28px;
+
+    height:28px;
+
+    margin:auto;
+
+    border:3px solid #e5e7eb;
+
+    border-top:3px solid #8b008b;
+
+    border-radius:50%;
+
+    animation:loadingSpin .8s linear infinite;
+
+}
+
+@keyframes loadingSpin{
+
+    to{
+
+        transform:rotate(360deg);
+
+    }
+
+}
      </style>
      <!-- Basic SEO -->
 <meta name="description" content="Gedarak.lk - Sri Lanka's property marketplace. Buy, sell and discover houses, apartments, lands and properties easily.">
@@ -603,6 +692,23 @@ opacity:1;
         💒 Home
         </button>
     </a>
+    <div id="propertyLoadingOverlay">
+
+    <div class="loading-box">
+
+        <div class="loading-logo">
+            🏠
+        </div>
+
+        <h2>Please wait a moment.</h2>
+
+        <p>Loading property...</p>
+
+        <div class="loading-spinner"></div>
+
+    </div>
+
+</div>
      <div id="gedarakModal">
 
     <div class="modal-box">
@@ -673,7 +779,8 @@ getDoc,
 doc,
 updateDoc,
 query,
-where
+where,
+increment
 
 }
 from "https://www.gstatic.com/firebasejs/12.16.0/firebase-firestore.js";
@@ -723,35 +830,57 @@ await getDoc(
 );
 
 
-if(propertySnap.exists()){
+if(!propertySnap.exists()){
 
-    property = {
+    hidePropertyLoader();
 
-        id: propertySnap.id,
+    document.getElementById("propertyDetails").innerHTML = `
+         <div class="section-card" style="text-align:center;padding:50px 20px;">
 
-        ...propertySnap.data()
+    <div style="font-size:70px;">🏠</div>
 
-    };
+    <h2>Property Not Found</h2>
 
+    <p style="color:#666;margin:15px 0;">
+        This property may have been removed, sold, or the link is invalid.
+    </p>
+
+    <a href="index.html"
+       style="
+       display:inline-block;
+       margin-top:20px;
+       background:#8b008b;
+       color:white;
+       text-decoration:none;
+       padding:14px 24px;
+       border-radius:12px;
+       font-weight:bold;
+       ">
+       ← Back to Homepage
+    </a>
+
+</div>
+    `;
+
+    return;
 }
+
+property = {
+    id: propertySnap.id,
+    ...propertySnap.data()
+};
 
    if(property){
 
-    property.views =
-    (property.views||0)+1;
+   await updateDoc(
+    doc(db, "properties", property.id),
+    {
+        views: increment(1)
+    }
+);
 
-
-    updateDoc(
-
-        doc(db,"properties",property.id),
-
-        {
-
-            views:property.views
-
-        }
-
-    );
+// Update the local object only for displaying on this page
+property.views = (property.views || 0) + 1;
 
           let galleryHTML ="";
  if(property.images &&
@@ -1185,6 +1314,8 @@ margin-top:18px;
                                 </div>
                                   `;
 currentProperty = property;
+
+hidePropertyLoader();
 
 setTimeout(async()=>{
 
@@ -2281,12 +2412,22 @@ modal.style.display="none";
 };
 
 }
+function hidePropertyLoader(){
+
+    const loader =
+        document.getElementById("propertyLoadingOverlay");
+
+    if(loader){
+
+        loader.style.display="none";
+
+    }
+
+}
 window.togglePropertyFavourite = togglePropertyFavourite;
 window.toggleFavourite = toggleFavourite;
 window.isFavourite = isFavourite;
 window.updatePropertyHeart = updatePropertyHeart;
-
-window.changeImage = changeImage;
 window.nextImage = nextImage;
 window.previousImage = previousImage;
 window.changeImage = changeImage;
@@ -2314,6 +2455,7 @@ window.showNotification = showNotification;
 window.checkDescriptionLength = checkDescriptionLength;
 window.timeAgo = timeAgo;
 window.showAlert = showAlert;
+window.hidePropertyLoader = hidePropertyLoader;
 </script>
 <div id="notification"
       style="
