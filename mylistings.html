@@ -587,8 +587,9 @@ gedarak.lk@gmail.com
 </a></p>
         <p>&copy; 2026 Gedarak.lk</p>
       </footer>
-        <script type="module">
-            import { auth, db } from "./firebase-config.js";
+<script type="module">
+
+import { auth, db } from "./firebase-config.js";
 
 import {
     onAuthStateChanged
@@ -598,481 +599,729 @@ import {
     collection,
     getDocs,
     query,
-    where,
-    deleteDoc,
-    doc,
-    getDoc
+    where
 } from "https://www.gstatic.com/firebasejs/12.16.0/firebase-firestore.js";
 
 import { deletePropertyCompletely } from "./delete-property.js";
 
-            let totalListings = 0;
-            let totalViews = 0;
-            let container= 
-             document.getElementById(
-                "myProperties"
-            );
-            onAuthStateChanged(auth, async function(user){
 
-  if(!user){
+let totalListings = 0;
+let totalViews = 0;
+
+const container =
+    document.getElementById("myProperties");
+
+
+onAuthStateChanged(auth, async function(user){
+
+    /*
+    ==========================================
+    NOT LOGGED IN
+    ==========================================
+    */
+
+    if(!user){
 
         document.getElementById("listingCount").innerHTML =
-        "0 Active Listings";
+            "0 Active Listings";
 
         container.innerHTML = `
-      <div
-style="
-max-width:700px;
-margin:50px auto;
-padding:35px;
-background:white;
-border-radius:18px;
-box-shadow:0 8px 25px rgba(0,0,0,.12);
-text-align:center;
-">
 
-<div
-style="
-font-size:70px;
-margin-bottom:15px;
-">
-🏡
-</div>
+        <div
+        style="
+        max-width:700px;
+        margin:50px auto;
+        padding:35px;
+        background:white;
+        border-radius:18px;
+        box-shadow:0 8px 25px rgba(0,0,0,.12);
+        text-align:center;
+        ">
 
-<h2>
-No Listings Yet
-</h2>
+        <div
+        style="
+        font-size:70px;
+        margin-bottom:15px;
+        ">
+        🏡
+        </div>
 
-<p
-style="
-font-size:18px;
-color:#666;
-line-height:1.8;
-">
+        <h2>
+        No Listings Yet
+        </h2>
 
-You haven't posted any properties yet.
+        <p
+        style="
+        font-size:18px;
+        color:#666;
+        line-height:1.8;
+        ">
 
-Create your first listing and start reaching buyers across Sri Lanka.
+        You haven't posted any properties yet.
 
-</p>
+        Create your first listing and start reaching buyers across Sri Lanka.
 
-<button
-onclick="openPostProperty()"
-style="
-padding:14px 28px;
-font-size:18px;
-margin-top:20px;
-cursor:pointer;
-border:none;
-border-radius:10px;
-">
+        </p>
 
-➕ Post Your First Property
+        <button
+        onclick="openPostProperty()"
+        style="
+        padding:14px 28px;
+        font-size:18px;
+        margin-top:20px;
+        cursor:pointer;
+        border:none;
+        border-radius:10px;
+        ">
 
-</button>
+        ➕ Post Your First Property
 
-</div> `;
+        </button>
 
- hideMyListingsLoader();
+        </div>
+
+        `;
+
+        hideMyListingsLoader();
+
         return;
     }
 
 
-    const q =
-query(
-    collection(db,"properties"),
-    where("ownerUid","==",user.uid)
-);
-
-    const snapshot =
-    await getDocs(q);
-
-    snapshot.forEach(function(document){
-
-        const property =
-        document.data();
-
-        const key =
-        document.id;
-
-        totalListings++;
-
-        totalViews += property.views || 0;
-
-         container.innerHTML += `
-
-<div
-style="
-background:white;
-border-radius:18px;
-overflow:hidden;
-box-shadow:0 8px 25px rgba(0,0,0,.12);
-margin:35px auto;
-max-width:700px;
-">
-
-<div class="propertyImageWrapper">
-
-<img
-src="${property.images[0]}"
-class="propertyImage">
-
-
-
-<div class="propertyWatermarkText">
-Gedarak.lk
-</div>
-
-</div>
-<div style="padding:20px;">
-
-<div
-style="
-display:flex;
-justify-content:space-between;
-align-items:center;
-margin-bottom:10px;
-">
-
-${property.boost ?
-
-`
-<span
-style="
-background:#f59e0b;
-color:white;
-padding:6px 14px;
-border-radius:20px;
-font-size:14px;
-font-weight:bold;
-">
-⭐ Boosted
-</span>
-`
-
-:
-
-`
-<span
-style="
-background:#e5e7eb;
-color:#555;
-padding:6px 14px;
-border-radius:20px;
-font-size:14px;
-">
-Normal Listing
-</span>
-`
-}
-
-<span
-style="
-font-size:15px;
-color:#666;
-">
-👁 ${property.views || 0}
-</span>
-
-</div>
-
-<h2
-style="
-font-size:30px;
-font-weight:700;
-margin-bottom:15px;
-">
-${property.name}
-</h2>
+    /*
+    ==========================================
+    LOGGED IN
+    ==========================================
+    */
 
-<h2
-style="
-font-size:32px;
-font-weight:bold;
-color:#0f766e;
-margin:0;
-">
-${
-property.negotiable
-?
-"💬 Negotiable"
-:
-"💸 Rs. "+Number(property.price).toLocaleString()
-}
-</h2>
+    try{
 
-<p>
-🏠 ${property.propertyType}
-</p>
+        /*
+        Reset counters in case the auth listener
+        ever runs more than once.
+        */
 
-<p>
-📍 ${property.city}, ${property.district}
-</p>
+        totalListings = 0;
+        totalViews = 0;
 
-<p>
-📅 ${timeAgo(
-property.createdAt.toMillis()
-)}
-</p>
+        container.innerHTML = "";
 
-${
-property.propertyType === "Land"
 
-?
+        /*
+        Get only this user's properties
+        */
 
-`
-<p>
-🌳 ${property.perches || 0} Perches
-</p>
-`
+        const q =
+            query(
+                collection(db,"properties"),
+                where("ownerUid","==",user.uid)
+            );
 
-:
 
-`
-<p>
-🛏 ${property.bedrooms || 0} Beds
-|
-🛁 ${property.bathrooms || 0} Baths
-</p>
+        const snapshot =
+            await getDocs(q);
 
-<p>
-📐 ${Number(property.squareFeet || 0).toLocaleString()} Sqft
-|
-🌳 ${property.perches || 0} Perches
-</p>
-`
-                    }
-<p>
 
-${property.status=="For Sale"
+        /*
+        Render properties
+        */
 
-?
+        snapshot.forEach(function(document){
 
-"🟢 For Sale"
+            const property =
+                document.data();
 
-:
+            const key =
+                document.id;
 
-property.status=="For Rent"
 
-?
+            totalListings++;
 
-"🔵 For Rent"
+            totalViews +=
+                Number(property.views || 0);
 
-:
 
-"🟣 For Sale / Rent"
+            /*
+            Safe image fallback
+            */
 
-}
+            const image =
+                property.images?.[0] ||
+                "favicon.png";
 
-</p>
 
-<div
-style="
-display:grid;
+            /*
+            Safe created date
+            */
 
-grid-template-columns:repeat(2,1fr);
+            let createdText =
+                "Recently";
 
-gap:14px;
+            if(
+                property.createdAt &&
+                typeof property.createdAt.toMillis === "function"
+            ){
 
-margin-top:28px;
-gap:12px;
-margin-top:20px;
-">
+                createdText =
+                    timeAgo(
+                        property.createdAt.toMillis()
+                    );
 
-<button
-style="
-padding:15px 0;
+            }
 
-font-size:17px;
 
-font-weight:600;
+            container.innerHTML += `
 
-border:none;
+            <div
+            style="
+            background:white;
+            border-radius:18px;
+            overflow:hidden;
+            box-shadow:0 8px 25px rgba(0,0,0,.12);
+            margin:35px auto;
+            max-width:700px;
+            ">
 
-border-radius:12px;
+            <div class="propertyImageWrapper">
 
-cursor:pointer;
+            <img
+            src="${image}"
+            class="propertyImage"
+            alt="${property.name || "Property"}">
 
-transition:.25s;
+            <div class="propertyWatermarkText">
+            Gedarak.lk
+            </div>
+
+            </div>
+
+
+            <div style="padding:20px;">
+
+
+            <div
+            style="
+            display:flex;
+            justify-content:space-between;
+            align-items:center;
+            margin-bottom:10px;
+            ">
 
-height:52px;
-background:#2563eb;
+            ${
+                property.boost
+
+                ?
 
-color:white;"
-onclick="viewProperty('${key}')">
-👁 View
-</button>
+                `
+                <span
+                style="
+                background:#f59e0b;
+                color:white;
+                padding:6px 14px;
+                border-radius:20px;
+                font-size:14px;
+                font-weight:bold;
+                ">
+                ⭐ Boosted
+                </span>
+                `
+
+                :
+
+                `
+                <span
+                style="
+                background:#e5e7eb;
+                color:#555;
+                padding:6px 14px;
+                border-radius:20px;
+                font-size:14px;
+                ">
+                Normal Listing
+                </span>
+                `
+            }
 
-<button
-style="
-padding:15px 0;
 
-font-size:17px;
+            <span
+            style="
+            font-size:15px;
+            color:#666;
+            ">
+            👁 ${property.views || 0}
+            </span>
 
-font-weight:600;
+            </div>
 
-border:none;
 
-border-radius:12px;
+            <h2
+            style="
+            font-size:30px;
+            font-weight:700;
+            margin-bottom:15px;
+            ">
+            ${property.name || "Unnamed Property"}
+            </h2>
 
-cursor:pointer;
 
-transition:.25s;
+            <h2
+            style="
+            font-size:32px;
+            font-weight:bold;
+            color:#0f766e;
+            margin:0;
+            ">
 
-height:52px;
-background:#16a34a;
+            ${
+                property.negotiable
+                ?
+                "💬 Negotiable"
+                :
+                "💸 Rs. " +
+                Number(property.price || 0).toLocaleString()
+            }
 
-color:white;"
-onclick="editProperty('${key}')">
-✏ Edit
-</button>
+            </h2>
 
 
+            <p>
+            🏠 ${property.propertyType || "Property"}
+            </p>
 
-<button
-style="
-padding:15px 0;
 
-font-size:17px;
+            <p>
+            📍 ${property.city || ""}, ${property.district || ""}
+            </p>
 
-font-weight:600;
 
-border:none;
+            <p>
+            📅 ${createdText}
+            </p>
 
-border-radius:12px;
 
-cursor:pointer;
+            ${
+                property.propertyType === "Land"
 
-transition:.25s;
+                ?
 
-height:52px;
-background:#dc2626;
+                `
+                <p>
+                🌳 ${property.perches || 0} Perches
+                </p>
+                `
 
-color:white;
-"
-onclick="deleteProperty('${key}')">
-🗑 Delete
-</button>
+                :
 
-</div>
+                `
+                <p>
+                🛏 ${property.bedrooms || 0} Beds
+                |
+                🛁 ${property.bathrooms || 0} Baths
+                </p>
+
+                <p>
+                📐 ${Number(
+                    property.squareFeet || 0
+                ).toLocaleString()} Sqft
+                |
+                🌳 ${property.perches || 0} Perches
+                </p>
+                `
+            }
 
-</div>
 
-</div>
+            <p>
 
-`;
+            ${
+                property.status == "For Sale"
 
-    })
-    if(totalListings===0){
+                ?
 
-container.innerHTML = `
+                "🟢 For Sale"
 
-<div
-style="
-max-width:700px;
-margin:50px auto;
-padding:35px;
-background:white;
-border-radius:18px;
-box-shadow:0 8px 25px rgba(0,0,0,.12);
-text-align:center;
-">
+                :
 
-<div
-style="
-font-size:70px;
-margin-bottom:15px;
-">
-🏡
-</div>
+                property.status == "For Rent"
 
-<h2>
-No Listings Yet
-</h2>
+                ?
 
-<p
-style="
-font-size:18px;
-color:#666;
-line-height:1.8;
-">
+                "🔵 For Rent"
 
-You haven't posted any properties yet.
+                :
 
-Create your first listing and start reaching buyers across Sri Lanka.
+                "🟣 For Sale / Rent"
+            }
 
-</p>
+            </p>
 
-<button
-onclick="openPostProperty()"
-style="
-padding:14px 28px;
-font-size:18px;
-margin-top:20px;
-cursor:pointer;
-border:none;
-border-radius:10px;
-">
 
-➕ Post Your First Property
+            <div
+            style="
+            display:grid;
+            grid-template-columns:repeat(2,1fr);
+            gap:12px;
+            margin-top:20px;
+            ">
 
-</button>
 
-</div>
+            <button
+            style="
+            padding:15px 0;
+            font-size:17px;
+            font-weight:600;
+            border:none;
+            border-radius:12px;
+            cursor:pointer;
+            transition:.25s;
+            height:52px;
+            background:#2563eb;
+            color:white;
+            "
+            onclick="viewProperty('${key}')">
 
-`;
+            👁 View
+
+            </button>
+
+
+            <button
+            style="
+            padding:15px 0;
+            font-size:17px;
+            font-weight:600;
+            border:none;
+            border-radius:12px;
+            cursor:pointer;
+            transition:.25s;
+            height:52px;
+            background:#16a34a;
+            color:white;
+            "
+            onclick="editProperty('${key}')">
+
+            ✏ Edit
+
+            </button>
+
+
+            <button
+            style="
+            padding:15px 0;
+            font-size:17px;
+            font-weight:600;
+            border:none;
+            border-radius:12px;
+            cursor:pointer;
+            transition:.25s;
+            height:52px;
+            background:#dc2626;
+            color:white;
+            "
+            onclick="deleteProperty('${key}')">
+
+            🗑 Delete
+
+            </button>
+
+
+            </div>
+
+            </div>
+
+            </div>
+
+            `;
+
+        });
+
+
+        /*
+        ==========================================
+        NO LISTINGS
+        ==========================================
+        */
+
+        if(totalListings === 0){
+
+            container.innerHTML = `
+
+            <div
+            style="
+            max-width:700px;
+            margin:50px auto;
+            padding:35px;
+            background:white;
+            border-radius:18px;
+            box-shadow:0 8px 25px rgba(0,0,0,.12);
+            text-align:center;
+            ">
+
+            <div
+            style="
+            font-size:70px;
+            margin-bottom:15px;
+            ">
+            🏡
+            </div>
+
+            <h2>
+            No Listings Yet
+            </h2>
+
+            <p
+            style="
+            font-size:18px;
+            color:#666;
+            line-height:1.8;
+            ">
+
+            You haven't posted any properties yet.
+
+            Create your first listing and start reaching buyers across Sri Lanka.
+
+            </p>
+
+            <button
+            onclick="openPostProperty()"
+            style="
+            padding:14px 28px;
+            font-size:18px;
+            margin-top:20px;
+            cursor:pointer;
+            border:none;
+            border-radius:10px;
+            ">
+
+            ➕ Post Your First Property
+
+            </button>
+
+            </div>
+
+            `;
+
+        }
+
+
+        /*
+        ==========================================
+        LISTING COUNT
+        ==========================================
+        */
+
+        document.getElementById("listingCount").innerHTML =
+
+            totalListings +
+
+            (
+                totalListings == 1
+                ?
+                " Active Listing"
+                :
+                " Active Listings"
+            );
+
+
+    }
+
+
+    /*
+    ==========================================
+    FIRESTORE / NETWORK ERROR
+    ==========================================
+    */
+
+    catch(error){
+
+        console.error(
+            "Error loading listings:",
+            error
+        );
+
+
+        container.innerHTML = `
+
+        <div
+        style="
+        max-width:700px;
+        margin:50px auto;
+        padding:35px;
+        background:white;
+        border-radius:18px;
+        box-shadow:0 8px 25px rgba(0,0,0,.12);
+        text-align:center;
+        ">
+
+        <div
+        style="
+        font-size:70px;
+        margin-bottom:15px;
+        ">
+        ⚠️
+        </div>
+
+
+        <h2>
+        Unable to Load Listings
+        </h2>
+
+
+        <p
+        style="
+        font-size:18px;
+        color:#666;
+        line-height:1.8;
+        ">
+
+        We couldn't load your listings right now.
+
+        Please check your internet connection and try again.
+
+        </p>
+
+
+        <button
+        onclick="location.reload()"
+        style="
+        padding:14px 28px;
+        font-size:18px;
+        margin-top:20px;
+        cursor:pointer;
+        border:none;
+        border-radius:10px;
+        background:#8b008b;
+        color:white;
+        font-weight:600;
+        ">
+
+        🔄 Try Again
+
+        </button>
+
+        </div>
+
+        `;
+
+    }
+
+
+    /*
+    ==========================================
+    ALWAYS HIDE LOADING POPUP
+    ==========================================
+    */
+
+    finally{
+
+        hideMyListingsLoader();
+
+    }
+
+});
+
+
+
+/*
+==========================================
+DELETE PROPERTY
+==========================================
+*/
+
+window.deleteProperty = function(key){
+
+    showAlert(
+        "Delete this property permanently?",
+
+        async function(){
+
+            try{
+
+                await deletePropertyCompletely(key);
+
+                showAlert(
+                    "Property deleted successfully.",
+
+                    function(){
+
+                        location.reload();
+
+                    },
+
+                    true
+
+                );
+
+            }
+
+            catch(error){
+
+                console.error(
+                    "Error deleting property:",
+                    error
+                );
+
+                showAlert(
+                    "Unable to delete this property right now. Please try again.",
+                    null,
+                    true,
+                    "⚠️ Error"
+                );
+
+            }
+
+        },
+
+        false,
+
+        "⚠️ Warning"
+    );
 
 };
 
-    document.getElementById("listingCount").innerHTML =
-    totalListings +
-    (totalListings==1 ?
-    " Active Listing" :
-    " Active Listings");
-    hideMyListingsLoader();
 
-});
-            
-    window.deleteProperty = function(key){
 
-    showAlert(
-    "Delete this property permanently?",
-    async function(){
+/*
+==========================================
+EDIT PROPERTY
+==========================================
+*/
 
-        await deletePropertyCompletely(key);
+window.editProperty = function(id){
 
-        showAlert(
-            "Property deleted successfully.",
-            function(){
+    sessionStorage.setItem(
+        "editPropertyId",
+        id
+    );
 
-                location.reload();
+    window.location.href =
+        "editproperty.html";
 
-            },
-            true
-        );
+};
 
-    },
-    false,
-    "⚠️ Warning"
-);
 
-}
-                         window.editProperty = function(id){
-                            sessionStorage.setItem(
-"editPropertyId",
-id
-);
-                            window.location.href = 
-                            "editproperty.html";
-                        }
-                        window.viewProperty = function(id){
 
-window.location.href =
-`property.html?id=${id}`;
+/*
+==========================================
+VIEW PROPERTY
+==========================================
+*/
 
-}
-                        
-                    window.showAlert = function(
+window.viewProperty = function(id){
+
+    window.location.href =
+        `property.html?id=${id}`;
+
+};
+
+
+
+/*
+==========================================
+CUSTOM ALERT
+==========================================
+*/
+
+window.showAlert = function(
     message,
     okAction,
     hideLater = false,
@@ -1080,136 +1329,239 @@ window.location.href =
 ){
 
     const modal =
-    document.getElementById("gedarakModal");
+        document.getElementById("gedarakModal");
+
 
     document.getElementById("modalTitle").textContent =
-    title;
+        title;
+
 
     document.getElementById("modalMessage").textContent =
-    message;
+        message;
+
 
     const laterBtn =
-    document.getElementById("modalLater");
+        document.getElementById("modalLater");
+
 
     laterBtn.style.display =
-    hideLater ? "none" : "inline-block";
+        hideLater
+        ?
+        "none"
+        :
+        "inline-block";
 
-    modal.style.display = "flex";
 
-    document.getElementById("modalOk").onclick = function(){
+    modal.style.display =
+        "flex";
 
-        modal.style.display = "none";
 
-        if(okAction){
+    document.getElementById("modalOk").onclick =
+        function(){
 
-            okAction();
+            modal.style.display =
+                "none";
 
-        }
 
-    };
+            if(okAction){
 
-    laterBtn.onclick = function(){
+                okAction();
 
-        modal.style.display = "none";
+            }
 
-    };
+        };
 
-}
 
+    laterBtn.onclick =
+        function(){
+
+            modal.style.display =
+                "none";
+
+        };
+
+};
+
+
+
+/*
+==========================================
+POST PROPERTY
+==========================================
+*/
 
 window.openPostProperty = function(){
 
     if(!auth.currentUser){
 
         showAlert(
+
             "Please login first",
+
             function(){
 
-                window.location.href="login.html";
+                window.location.href =
+                    "login.html";
 
             }
+
         );
 
         return;
 
     }
 
-    window.location.href="postproperty.html";
 
-}
-                    window.openBoost = function(id){
+    window.location.href =
+        "postproperty.html";
 
-sessionStorage.setItem(
-"selectedBoostProperty",
-id
-);
+};
 
-window.location.href="boost.html";
 
-}
+
+/*
+==========================================
+BOOST PROPERTY
+==========================================
+*/
+
+window.openBoost = function(id){
+
+    sessionStorage.setItem(
+        "selectedBoostProperty",
+        id
+    );
+
+    window.location.href =
+        "boost.html";
+
+};
+
+
+
+/*
+==========================================
+TIME AGO
+==========================================
+*/
+
 function timeAgo(date){
 
-let diff =
-Date.now()-date;
+    let diff =
+        Date.now() - date;
 
-let days =
-Math.floor(diff/86400000);
 
-if(days==0){
+    let days =
+        Math.floor(
+            diff / 86400000
+        );
 
-return "Today";
+
+    if(days <= 0){
+
+        return "Today";
+
+    }
+
+
+    if(days == 1){
+
+        return "Yesterday";
+
+    }
+
+
+    if(days < 30){
+
+        return (
+            days +
+            " days ago"
+        );
+
+    }
+
+
+    let months =
+        Math.floor(
+            days / 30
+        );
+
+
+    if(months < 12){
+
+        return (
+
+            months +
+
+            " month" +
+
+            (
+                months > 1
+                ?
+                "s"
+                :
+                ""
+            ) +
+
+            " ago"
+
+        );
+
+    }
+
+
+    let years =
+        Math.floor(
+            months / 12
+        );
+
+
+    return (
+
+        years +
+
+        " year" +
+
+        (
+            years > 1
+            ?
+            "s"
+            :
+            ""
+        ) +
+
+        " ago"
+
+    );
 
 }
 
-if(days==1){
 
-return "Yesterday";
 
-}
+/*
+==========================================
+HIDE LOADING POPUP
+==========================================
+*/
 
-if(days<30){
-
-return days+" days ago";
-
-}
-
-let months=
-Math.floor(days/30);
-
-if(months<12){
-
-return months+" month"+
-
-(months>1?"s":"")+
-
-" ago";
-
-}
-
-let years=
-Math.floor(months/12);
-
-return years+
-
-" year"+
-
-(years>1?"s":"")+
-
-" ago";
-
-}
 function hideMyListingsLoader(){
 
     const loader =
-        document.getElementById("myListingsLoadingOverlay");
+        document.getElementById(
+            "myListingsLoadingOverlay"
+        );
+
 
     if(loader){
 
-        loader.style.display="none";
+        loader.style.display =
+            "none";
 
     }
 
 }
-        </script>
+
+</script>
+
     </body>
 </html>
