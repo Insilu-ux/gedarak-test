@@ -917,6 +917,355 @@ position:relative;
     user-select:none;
     white-space:nowrap;
 }
+
+/* =========================================
+   GEDARAK HOMEPAGE LOADER
+========================================= */
+
+#gedarakHomeLoader {
+
+    position: fixed;
+
+    inset: 0;
+
+    display: flex;
+
+    justify-content: center;
+
+    align-items: center;
+
+    background: rgba(0, 0, 0, 0.28);
+
+    backdrop-filter: blur(2px);
+
+    -webkit-backdrop-filter: blur(2px);
+
+    z-index: 999999;
+
+    opacity: 1;
+
+    visibility: visible;
+
+    transition:
+        opacity 0.4s ease,
+        visibility 0.4s ease;
+
+}
+
+
+/* Hidden state */
+
+#gedarakHomeLoader.loader-hidden {
+
+    opacity: 0;
+
+    visibility: hidden;
+
+    pointer-events: none;
+
+}
+
+
+/* Small centered box */
+
+.gedarak-loader-box {
+
+    width: min(320px, calc(100% - 40px));
+
+    background: rgba(255, 255, 255, 0.97);
+
+    border-radius: 18px;
+
+    padding: 25px 22px;
+
+    text-align: center;
+
+    box-shadow:
+        0 15px 45px rgba(0, 0, 0, 0.25);
+
+    animation: loaderBoxAppear 0.35s ease;
+
+}
+
+
+/* Main emoji */
+
+#gedarakLoaderEmoji {
+
+    font-size: 42px;
+
+    display: inline-block;
+
+    margin-bottom: 8px;
+
+}
+
+
+/* Message */
+
+#gedarakLoaderMessage {
+
+    margin: 0;
+
+    font-size: 20px;
+
+    font-weight: 700;
+
+    color: #333;
+
+}
+
+
+/* Small secondary text */
+
+#gedarakLoaderSubtext {
+
+    margin: 8px 0 0;
+
+    font-size: 17px;
+
+    color: #2e2e2e;
+
+}
+
+
+/* Progress dots */
+
+.gedarak-loader-dots {
+
+    display: flex;
+
+    justify-content: center;
+
+    gap: 6px;
+
+    margin-top: 17px;
+
+}
+
+
+.gedarak-loader-dot {
+
+    width: 7px;
+
+    height: 7px;
+
+    border-radius: 50%;
+
+    background: #999;
+
+    animation: loaderDot 1.2s infinite ease-in-out;
+
+}
+
+
+.gedarak-loader-dot:nth-child(2) {
+
+    animation-delay: 0.15s;
+
+}
+
+
+.gedarak-loader-dot:nth-child(3) {
+
+    animation-delay: 0.3s;
+
+}
+
+
+/* Box entrance */
+
+@keyframes loaderBoxAppear {
+
+    from {
+
+        opacity: 0;
+
+        transform: scale(0.92);
+
+    }
+
+    to {
+
+        opacity: 1;
+
+        transform: scale(1);
+
+    }
+
+}
+
+
+/* Dots */
+
+@keyframes loaderDot {
+
+    0%, 80%, 100% {
+
+        transform: scale(0.65);
+
+        opacity: 0.4;
+
+    }
+
+    40% {
+
+        transform: scale(1);
+
+        opacity: 1;
+
+    }
+
+}
+
+
+/* House */
+
+.loader-house {
+
+    animation: houseBounce 1.5s infinite ease-in-out;
+
+}
+
+
+@keyframes houseBounce {
+
+    0%, 100% {
+
+        transform: translateY(0);
+
+    }
+
+    50% {
+
+        transform: translateY(-5px);
+
+    }
+
+}
+
+
+/* Search */
+
+.loader-search {
+
+    animation: searchMove 1.4s infinite ease-in-out;
+
+}
+
+
+@keyframes searchMove {
+
+    0%, 100% {
+
+        transform: translateX(0) rotate(0deg);
+
+    }
+
+    50% {
+
+        transform: translateX(5px) rotate(8deg);
+
+    }
+
+}
+
+
+/* Clipboard */
+
+.loader-clipboard {
+
+    animation: clipboardSlide 1.3s infinite ease-in-out;
+
+}
+
+
+@keyframes clipboardSlide {
+
+    0% {
+
+        transform: translateX(-7px);
+
+        opacity: 0.5;
+
+    }
+
+    50% {
+
+        transform: translateX(0);
+
+        opacity: 1;
+
+    }
+
+    100% {
+
+        transform: translateX(7px);
+
+        opacity: 0.5;
+
+    }
+
+}
+
+
+/* Still working face */
+
+.loader-worried {
+
+    animation: worriedShake 1.5s infinite ease-in-out;
+
+}
+
+
+@keyframes worriedShake {
+
+    0%, 100% {
+
+        transform: rotate(0deg);
+
+    }
+
+    25% {
+
+        transform: rotate(-5deg);
+
+    }
+
+    75% {
+
+        transform: rotate(5deg);
+
+    }
+
+}
+
+
+/* Mobile */
+
+@media (max-width: 480px) {
+
+    .gedarak-loader-box {
+
+        width: calc(100% - 50px);
+
+        padding: 22px 18px;
+
+    }
+
+    #gedarakLoaderEmoji {
+
+        font-size: 38px;
+
+    }
+
+    #gedarakLoaderMessage {
+
+        font-size: 16px;
+
+    }
+
+}
 </style>
     <title>Gedarak.lk</title>
 <!-- Basic SEO -->
@@ -972,6 +1321,39 @@ position:relative;
 </head>
 
 <body>
+    <!-- =========================================
+     GEDARAK HOMEPAGE LOADER
+========================================= -->
+
+<div id="gedarakHomeLoader">
+
+    <div class="gedarak-loader-box">
+
+        <div id="gedarakLoaderEmoji" class="loader-house">
+            🏠
+        </div>
+
+        <p id="gedarakLoaderMessage">
+            Getting things ready...
+        </p>
+
+        <p id="gedarakLoaderSubtext">
+            Preparing Gedarak.lk for you
+        </p>
+
+        <div class="gedarak-loader-dots">
+
+            <span class="gedarak-loader-dot"></span>
+
+            <span class="gedarak-loader-dot"></span>
+
+            <span class="gedarak-loader-dot"></span>
+
+        </div>
+
+    </div>
+
+</div>
     <div id="gedarakModal">
 
     <div class="modal-box">
@@ -1633,6 +2015,117 @@ Refund Policy
 
 </footer>
     <script type="module">
+        /* =========================================
+   GEDARAK HOMEPAGE LOADER
+========================================= */
+
+const gedarakLoader = document.getElementById(
+    "gedarakHomeLoader"
+);
+
+const gedarakLoaderEmoji = document.getElementById(
+    "gedarakLoaderEmoji"
+);
+
+const gedarakLoaderMessage = document.getElementById(
+    "gedarakLoaderMessage"
+);
+
+const gedarakLoaderSubtext = document.getElementById(
+    "gedarakLoaderSubtext"
+);
+
+const gedarakLoaderStartTime = Date.now();
+
+
+function updateGedarakLoader(){
+
+    const elapsed =
+        (Date.now() - gedarakLoaderStartTime) / 1000;
+
+
+    if(elapsed < 2){
+
+        gedarakLoaderEmoji.innerHTML = "🏠";
+
+        gedarakLoaderEmoji.className =
+            "loader-house";
+
+        gedarakLoaderMessage.innerHTML =
+            "Getting things ready...";
+
+        gedarakLoaderSubtext.innerHTML =
+            "Preparing Gedarak.lk for you";
+
+    }
+
+
+    else if(elapsed < 4){
+
+        gedarakLoaderEmoji.innerHTML =
+            "🔎 🏠";
+
+        gedarakLoaderEmoji.className =
+            "loader-search";
+
+        gedarakLoaderMessage.innerHTML =
+            "Finding the right properties...";
+
+        gedarakLoaderSubtext.innerHTML =
+            "Searching through available listings";
+
+    }
+
+
+    else if(elapsed < 6){
+
+        gedarakLoaderEmoji.innerHTML =
+            "📋 🏠";
+
+        gedarakLoaderEmoji.className =
+            "loader-clipboard";
+
+        gedarakLoaderMessage.innerHTML =
+            "Organizing listings...";
+
+        gedarakLoaderSubtext.innerHTML =
+            "Almost there";
+
+    }
+
+
+    else{
+
+        gedarakLoaderEmoji.innerHTML =
+            "🏠 😅";
+
+        gedarakLoaderEmoji.className =
+            "loader-worried";
+
+        gedarakLoaderMessage.innerHTML =
+            "Still working...";
+
+        gedarakLoaderSubtext.innerHTML =
+            "Slow internet? Don't worry, we're still working. ❤️";
+
+    }
+
+}
+
+
+const gedarakLoaderTimer =
+    setInterval(updateGedarakLoader, 500);
+
+
+function hideGedarakLoader(){
+
+    clearInterval(gedarakLoaderTimer);
+
+    gedarakLoader.classList.add(
+        "loader-hidden"
+    );
+
+}
         import { auth, db } from "./firebase-config.js"
 
 import {
@@ -3029,7 +3522,7 @@ text.includes("looking") ||
 text.includes("find")
 ){
 
-let searchIntent="search";
+searchIntent="search";
 
 }
 
@@ -3040,7 +3533,7 @@ text.includes("top") ||
 text.includes("recommended")
 ){
 
-let searchIntent="recommend";
+searchIntent="recommend";
 
 }
 // REMOVE USELESS WORDS HERE
@@ -3082,7 +3575,7 @@ text.includes("kids") ||
 text.includes("children")
 ){
 
-let searchPurpose = "family";
+searchPurpose = "family";
 
 }
 
@@ -3094,7 +3587,7 @@ text.includes("income") ||
 text.includes("rental return")
 ){
 
-let searchPurpose = "investment";
+searchPurpose = "investment";
 
 }
 
@@ -3105,7 +3598,7 @@ text.includes("shop") ||
 text.includes("office")
 ){
 
-let searchPurpose = "business";
+searchPurpose = "business";
 
 }
 
@@ -5256,6 +5749,8 @@ currentPage = 1;
 searchProperty();
 
 showHomepagePlatinum();
+
+hideGedarakLoader();
 
 function showHomepagePlatinum(){
 
