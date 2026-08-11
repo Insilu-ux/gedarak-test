@@ -779,7 +779,8 @@ getDoc,
 doc,
 updateDoc,
 query,
-where
+where,
+increment
 
 }
 from "https://www.gstatic.com/firebasejs/12.16.0/firebase-firestore.js";
@@ -843,21 +844,14 @@ if(propertySnap.exists()){
 
    if(property){
 
-    property.views =
-    (property.views||0)+1;
+   await updateDoc(
+    doc(db, "properties", property.id),
+    {
+        views: increment(1)
+    }
+);
 
-
-    updateDoc(
-
-        doc(db,"properties",property.id),
-
-        {
-
-            views:property.views
-
-        }
-
-    );
+property.views = (property.views || 0) + 1;
 
           let galleryHTML ="";
  if(property.images &&
@@ -1805,10 +1799,14 @@ margin-bottom:4px;
 
     }
 
-    let property =
-    allProperties.find(p => String(p.id) === String(id));
+   let property =
+allProperties.find(p => String(p.id) === String(id));
 
-    if(!property) return;
+if(!property && currentProperty && String(currentProperty.id) === String(id)){
+    property = currentProperty;
+}
+
+if(!property) return;
 
     let favourites = [...window.favourites];
 
@@ -1820,8 +1818,14 @@ margin-bottom:4px;
         heart.innerHTML = "🤍";
         heart.style.color = "white";
 
-        property.saves =
-        Math.max(0,(property.saves || 0)-1);
+        property.saves = Math.max(0, (property.saves || 0) - 1);
+
+await updateDoc(
+    doc(db, "properties", property.id),
+    {
+        saves: increment(-1)
+    }
+);
 
         showNotification(
             "✔ Removed: " + property.name
@@ -1836,8 +1840,14 @@ margin-bottom:4px;
         heart.innerHTML = "💗";
         heart.style.color = "red";
 
-        property.saves =
-        (property.saves || 0)+1;
+       property.saves = (property.saves || 0) + 1;
+
+await updateDoc(
+    doc(db, "properties", property.id),
+    {
+        saves: increment(1)
+    }
+);
 
         showNotification(
             "✔ Saved: " + property.name
@@ -1860,16 +1870,6 @@ window.favourites = favourites;
 loadSimilarProperties(currentProperty);
 
 updatePropertyHeart();
-
-    await updateDoc(
-
-        doc(db,"properties",property.id),
-
-        {
-            saves:property.saves
-        }
-
-    );
 
 }
       function isFavourite(id){
