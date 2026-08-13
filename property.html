@@ -1242,16 +1242,17 @@ align-items:center;
                            🔗 Share Property
                             </button>
         
-                             <button  class="action-btn contact-btn"
-                             onclick="openContactPopup(
+                          <button class="action-btn contact-btn"
+onclick="openContactPopup(
 '${property.ownerUsername}',
 '${property.phone}',
+'${property.phone2 || ""}',
 '${property.name}',
 ${property.price},
 ${property.negotiable}
 )">
-                      📞 Contact Seller
-                    </button>
+📞 Contact Seller
+</button>
        
 
 <button
@@ -2121,23 +2122,33 @@ createdAt
     return posted.toLocaleDateString();
 
 }
-      function openContactPopup(ownerUsername, phone, property, price, negotiable){
+      function openContactPopup(ownerUsername, phone, phone2, property, price, negotiable){
 
 document.getElementById("contactPopup").style.display="flex";
 
 let localPhone = phone.replace(/^94/, "0");
 
-document.getElementById("popupOwner").innerHTML=ownerUsername;
+let localPhone2 = phone2
+? phone2.replace(/^94/, "0")
+: "";
 
-document.getElementById("popupCall").onclick=function(){
+document.getElementById("popupOwner").innerHTML = ownerUsername;
 
-    window.location.href="tel:"+localPhone;
+document.getElementById("popupCall").onclick = function(){
+
+    window.location.href = "tel:" + localPhone;
 
 };
 
-document.getElementById("popupPhone").innerHTML = localPhone;
+document.getElementById("popupPhone").innerHTML =
+localPhone +
+(
+localPhone2
+? "<br>📞 " + localPhone2
+: ""
+);
 
-document.getElementById("popupProperty").innerHTML=property;
+document.getElementById("popupProperty").innerHTML = property;
 
 document.getElementById("popupPrice").innerHTML =
 negotiable
@@ -2149,8 +2160,7 @@ negotiable
 document.getElementById("popupMessage").value =
 "Hello, I'm interested in " + property + ". Is it still available?";
 
-
-document.getElementById("popupWhatsapp").onclick=function(){
+document.getElementById("popupWhatsapp").onclick = function(){
 
 let message =
 document.getElementById("popupMessage").value.trim();
@@ -2163,8 +2173,10 @@ message =
 }
 
 window.open(
-"https://wa.me/"+phone.replace(/^0/,"94")+
-"?text="+encodeURIComponent(message)
+"https://wa.me/" +
+phone.replace(/^0/,"94") +
+"?text=" +
+encodeURIComponent(message)
 );
 
 };
@@ -2575,6 +2587,16 @@ text-align: center;">
 
 <span id="popupPhone"></span>
 
+</p>
+
+<p
+id="popupPhone2"
+style="
+font-size:20px;
+font-weight:600;
+display:none;
+">
+📞
 </p>
 
 <h4>Your Message</h4>
