@@ -5613,6 +5613,7 @@ class="contact-btn"
 onclick="event.stopPropagation();openContactPopup(
 '${property.ownerUsername}',
 '${property.phone}',
+'${property.phone2 || ""}',
 '${property.name}',
 ${property.price},
 ${property.negotiable}
@@ -5919,23 +5920,36 @@ closeImageViewer();
 
 }
 
-function openContactPopup(ownerUsername, phone, property, price, negotiable){
+function openContactPopup(ownerUsername, phone, phone2, property, price, negotiable){
 
 document.getElementById("contactPopup").style.display="flex";
 
 let localPhone = phone.replace(/^94/, "0");
 
-document.getElementById("popupOwner").innerHTML=ownerUsername;
-
-document.getElementById("popupCall").onclick=function(){
-
-    window.location.href="tel:"+localPhone;
-
-};
+document.getElementById("popupOwner").innerHTML = ownerUsername;
 
 document.getElementById("popupPhone").innerHTML = localPhone;
 
-document.getElementById("popupProperty").innerHTML=property;
+if(phone2){
+
+document.getElementById("popupPhone2").style.display = "block";
+
+document.getElementById("popupPhone2").innerHTML =
+"📞 " + phone2.replace(/^94/, "0");
+
+}else{
+
+document.getElementById("popupPhone2").style.display = "none";
+
+}
+
+document.getElementById("popupCall").onclick=function(){
+
+window.location.href="tel:"+localPhone;
+
+};
+
+document.getElementById("popupProperty").innerHTML = property;
 
 document.getElementById("popupPrice").innerHTML =
 negotiable
@@ -5946,7 +5960,6 @@ negotiable
 
 document.getElementById("popupMessage").value =
 "Hello, I'm interested in " + property + ". Is it still available?";
-
 
 document.getElementById("popupWhatsapp").onclick=function(){
 
@@ -5968,7 +5981,6 @@ window.open(
 };
 
 }
-
 function closeContactPopup(){
 
 document.getElementById("contactPopup").style.display="none";
@@ -6295,6 +6307,16 @@ text-align: center;">
 
 </p>
 
+<p
+id="popupPhone2"
+style="
+font-size:20px;
+font-weight:600;
+display:none;
+">
+📞
+</p>
+    
 <h4>Your Message</h4>
 
 <textarea
