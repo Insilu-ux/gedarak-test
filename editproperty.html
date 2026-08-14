@@ -625,22 +625,7 @@ accept="image/*"
 onchange="previewImages()">
 <br>
 
-<button
-type="button"
-id="coverImageBtn"
-onclick="chooseCoverImage()"
-style="
-margin-top:10px;
-padding:10px 18px;
-background:#ff9800;
-color:white;
-border:none;
-border-radius:10px;
-cursor:pointer;
-font-weight:bold;
-">
-⭐ Choose Cover Image
-</button>
+
 
 <p
 style="
@@ -2193,9 +2178,9 @@ function refreshPreview(){
 
     preview.innerHTML = "";
 
-    if(selectedImages.length===0){
+    if(selectedImages.length === 0){
 
-        preview.innerHTML="<p>No images selected.</p>";
+        preview.innerHTML = "<p>No images selected.</p>";
         return;
 
     }
@@ -2204,17 +2189,29 @@ function refreshPreview(){
 
         function createCard(src,removeFunction){
 
+            const isCover = index === coverImageIndex;
+
             preview.innerHTML += `
 
 <div
 style="
 position:relative;
-display:inline-block;
+display:inline-flex;
+flex-direction:column;
+align-items:center;
+width:170px;
 margin:6px;
 ">
 
+<div
+style="
+position:relative;
+width:150px;
+height:110px;
+">
+
 ${
-index===coverImageIndex
+isCover
 ?
 `
 <div
@@ -2245,6 +2242,7 @@ height:110px;
 object-fit:cover;
 border-radius:10px;
 box-shadow:0 2px 8px rgba(0,0,0,.2);
+display:block;
 ">
 
 <button
@@ -2261,9 +2259,56 @@ border-radius:50%;
 background:red;
 color:white;
 cursor:pointer;
+z-index:10;
+font-weight:bold;
 ">
 ✕
 </button>
+
+</div>
+
+${
+!isCover
+?
+`
+<button
+type="button"
+onclick="chooseCover(${index})"
+style="
+margin-top:8px;
+padding:8px 12px;
+background:#ff9800;
+color:white;
+border:none;
+border-radius:9px;
+cursor:pointer;
+font-weight:bold;
+font-size:13px;
+width:150px;
+box-shadow:0 3px 8px rgba(255,152,0,.25);
+">
+⭐ Choose as Cover
+</button>
+`
+:
+`
+<div
+style="
+margin-top:8px;
+padding:8px 12px;
+background:#fff3cd;
+color:#856404;
+border:1px solid #ffe69c;
+border-radius:9px;
+font-weight:bold;
+font-size:13px;
+width:126px;
+text-align:center;
+">
+⭐ Cover Photo
+</div>
+`
+}
 
 </div>
 
@@ -2271,18 +2316,21 @@ cursor:pointer;
 
         }
 
-        if(typeof file==="string"){
+        if(typeof file === "string"){
 
             createCard(file,"removeExistingImage");
             return;
 
         }
 
-        const reader=new FileReader();
+        const reader = new FileReader();
 
-        reader.onload=function(e){
+        reader.onload = function(e){
 
-            createCard(e.target.result,"removeSelectedImage");
+            createCard(
+                e.target.result,
+                "removeSelectedImage"
+            );
 
         };
 
@@ -2291,77 +2339,38 @@ cursor:pointer;
     });
 
 }
-window.chooseCoverImage = function(){
+window.chooseCover = function(index){
 
-if(selectedImages.length<=1){
+    if(index < 0 || index >= selectedImages.length){
 
-showAlert(
-"Not Enough Images",
-"Upload at least two images before choosing a cover."
-);
+        return;
 
-return;
+    }
 
-}
+    if(index === coverImageIndex){
 
-let options="";
+        return;
 
-selectedImages.forEach(function(img,index){
+    }
 
-options +=
-(index+1)+". Image "+(index+1)+"\n";
+    /*
+       Move selected image to the beginning.
+       This makes it the actual first image,
+       which is what Firebase will save as
+       the cover image.
+    */
 
-});
+    const selectedImage =
+        selectedImages.splice(index,1)[0];
 
-let choice=prompt(
+    selectedImages.unshift(selectedImage);
 
-"Choose the cover image.\n\n"+
+    // Cover is now always index 0
+    coverImageIndex = 0;
 
-options+
+    refreshPreview();
 
-"\nEnter image number:"
-
-);
-
-if(choice===null)return;
-
-choice=parseInt(choice);
-
-if(
-
-isNaN(choice) ||
-
-choice<1 ||
-
-choice>selectedImages.length
-
-){
-
-showAlert(
-
-"Invalid Choice",
-
-"Please enter a valid image number."
-
-);
-
-return;
-
-}
-
-coverImageIndex=choice-1;
-
-refreshPreview();
-
-showAlert(
-
-"Cover Image Updated",
-
-"Your selected cover image has been saved."
-
-,"success");
-
-}
+};
 function showAlert(title,message,type="warning"){
 
     document.getElementById("alertTitle").textContent=title;
