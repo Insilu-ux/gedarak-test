@@ -623,8 +623,11 @@ style="
 margin-top:8px;
 font-size:14px;
 color:#666;
+line-height:1.5;
 ">
 You can select multiple images. They will appear below.
+<br>
+⭐ Choose your preferred image as the <b>Cover Photo</b>.
 </p>
 
 <div
@@ -958,6 +961,7 @@ window.numbersOnly = function(input){
 
 }
         let selectedImages = [];
+        let coverImageIndex = 0;
         async function compressImage(file){
 
     return new Promise((resolve)=>{
@@ -1885,21 +1889,33 @@ await new Promise(resolve => {
     });
 });
 
-for(const file of selectedImages){
+/*
+    Upload the selected cover image first.
+    This guarantees images[0] is always the cover photo.
+*/
 
-const imageRef = ref(
+const orderedImages = [
+    selectedImages[coverImageIndex],
+    ...selectedImages.filter(
+        (_, index) => index !== coverImageIndex
+    )
+];
 
-storage,
+for(const file of orderedImages){
 
-"properties/"+crypto.randomUUID()+"_"+file.name
+    const imageRef = ref(
+        storage,
+        "properties/" +
+        crypto.randomUUID() +
+        "_" +
+        file.name
+    );
 
-);
+    await uploadBytes(imageRef, file);
 
-await uploadBytes(imageRef,file);
+    const url = await getDownloadURL(imageRef);
 
-const url = await getDownloadURL(imageRef);
-
-imageUrls.push(url);
+    imageUrls.push(url);
 
 }
 const userDoc = await getDoc(
@@ -1990,7 +2006,7 @@ btn.disabled=false;
 btn.innerHTML="Post Property";
 
 }
-     window.previewImages = function(){
+    window.previewImages = function(){
 
     let input = document.getElementById("propertyImages");
 
@@ -1998,20 +2014,36 @@ btn.innerHTML="Post Property";
 
         for(const file of input.files){
 
+            if(selectedImages.length >= 20){
+
+                showAlert(
+                    "Maximum Images Reached",
+                    "You can upload a maximum of 20 images."
+                );
+
+                break;
+            }
+
             const compressed = await compressImage(file);
 
             selectedImages.push(compressed);
 
         }
 
-        if(selectedImages.length>20){
+        if(selectedImages.length > 0){
 
-            showAlert(
-                "Maximum Images Reached",
-                "You can upload a maximum of 20 images."
-            );
+            if(
+                coverImageIndex >= selectedImages.length ||
+                coverImageIndex === undefined
+            ){
 
-            selectedImages=selectedImages.slice(0,20);
+                coverImageIndex = 0;
+
+            }
+
+        }else{
+
+            coverImageIndex = 0;
 
         }
 
@@ -2023,7 +2055,37 @@ btn.innerHTML="Post Property";
 
 window.removeSelectedImage = function(index){
 
+    if(index < 0 || index >= selectedImages.length){
+        return;
+    }
+
     selectedImages.splice(index,1);
+
+    /*
+        Keep the cover image correct after removing an image.
+    */
+
+    if(selectedImages.length === 0){
+
+        coverImageIndex = 0;
+
+    }
+    else if(index === coverImageIndex){
+
+        // Removed the current cover.
+        // Make the first remaining image the new cover.
+
+        coverImageIndex = 0;
+
+    }
+    else if(index < coverImageIndex){
+
+        // Since an image before the cover was removed,
+        // the cover's index moves one position backwards.
+
+        coverImageIndex--;
+
+    }
 
     const dataTransfer = new DataTransfer();
 
@@ -2037,94 +2099,156 @@ window.removeSelectedImage = function(index){
     refreshPreview();
 
 }
-function refreshPreview(){
 
-let preview =
-document.getElementById("imagePreview");
+window.chooseCoverImage = function(index){
 
-preview.innerHTML="";
+    if(index < 0 || index >= selectedImages.length){
+        return;
+    }
 
-preview.innerHTML =
-"<p style='width:100%;font-weight:bold;'>"+
-selectedImages.length+
-" image(s) selected</p>";
+    coverImageIndex = index;
 
-selectedImages.forEach(function(file,index){
+    refreshPreview();
 
-let reader=new FileReader();
-
-reader.onload=function(e){
-
-preview.innerHTML += `
-
-<div
-style="
-position:relative;
-display:inline-block;
-margin:6px;
-">
-
-${
-index===0
-?
-`
-<div
-style="
-position:absolute;
-top:8px;
-left:8px;
-background:#ff9800;
-color:white;
-padding:5px 10px;
-border-radius:20px;
-font-size:13px;
-font-weight:bold;
-z-index:5;
-">
-⭐ Cover Photo
-</div>
-`
-:
-""
 }
 
-<img
-src="${e.target.result}"
-style="
-width:150px;
-height:110px;
-object-fit:cover;
-border-radius:10px;
-box-shadow:0 2px 8px rgba(0,0,0,.2);
-">
+function refreshPreview(){
 
-<button
-type="button"
-onclick="removeSelectedImage(${index})"
-style="
-position:absolute;
-top:6px;
-right:6px;
-width:26px;
-height:26px;
-border:none;
-border-radius:50%;
-background:red;
-color:white;
-cursor:pointer;
-">
-✕
-</button>
+    let preview =
+        document.getElementById("imagePreview");
 
-</div>
+    preview.innerHTML = "";
 
-`;
+    if(selectedImages.length === 0){
 
-};
+        preview.innerHTML =
+            "<p style='width:100%;font-weight:bold;color:#777;'>"+
+            "No images selected"+
+            "</p>";
 
-reader.readAsDataURL(file);
+        return;
+    }
 
-});
+    preview.innerHTML =
+        "<p style='width:100%;font-weight:bold;'>"+
+        selectedImages.length+
+        " image(s) selected"+
+        "</p>";
+
+    selectedImages.forEach(function(file,index){
+
+        let reader = new FileReader();
+
+        reader.onload = function(e){
+
+            const isCover = index === coverImageIndex;
+
+            preview.innerHTML += `
+
+            <div
+            style="
+            position:relative;
+            display:inline-block;
+            margin:6px;
+            vertical-align:top;
+            "
+            >
+
+            ${
+                isCover
+                ?
+                `
+                <div
+                style="
+                position:absolute;
+                top:8px;
+                left:8px;
+                background:#ff9800;
+                color:white;
+                padding:5px 10px;
+                border-radius:20px;
+                font-size:13px;
+                font-weight:bold;
+                z-index:5;
+                box-shadow:0 2px 5px rgba(0,0,0,.2);
+                ">
+                ⭐ Cover Photo
+                </div>
+                `
+                :
+                ""
+            }
+
+            <img
+            src="${e.target.result}"
+            style="
+            width:150px;
+            height:110px;
+            object-fit:cover;
+            border-radius:10px;
+            box-shadow:0 2px 8px rgba(0,0,0,.2);
+            display:block;
+            "
+            >
+
+            <button
+            type="button"
+            onclick="chooseCoverImage(${index})"
+            ${
+                isCover
+                ? "disabled"
+                : ""
+            }
+            style="
+            width:100%;
+            margin-top:8px;
+            padding:8px 6px;
+            border:none;
+            border-radius:8px;
+            background:${isCover ? "#ff9800" : "#8b008b"};
+            color:white;
+            font-size:13px;
+            font-weight:bold;
+            cursor:${isCover ? "default" : "pointer"};
+            opacity:${isCover ? "1" : "0.95"};
+            "
+            >
+            ${
+                isCover
+                ? "⭐ Cover Photo"
+                : "⭐ Choose as Cover"
+            }
+            </button>
+
+            <button
+            type="button"
+            onclick="removeSelectedImage(${index})"
+            style="
+            position:absolute;
+            top:6px;
+            right:6px;
+            width:26px;
+            height:26px;
+            border:none;
+            border-radius:50%;
+            background:red;
+            color:white;
+            cursor:pointer;
+            z-index:6;
+            "
+            >
+            ✕
+            </button>
+
+            </div>
+
+            `;
+
+        };
+
+        reader.readAsDataURL(file);
+
+    });
 
 }
 function showBoostPopup(){
