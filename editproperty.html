@@ -1660,86 +1660,19 @@ formatSqft(document.getElementById("squareFeet"));
 
 if(property.images && property.images.length > 0){
 
-selectedImages = [...property.images];
-coverImageIndex = 0;
+    selectedImages = [...property.images];
 
-let preview =
-document.getElementById("imagePreview");
+    coverImageIndex = 0;
 
-preview.innerHTML =
-"<p style='width:100%;font-weight:bold;'>"+
-selectedImages.length+
-" existing image(s)</p>";
+    let preview =
+        document.getElementById("imagePreview");
 
+    preview.innerHTML =
+        "<p style='width:100%;font-weight:bold;'>" +
+        selectedImages.length +
+        " existing image(s)</p>";
 
-selectedImages.forEach(function(img,index){
-
-preview.innerHTML += `
-
-<div
-style="
-position:relative;
-display:inline-block;
-margin:6px;
-">
-
-${
-index===coverImageIndex
-?
-`
-<div
-style="
-position:absolute;
-top:8px;
-left:8px;
-background:#ff9800;
-color:white;
-padding:5px 10px;
-border-radius:20px;
-font-size:13px;
-font-weight:bold;
-z-index:5;
-">
-⭐ Cover Photo
-</div>
-`
-:
-""
-}
-
-<img
-src="${img}"
-style="
-width:150px;
-height:110px;
-object-fit:cover;
-border-radius:10px;
-box-shadow:0 2px 8px rgba(0,0,0,.2);
-">
-
-<button
-type="button"
-onclick="removeExistingImage(${index})"
-style="
-position:absolute;
-top:6px;
-right:6px;
-width:26px;
-height:26px;
-border:none;
-border-radius:50%;
-background:red;
-color:white;
-cursor:pointer;
-">
-✕
-</button>
-
-</div>
-
-`;
-
-});
+    refreshPreview();
 
 }
 }
