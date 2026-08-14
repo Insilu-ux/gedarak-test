@@ -1664,14 +1664,6 @@ if(property.images && property.images.length > 0){
 
     coverImageIndex = 0;
 
-    let preview =
-        document.getElementById("imagePreview");
-
-    preview.innerHTML =
-        "<p style='width:100%;font-weight:bold;'>" +
-        selectedImages.length +
-        " existing image(s)</p>";
-
     refreshPreview();
 
 }
@@ -1940,27 +1932,60 @@ hideLoading();
 }
 
 /* ===============================
-   SAVE IMAGES IN CORRECT ORDER
+   SAVE IMAGES WITH SELECTED COVER
    =============================== */
 
-// Move selected cover image to index 0
-if(coverImageIndex !== 0){
+// Keep the visual order of selectedImages unchanged.
+// Only create the Firebase image order separately.
 
-    const cover =
-        selectedImages.splice(coverImageIndex, 1)[0];
-
-    selectedImages.unshift(cover);
-
-}
-
-// Cover is always index 0
-coverImageIndex = 0;
-
-
-// New array that will preserve
-// the exact selectedImages order
 const finalImages = [];
 
+const orderedImages = [
+
+    selectedImages[coverImageIndex],
+
+    ...selectedImages.filter(
+        (_, index) => index !== coverImageIndex
+    )
+
+];
+
+for(const item of orderedImages){
+
+    // Existing Firebase image
+    if(typeof item === "string"){
+
+        finalImages.push(item);
+
+    }
+
+    // Newly selected image
+    else if(item instanceof File){
+
+        const compressedFile =
+            await compressImage(item);
+
+        const storageRef = ref(
+            storage,
+            "propertyImages/" +
+            crypto.randomUUID() +
+            "_" +
+            compressedFile.name
+        );
+
+        await uploadBytes(
+            storageRef,
+            compressedFile
+        );
+
+        const url =
+            await getDownloadURL(storageRef);
+
+        finalImages.push(url);
+
+    }
+
+}
 
 // Process images one by one
 for(const item of selectedImages){
@@ -2107,156 +2132,150 @@ window.previewImages = function () {
 
 function refreshPreview(){
 
-    const preview = document.getElementById("imagePreview");
+    const preview =
+        document.getElementById("imagePreview");
 
     preview.innerHTML = "";
 
     if(selectedImages.length === 0){
 
-        preview.innerHTML = "<p>No images selected.</p>";
-        return;
+        preview.innerHTML =
+            "<p style='width:100%;font-weight:bold;color:#777;'>"+
+            "No images selected"+
+            "</p>";
 
+        return;
     }
+
+    preview.innerHTML =
+        "<p style='width:100%;font-weight:bold;'>"+
+        selectedImages.length+
+        " image(s) selected"+
+        "</p>";
 
     selectedImages.forEach(function(file,index){
 
         function createCard(src,removeFunction){
 
-            const isCover = index === coverImageIndex;
+            const isCover =
+                index === coverImageIndex;
 
             preview.innerHTML += `
 
-<div
-style="
-position:relative;
-display:inline-flex;
-flex-direction:column;
-align-items:center;
-width:170px;
-margin:6px;
-">
+            <div
+            style="
+            position:relative;
+            display:inline-block;
+            margin:6px;
+            vertical-align:top;
+            "
+            >
 
-<div
-style="
-position:relative;
-width:150px;
-height:110px;
-">
+            ${
+                isCover
+                ?
+                `
+                <div
+                style="
+                position:absolute;
+                top:8px;
+                left:8px;
+                background:#ff9800;
+                color:white;
+                padding:5px 10px;
+                border-radius:20px;
+                font-size:13px;
+                font-weight:bold;
+                z-index:5;
+                box-shadow:0 2px 5px rgba(0,0,0,.2);
+                ">
+                ⭐ Cover Photo
+                </div>
+                `
+                :
+                ""
+            }
 
-${
-isCover
-?
-`
-<div
-style="
-position:absolute;
-top:8px;
-left:8px;
-background:#ff9800;
-color:white;
-padding:5px 10px;
-border-radius:20px;
-font-size:13px;
-font-weight:bold;
-z-index:5;
-">
-⭐ Cover Photo
-</div>
-`
-:
-""
-}
+            <img
+            src="${src}"
+            style="
+            width:150px;
+            height:110px;
+            object-fit:cover;
+            border-radius:10px;
+            box-shadow:0 2px 8px rgba(0,0,0,.2);
+            display:block;
+            "
+            >
 
-<img
-src="${src}"
-style="
-width:150px;
-height:110px;
-object-fit:cover;
-border-radius:10px;
-box-shadow:0 2px 8px rgba(0,0,0,.2);
-display:block;
-">
+            <button
+            type="button"
+            onclick="${removeFunction}(${index})"
+            style="
+            position:absolute;
+            top:6px;
+            right:6px;
+            width:26px;
+            height:26px;
+            border:none;
+            border-radius:50%;
+            background:red;
+            color:white;
+            cursor:pointer;
+            z-index:6;
+            "
+            >
+            ✕
+            </button>
 
-<button
-type="button"
-onclick="${removeFunction}(${index})"
-style="
-position:absolute;
-top:6px;
-right:6px;
-width:26px;
-height:26px;
-border:none;
-border-radius:50%;
-background:red;
-color:white;
-cursor:pointer;
-z-index:10;
-font-weight:bold;
-">
-✕
-</button>
+            <button
+            type="button"
+            onclick="chooseCover(${index})"
+            ${
+                isCover
+                ? "disabled"
+                : ""
+            }
+            style="
+            width:100%;
+            margin-top:8px;
+            padding:8px 6px;
+            border:none;
+            border-radius:8px;
+            background:${isCover ? "#ff9800" : "#8b008b"};
+            color:white;
+            font-size:13px;
+            font-weight:bold;
+            cursor:${isCover ? "default" : "pointer"};
+            opacity:${isCover ? "1" : "0.95"};
+            "
+            >
+            ${
+                isCover
+                ? "⭐ Cover Photo"
+                : "⭐ Choose as Cover"
+            }
+            </button>
 
-</div>
+            </div>
 
-${
-!isCover
-?
-`
-<button
-type="button"
-onclick="chooseCover(${index})"
-style="
-margin-top:8px;
-padding:8px 12px;
-background:#ff9800;
-color:white;
-border:none;
-border-radius:9px;
-cursor:pointer;
-font-weight:bold;
-font-size:13px;
-width:150px;
-box-shadow:0 3px 8px rgba(255,152,0,.25);
-">
-⭐ Choose as Cover
-</button>
-`
-:
-`
-<div
-style="
-margin-top:8px;
-padding:8px 12px;
-background:#fff3cd;
-color:#856404;
-border:1px solid #ffe69c;
-border-radius:9px;
-font-weight:bold;
-font-size:13px;
-width:126px;
-text-align:center;
-">
-⭐ Cover Photo
-</div>
-`
-}
-
-</div>
-
-`;
+            `;
 
         }
 
         if(typeof file === "string"){
 
-            createCard(file,"removeExistingImage");
+            createCard(
+                file,
+                "removeExistingImage"
+            );
+
             return;
 
         }
 
-        const reader = new FileReader();
+        const reader =
+            new FileReader();
 
         reader.onload = function(e){
 
@@ -2275,31 +2294,10 @@ text-align:center;
 window.chooseCover = function(index){
 
     if(index < 0 || index >= selectedImages.length){
-
         return;
-
     }
 
-    if(index === coverImageIndex){
-
-        return;
-
-    }
-
-    /*
-       Move selected image to the beginning.
-       This makes it the actual first image,
-       which is what Firebase will save as
-       the cover image.
-    */
-
-    const selectedImage =
-        selectedImages.splice(index,1)[0];
-
-    selectedImages.unshift(selectedImage);
-
-    // Cover is now always index 0
-    coverImageIndex = 0;
+    coverImageIndex = index;
 
     refreshPreview();
 
