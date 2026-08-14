@@ -1987,44 +1987,6 @@ for(const item of orderedImages){
 
 }
 
-// Process images one by one
-for(const item of selectedImages){
-
-    // Existing Firebase image
-    if(typeof item === "string"){
-
-        finalImages.push(item);
-
-    }
-
-    // Newly uploaded image
-    else if(item instanceof File){
-
-        const compressedFile =
-            await compressImage(item);
-
-        const storageRef = ref(
-            storage,
-            "propertyImages/" +
-            crypto.randomUUID() +
-            "_" +
-            compressedFile.name
-        );
-
-        await uploadBytes(
-            storageRef,
-            compressedFile
-        );
-
-        const url =
-            await getDownloadURL(storageRef);
-
-        finalImages.push(url);
-
-    }
-
-}
-
 
 // Make sure at least one image exists
 if(finalImages.length === 0){
@@ -2077,6 +2039,16 @@ function removeExistingImage(index){
 
     selectedImages.splice(index,1);
 
+    if(selectedImages.length === 0){
+        coverImageIndex = 0;
+    }
+    else if(index === coverImageIndex){
+        coverImageIndex = 0;
+    }
+    else if(index < coverImageIndex){
+        coverImageIndex--;
+    }
+
     refreshPreview();
 
 }
@@ -2085,15 +2057,25 @@ function removeSelectedImage(index){
 
     selectedImages.splice(index,1);
 
-    const dt=new DataTransfer();
+    if(selectedImages.length === 0){
+        coverImageIndex = 0;
+    }
+    else if(index === coverImageIndex){
+        coverImageIndex = 0;
+    }
+    else if(index < coverImageIndex){
+        coverImageIndex--;
+    }
 
-    selectedImages.forEach(file=>{
+    const dt = new DataTransfer();
 
-        dt.items.add(file);
-
+    selectedImages.forEach(file => {
+        if(file instanceof File){
+            dt.items.add(file);
+        }
     });
 
-    document.getElementById("propertyImages").files=dt.files;
+    document.getElementById("propertyImages").files = dt.files;
 
     refreshPreview();
 
