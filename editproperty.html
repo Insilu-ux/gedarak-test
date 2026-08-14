@@ -609,9 +609,9 @@ oninput="formatSqft(this)">
 
 <b>Main Cover Photo</b><br>
 
-The <b>first image</b> you upload will be shown on the homepage, search results, and property listings.
-
-Choose your best photo first.
+The <b>first image</b> is your property's cover photo.
+You can upload multiple images and use
+<b>Choose Cover Image</b> to select which photo appears first.
 
 </div>
 
@@ -623,6 +623,25 @@ id="propertyImages"
 multiple
 accept="image/*"
 onchange="previewImages()">
+<br>
+
+<button
+type="button"
+id="coverImageBtn"
+onclick="chooseCoverImage()"
+style="
+margin-top:10px;
+padding:10px 18px;
+background:#ff9800;
+color:white;
+border:none;
+border-radius:10px;
+cursor:pointer;
+font-weight:bold;
+">
+⭐ Choose Cover Image
+</button>
+
 <p
 style="
 margin-top:8px;
@@ -984,6 +1003,7 @@ price.disabled=false;
 
 }
         let selectedImages = [];
+        let coverImageIndex = 0;
         let property = null;
         showLoading();
 
@@ -1655,7 +1675,8 @@ formatSqft(document.getElementById("squareFeet"));
 
 if(property.images && property.images.length > 0){
 
-selectedImages = property.images;
+selectedImages = [...property.images];
+coverImageIndex = 0;
 
 let preview =
 document.getElementById("imagePreview");
@@ -1678,7 +1699,7 @@ margin:6px;
 ">
 
 ${
-index===0
+index===coverImageIndex
 ?
 `
 <div
@@ -2000,70 +2021,95 @@ hideLoading();
 
 }
 
-property.images = [];
+/* ===============================
+   SAVE IMAGES IN CORRECT ORDER
+   =============================== */
+
+// Move selected cover image to index 0
+if(coverImageIndex !== 0){
+
+    const cover =
+        selectedImages.splice(coverImageIndex, 1)[0];
+
+    selectedImages.unshift(cover);
+
+}
+
+// Cover is always index 0
+coverImageIndex = 0;
 
 
-let uploadedFiles = selectedImages.filter(function(item){
-
-    return item instanceof File;
-
-});
+// New array that will preserve
+// the exact selectedImages order
+const finalImages = [];
 
 
-let existingImages = selectedImages.filter(function(item){
+// Process images one by one
+for(const item of selectedImages){
 
-    return typeof item === "string";
+    // Existing Firebase image
+    if(typeof item === "string"){
 
-});
+        finalImages.push(item);
+
+    }
+
+    // Newly uploaded image
+    else if(item instanceof File){
+
+        const compressedFile =
+            await compressImage(item);
+
+        const storageRef = ref(
+            storage,
+            "propertyImages/" +
+            crypto.randomUUID() +
+            "_" +
+            compressedFile.name
+        );
+
+        await uploadBytes(
+            storageRef,
+            compressedFile
+        );
+
+        const url =
+            await getDownloadURL(storageRef);
+
+        finalImages.push(url);
+
+    }
+
+}
 
 
-property.images = existingImages;
+// Make sure at least one image exists
+if(finalImages.length === 0){
+
+    showAlert(
+        "Property Images Required",
+        "Please keep at least one property image."
+    );
+
+    btn.disabled = false;
+    btn.textContent = "Save Changes";
+    hideLoading();
+
+    return;
+}
 
 
-if(uploadedFiles.length === 0){
+// Save images in EXACTLY the same order
+// the seller selected
+property.images = finalImages;
 
-    await saveEditedProperty();
+
+await saveEditedProperty();
+
 btn.disabled = false;
 btn.textContent = "Save Changes";
 hideLoading();
-    return;
 
-}
-
-
-for (const file of uploadedFiles) {
-
-
-   const compressedFile =
-await compressImage(file);
-
-const storageRef = ref(
-
-storage,
-
-"propertyImages/" +
-
-crypto.randomUUID()+"_"+
-
-compressedFile.name
-
-);
-
-await uploadBytes(
-
-storageRef,
-
-compressedFile
-
-);
-
-const url =
-await getDownloadURL(storageRef);
-
-property.images.push(url);
-
-}
-await saveEditedProperty();
 }
 async function saveEditedProperty(){
 
@@ -2168,7 +2214,7 @@ margin:6px;
 ">
 
 ${
-index===0
+index===coverImageIndex
 ?
 `
 <div
@@ -2245,7 +2291,77 @@ cursor:pointer;
     });
 
 }
+window.chooseCoverImage = function(){
 
+if(selectedImages.length<=1){
+
+showAlert(
+"Not Enough Images",
+"Upload at least two images before choosing a cover."
+);
+
+return;
+
+}
+
+let options="";
+
+selectedImages.forEach(function(img,index){
+
+options +=
+(index+1)+". Image "+(index+1)+"\n";
+
+});
+
+let choice=prompt(
+
+"Choose the cover image.\n\n"+
+
+options+
+
+"\nEnter image number:"
+
+);
+
+if(choice===null)return;
+
+choice=parseInt(choice);
+
+if(
+
+isNaN(choice) ||
+
+choice<1 ||
+
+choice>selectedImages.length
+
+){
+
+showAlert(
+
+"Invalid Choice",
+
+"Please enter a valid image number."
+
+);
+
+return;
+
+}
+
+coverImageIndex=choice-1;
+
+refreshPreview();
+
+showAlert(
+
+"Cover Image Updated",
+
+"Your selected cover image has been saved."
+
+,"success");
+
+}
 function showAlert(title,message,type="warning"){
 
     document.getElementById("alertTitle").textContent=title;
