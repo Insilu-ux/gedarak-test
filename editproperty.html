@@ -507,11 +507,18 @@ placeholder="Bathrooms">
          id="perches"
          placeholder="Example: 15">
          <br><br>
-         <div id="sqftGroup">
-<label>Building Size(Sqft)</label>
+        <div id="sqftGroup">
+<label>
+    Building Size(Sqft)
+    <span id="sqftOptional"
+    style="color:#777;font-size:15px;">
+        (Optional)
+    </span>
+</label>
+
 <input
 class="formInput"
- type="text"
+type="text"
 maxlength="8"
 min="0"
 id="squareFeet"
@@ -954,20 +961,55 @@ window.numbersOnly = function(input){
 }
         function toggleLandFields(){
 
-let type =
-document.getElementById("propertyType").value;
+    const type =
+        document.getElementById("propertyType").value;
 
-let isLand =
-type === "Land";
+    const bedroomGroup =
+        document.getElementById("bedroomGroup");
 
-document.getElementById("bedroomGroup").style.display =
-isLand ? "none" : "block";
+    const bathroomGroup =
+        document.getElementById("bathroomGroup");
 
-document.getElementById("bathroomGroup").style.display =
-isLand ? "none" : "block";
+    const sqftGroup =
+        document.getElementById("sqftGroup");
 
-document.getElementById("sqftGroup").style.display =
-isLand ? "none" : "block";
+
+    // Property types that do NOT use bedrooms or bathrooms
+    const noBedroomsBathrooms = [
+        "Land",
+        "Commercial",
+        "Office",
+        "Shop",
+        "Warehouse",
+        "Building",
+        "Hotel"
+    ];
+
+
+    // Show/hide bedrooms and bathrooms
+    if(noBedroomsBathrooms.includes(type)){
+
+        bedroomGroup.style.display = "none";
+        bathroomGroup.style.display = "none";
+
+    }else{
+
+        bedroomGroup.style.display = "block";
+        bathroomGroup.style.display = "block";
+
+    }
+
+
+    // Land does NOT have building size
+    if(type === "Land"){
+
+        sqftGroup.style.display = "none";
+
+    }else{
+
+        sqftGroup.style.display = "block";
+
+    }
 
 }
         function toggleNegotiable(){
