@@ -1043,10 +1043,56 @@ ${property.status}
             </p>
             
             </div>
-         <div class="facts-grid">
+        <div class="facts-grid">
 
 ${
-property.propertyType !== "Land"
+property.propertyType === "Land"
+
+?
+
+`
+<div class="fact-box">
+
+🌳<br><br>
+
+${property.perches || 0}
+
+Perches
+
+</div>
+`
+
+:
+
+["Office","Shop","Warehouse","Building","Commercial"].includes(property.propertyType)
+
+?
+
+`
+<div class="fact-box">
+
+📐<br><br>
+
+${Number(property.squareFeet || 0).toLocaleString()}
+
+Sqft
+
+</div>
+
+<div class="fact-box">
+
+🌳<br><br>
+
+${property.perches || 0}
+
+Perches
+
+</div>
+`
+
+:
+
+property.propertyType === "Hotel"
 
 ?
 
@@ -1057,21 +1103,9 @@ property.propertyType !== "Land"
 
 ${property.bedrooms || 0}
 
-Bedrooms
+Rooms
 
 </div>
-
-
-<div class="fact-box">
-
-🛁<br><br>
-
-${property.bathrooms || 0}
-
-Bathrooms
-
-</div>
-
 
 <div class="fact-box">
 
@@ -1086,21 +1120,39 @@ Sqft
 
 :
 
-""
-
-}
-
-
+`
 <div class="fact-box">
 
-🌳<br><br>
+🛏<br><br>
 
-${property.perches || 0}
+${property.bedrooms || 0}
 
-Perches
+Bedrooms
 
 </div>
 
+<div class="fact-box">
+
+🛁<br><br>
+
+${property.bathrooms || 0}
+
+Bathrooms
+
+</div>
+
+<div class="fact-box">
+
+📐<br><br>
+
+${Number(property.squareFeet || 0).toLocaleString()}
+
+Sqft
+
+</div>
+`
+
+}
 
 </div>
                <div class="section-card">
