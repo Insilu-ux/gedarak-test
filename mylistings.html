@@ -899,35 +899,51 @@ onAuthStateChanged(auth, async function(user){
             </p>
 
 
-            ${
-                property.propertyType === "Land"
+          ${
+    property.propertyType === "Land"
 
-                ?
+    ?
 
-                `
-                <p>
-                🌳 ${property.perches || 0} Perches
-                </p>
-                `
+    `
+    <p>
+    🌳 ${property.perches || 0} Perches
+    </p>
+    `
 
-                :
+    :
 
-                `
-                <p>
-                🛏 ${property.bedrooms || 0} Beds
-                |
-                🛁 ${property.bathrooms || 0} Baths
-                </p>
+    ["Warehouse", "Office", "Shop", "Building", "Commercial"].includes(property.propertyType)
 
-                <p>
-                📐 ${Number(
-                    property.squareFeet || 0
-                ).toLocaleString()} Sqft
-                |
-                🌳 ${property.perches || 0} Perches
-                </p>
-                `
-            }
+    ?
+
+    `
+    <p>
+    📐 ${Number(
+        property.squareFeet || 0
+    ).toLocaleString()} Sqft
+    |
+    🌳 ${property.perches || 0} Perches
+    </p>
+    `
+
+    :
+
+    `
+    <p>
+    🛏 ${property.bedrooms || 0} Beds
+    |
+    🛁 ${property.bathrooms || 0} Baths
+    </p>
+
+    <p>
+    📐 ${Number(
+        property.squareFeet || 0
+    ).toLocaleString()} Sqft
+    |
+    🌳 ${property.perches || 0} Perches
+    </p>
+    `
+}
 
 
             <p>
