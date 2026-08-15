@@ -490,7 +490,7 @@ Buyers can view your property's location directly in Google Maps.
         placeholder="Bathrooms">
          </div>
          <br>
-         <label>Land Size(Perches)</label>
+         <label id="perchesLabel">Land Size (Perches)</label>
          <input
          type="text"
          min="0"
@@ -501,18 +501,18 @@ Buyers can view your property's location directly in Google Maps.
          id="perches"
          placeholder="Example: 15">
          <br></br>
-         <div id="sqftSection">
-          <label>Building Size(Sqft)</label>
-         <input
-         class="formInput"
-type="text"
-min="0"
-maxlength="8"
-id="squareFeet"
-placeholder="Example: 2,500"
-inputmode="numeric"
-oninput="formatSqft(this)">
-         </div>
+        <div id="sqftSection">
+    <label>Building Size (Sqft)</label>
+    <input
+    class="formInput"
+    type="text"
+    min="0"
+    maxlength="8"
+    id="squareFeet"
+    placeholder="Example: 2,500"
+    inputmode="numeric"
+    oninput="formatSqft(this)">
+</div>
         <h3 class="sectionHeading">🏡 Amenities</h3>
 
 <label class="checkboxLabel">
@@ -872,24 +872,114 @@ from "https://www.gstatic.com/firebasejs/12.16.0/firebase-firestore.js";
     }
 
 }
-        document.getElementById("propertyType").onchange=function(){
+      document.getElementById("propertyType").onchange=function(){
 
-let land=this.value=="Land";
+    const propertyType = this.value;
 
-document.getElementById("bedroomSection").style.display=
-land?"none":"block";
+    const bedroomSection =
+        document.getElementById("bedroomSection");
 
-document.getElementById("bathroomSection").style.display=
-land?"none":"block";
+    const bathroomSection =
+        document.getElementById("bathroomSection");
 
-document.getElementById("sqftSection").style.display=
-land?"none":"block";
+    const sqftSection =
+        document.getElementById("sqftSection");
 
-if(land){
+    const sqftLabel =
+        document.getElementById("sqftLabel");
 
-document.getElementById("bedrooms").value="";
-document.getElementById("bathrooms").value="";
-document.getElementById("squareFeet").value="";
+    const bedrooms =
+        document.getElementById("bedrooms");
+
+    const bathrooms =
+        document.getElementById("bathrooms");
+
+    const squareFeet =
+        document.getElementById("squareFeet");
+
+    /*
+    =========================================
+    PROPERTY CATEGORIES
+    =========================================
+    */
+
+    const residentialTypes = [
+        "House",
+        "Apartment",
+        "Villa",
+        "Annex",
+        "Hotel",
+        "Bungalow"
+    ];
+
+    const land = propertyType === "Land";
+
+    const isResidential =
+        residentialTypes.includes(propertyType);
+
+    /*
+    =========================================
+    BEDROOMS + BATHROOMS
+    =========================================
+    */
+
+    if(isResidential){
+
+        bedroomSection.style.display = "block";
+        bathroomSection.style.display = "block";
+
+    }
+    else{
+
+        bedroomSection.style.display = "none";
+        bathroomSection.style.display = "none";
+
+        bedrooms.value = "";
+        bathrooms.value = "";
+
+    }
+
+    /*
+    =========================================
+    BUILDING SIZE
+    =========================================
+    */
+
+    if(land){
+
+        sqftSection.style.display = "none";
+
+        squareFeet.value = "";
+
+    }
+    else{
+
+        sqftSection.style.display = "block";
+
+    }
+
+    /*
+    =========================================
+    APARTMENT BUILDING SIZE = OPTIONAL
+    =========================================
+    */
+
+   if(propertyType === "Apartment"){
+
+    document.getElementById("perchesLabel").textContent =
+        "Land Size (Perches) (Optional)";
+
+    sqftLabel.textContent =
+        "Building Size (Sqft)";
+
+}
+else{
+
+    document.getElementById("perchesLabel").textContent =
+        "Land Size (Perches)";
+
+    sqftLabel.textContent =
+        "Building Size (Sqft)";
 
 }
 
