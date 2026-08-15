@@ -1026,35 +1026,64 @@ function renderFavourites(list){
         </p>
 
 
-        ${
-            property.propertyType === "Land"
+       ${
+    property.propertyType === "Land"
 
-            ?
+    ?
 
-            `
-            <p>
-            🌳 ${property.perches || 0} Perches
-            </p>
-            `
+    `
+    <p>
+    🌳 ${property.perches || 0} Perches
+    </p>
+    `
 
-            :
+    :
 
-            `
-            <p>
-            🛏 ${property.bedrooms || 0} Bedrooms
-            </p>
+    [
+        "House",
+        "Apartment",
+        "Villa",
+        "Annex",
+        "Bungalow",
+        "Hotel"
+    ].includes(property.propertyType)
 
-            <p>
-            🛁 ${property.bathrooms || 0} Bathrooms
-            </p>
+    ?
 
-            <p>
-            📐 ${Number(
-                property.squareFeet || 0
-            ).toLocaleString()} Sqft
-            </p>
-            `
-        }
+    `
+    <p>
+    🛏 ${property.bedrooms || 0} Bedrooms
+    </p>
+
+    <p>
+    🛁 ${property.bathrooms || 0} Bathrooms
+    </p>
+
+    <p>
+    📐 ${Number(
+        property.squareFeet || 0
+    ).toLocaleString()} Sqft
+    </p>
+
+    <p>
+    🌳 ${property.perches || 0} Perches
+    </p>
+    `
+
+    :
+
+    `
+    <p>
+    📐 ${Number(
+        property.squareFeet || 0
+    ).toLocaleString()} Sqft
+    </p>
+
+    <p>
+    🌳 ${property.perches || 0} Perches
+    </p>
+    `
+}
 
 
         <div class="buttonRow">
