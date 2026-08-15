@@ -4910,36 +4910,113 @@ searchRanking.forEach(function(item){
 sortSearchResults();
 sortProperties();
 
-let visibleCards =
+/*
+=========================================
+COMBINED PAGINATION
+Platinum + Normal properties
+=========================================
+*/
+
+// Get matching Platinum properties
+let platinumVisibleCards =
 Array.from(
-normalContainer.querySelectorAll(".property-card")
+    platinumContainer.querySelectorAll(".property-card")
 )
-.filter(card=>card.style.display!="none");
+.filter(card =>
+    card.style.display !== "none"
+);
 
-// Pagination
+// Get matching normal properties
+let normalVisibleCards =
+Array.from(
+    normalContainer.querySelectorAll(".property-card")
+)
+.filter(card =>
+    card.style.display !== "none"
+);
 
-let totalProperties = visibleCards.length;
-let totalPages = Math.ceil(totalProperties / propertiesPerPage);
+// Combine them.
+// Platinum properties come first.
+let visibleCards = [
 
+    ...platinumVisibleCards,
+    ...normalVisibleCards
+
+];
+
+// Total matching properties
+let totalProperties =
+visibleCards.length;
+
+// Total pages
+let totalPages =
+Math.ceil(
+    totalProperties / propertiesPerPage
+);
+
+// Make sure current page is valid
 if(currentPage > totalPages){
-    currentPage = totalPages || 1;
+
+    currentPage =
+    totalPages || 1;
+
 }
 
-let start = (currentPage - 1) * propertiesPerPage;
-let end = start + propertiesPerPage;
+let start =
+(currentPage - 1) *
+propertiesPerPage;
 
-// Hide every visible card first
-visibleCards.forEach(card=>{
-    card.style.display="none";
+let end =
+start + propertiesPerPage;
+
+
+/*
+=========================================
+HIDE ALL MATCHING CARDS
+=========================================
+*/
+
+visibleCards.forEach(function(card){
+
+    card.style.display = "none";
+
 });
 
-// Show only this page
+
+/*
+=========================================
+SHOW ONLY CURRENT PAGE
+=========================================
+*/
+
 visibleCards
 .slice(start,end)
-.forEach(card=>{
-    card.style.display="";
+.forEach(function(card){
+
+    card.style.display = "";
+
 });
-updateResultsInfo(totalProperties,start,end);
+
+
+/*
+=========================================
+RESULT INFORMATION
+=========================================
+*/
+
+updateResultsInfo(
+    totalProperties,
+    start,
+    end
+);
+
+
+/*
+=========================================
+PAGINATION BUTTONS
+=========================================
+*/
+
 renderPagination(totalPages);
 
 let noResult = document.getElementById("noResults");
