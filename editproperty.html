@@ -794,6 +794,71 @@ uploadBytes,
 getDownloadURL
 }
 from "https://www.gstatic.com/firebasejs/12.16.0/firebase-storage.js";
+
+function validatePlainText(value, fieldName){
+
+    if(typeof value !== "string"){
+
+        return {
+            valid:false,
+            message:`Invalid ${fieldName}.`
+        };
+
+    }
+
+    value = value.trim();
+
+    // Reject HTML tags / markup
+    if(value.includes("<") || value.includes(">")){
+
+        return {
+            valid:false,
+            message:
+            `${fieldName} contains characters that are not allowed. Please use normal text and emojis only.`
+        };
+
+    }
+
+    // Reject javascript: payloads
+    if(/javascript\s*:/i.test(value)){
+
+        return {
+            valid:false,
+            message:
+            `Invalid content detected in ${fieldName}.`
+        };
+
+    }
+
+    // Reject HTML event handlers
+    // onclick=, onerror=, onload=, etc.
+    if(/\bon[a-z]+\s*=/i.test(value)){
+
+        return {
+            valid:false,
+            message:
+            `Invalid content detected in ${fieldName}.`
+        };
+
+    }
+
+    // Reject encoded HTML entities
+    if(/&#x?[0-9a-f]+;/i.test(value)){
+
+        return {
+            valid:false,
+            message:
+            `Invalid encoded content detected in ${fieldName}.`
+        };
+
+    }
+
+    return {
+        valid:true,
+        value:value
+    };
+
+}
       function priceChanged(){
 
     const input = document.getElementById("propertyPrice");
@@ -2089,16 +2154,50 @@ showLoading(
     "Preparing your property..."
 );
 
-if(document.getElementById("propertyName").value.trim() === ""){
+let name =
+    document.getElementById("propertyName")
+    .value
+    .trim();
+
+if(name === ""){
+
     showAlert(
-    "Missing Property Name",
-    "Please enter the property name."
-);
-btn.disabled = false;
-btn.textContent = "Save Changes";
-hideLoading();
+        "Property Name Missing",
+        "Please enter a name for your property."
+    );
+
+    btn.disabled = false;
+    btn.textContent = "Save Changes";
+    hideLoading();
+
     return;
+
 }
+
+const nameCheck =
+    validatePlainText(
+        name,
+        "Property Name"
+    );
+
+if(!nameCheck.valid){
+
+    showAlert(
+        "Invalid Property Name",
+        nameCheck.message
+    );
+
+    btn.disabled = false;
+    btn.textContent = "Save Changes";
+    hideLoading();
+
+    return;
+
+}
+
+name = nameCheck.value;
+
+property.name = name;
 
 if(document.getElementById("propertyType").value === ""){
     showAlert(
@@ -2132,26 +2231,96 @@ btn.textContent = "Save Changes";
 hideLoading();
     return;
 }
-if(document.getElementById("address").value === ""){
+let address =
+    document.getElementById("address")
+    .value
+    .trim();
+
+if(address === ""){
+
     showAlert(
-    "Property Address Required",
-    "Please enter Property address."
-);
-btn.disabled = false;
-btn.textContent = "Save Changes";
-hideLoading();
+        "Property Address Required",
+        "Please enter your property address."
+    );
+
+    btn.disabled = false;
+    btn.textContent = "Save Changes";
+    hideLoading();
+
     return;
+
 }
-if(document.getElementById("description").value === ""){
+
+const addressCheck =
+    validatePlainText(
+        address,
+        "Property Address"
+    );
+
+if(!addressCheck.valid){
+
     showAlert(
-    "Property Description Required",
-    "Please enter a Property description."
-);
-btn.disabled = false;
-btn.textContent = "Save Changes";
-hideLoading();
+        "Invalid Property Address",
+        addressCheck.message
+    );
+
+    btn.disabled = false;
+    btn.textContent = "Save Changes";
+    hideLoading();
+
     return;
+
 }
+
+address = addressCheck.value;
+
+property.address = address;
+
+let description =
+    document.getElementById("description")
+    .value
+    .trim();
+
+if(description === ""){
+
+    showAlert(
+        "Property Description Required",
+        "Please enter a property description."
+    );
+
+    btn.disabled = false;
+    btn.textContent = "Save Changes";
+    hideLoading();
+
+    return;
+
+}
+
+const descriptionCheck =
+    validatePlainText(
+        description,
+        "Property Description"
+    );
+
+if(!descriptionCheck.valid){
+
+    showAlert(
+        "Invalid Description",
+        descriptionCheck.message
+    );
+
+    btn.disabled = false;
+    btn.textContent = "Save Changes";
+    hideLoading();
+
+    return;
+
+}
+
+description = descriptionCheck.value;
+
+property.description = description;
+
 property.name =
 document.getElementById("propertyName").value.trim();
 
@@ -2262,23 +2431,66 @@ property.phone2 =
     : "94" + phone2;
 
 let mapLink =
-document.getElementById("mapLink").value.trim();
+    document.getElementById("mapLink").value.trim();
 
-if(
-    mapLink !== "" &&
-    !mapLink.includes("maps.google") &&
-    !mapLink.includes("goo.gl/maps") &&
-    !mapLink.includes("maps.app.goo.gl")
-){
-    showAlert(
-    "Invalid Google Maps Link",
-    "Please paste a valid Google Maps location."
-);
-btn.disabled = false;
-btn.textContent = "Save Changes";
-hideLoading();
-    return;
+if(mapLink !== ""){
+
+    try{
+
+        const parsedURL =
+            new URL(mapLink);
+
+        const hostname =
+            parsedURL.hostname.toLowerCase();
+
+        const allowedHosts = [
+
+            "google.com",
+            "www.google.com",
+            "maps.google.com",
+            "goo.gl",
+            "maps.app.goo.gl"
+
+        ];
+
+        const validHost =
+            allowedHosts.some(host =>
+
+                hostname === host ||
+                hostname.endsWith("." + host)
+
+            );
+
+        if(!validHost){
+
+            throw new Error("Invalid host");
+
+        }
+
+        if(parsedURL.protocol !== "https:"){
+
+            throw new Error("Invalid protocol");
+
+        }
+
+    }
+    catch(error){
+
+        showAlert(
+            "Invalid Google Maps Link",
+            "Please paste a valid Google Maps location."
+        );
+
+        btn.disabled = false;
+        btn.textContent = "Save Changes";
+        hideLoading();
+
+        return;
+
+    }
+
 }
+
 property.mapLink = mapLink;
 
 property.status =
