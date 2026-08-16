@@ -515,50 +515,7 @@ Buyers can view your property's location directly in Google Maps.
 </div>
         <h3 class="sectionHeading">🏡 Amenities</h3>
 
-<label class="checkboxLabel">
-<input type="checkbox" value="Parking" class="amenity">
-<span>Parking</span>
-</label>
-
-<label class="checkboxLabel">
-<input type="checkbox" value="Garage" class="amenity">
-<span>Garage</span>
-</label>
-
-<label class="checkboxLabel">
-<input type="checkbox" value="Pool" class="amenity">
-<span>Swimming Pool</span>
-</label>
-
-<label class="checkboxLabel">
-<input type="checkbox" value="Garden" class="amenity">
-<span>Garden</span>
-</label>
-
-<label class="checkboxLabel">
-<input type="checkbox" value="Gym" class="amenity">
-<span>Gym</span>
-</label>
-
-<label class="checkboxLabel">
-<input type="checkbox" value="Elevator" class="amenity">
-<span>Elevator</span>
-</label>
-
-<label class="checkboxLabel">
-<input type="checkbox" value="Furnished" class="amenity">
-<span>Furnished</span>
-</label>
-
-<label class="checkboxLabel">
-<input type="checkbox" value="Basement" class="amenity">
-<span>Basement</span>
-</label>
-
-<label class="checkboxLabel">
-<input type="checkbox" value="Outdoor Space" class="amenity">
-<span>Outdoor Space</span>
-</label>
+<div id="amenitiesContainer"></div>
         <h3 class="sectionHeading">🌄 Property Viewings</h3>
 
 <label class="checkboxLabel">
@@ -872,9 +829,140 @@ from "https://www.gstatic.com/firebasejs/12.16.0/firebase-firestore.js";
     }
 
 }
+const amenityLists = {
+
+Residential: [
+"Parking",
+"Garden",
+"Furnished",
+"Air Conditioning",
+"CCTV Security",
+"Hot Water",
+"Modern Kitchen",
+"Fiber Internet",
+"Solar Power",
+"Pet Friendly"
+],
+
+Apartment: [
+"Parking",
+"Elevator",
+"Swimming Pool",
+"Gym",
+"24/7 Security",
+"Furnished",
+"Air Conditioning",
+"Fiber Internet",
+"Rooftop/Common Area",
+"Backup Generator"
+],
+
+Land: [
+"Road Access",
+"Electricity Available",
+"Water Supply",
+"Fiber Internet",
+"Cleared Land",
+"Boundary Wall",
+"Clear Deeds",
+"Corner Land",
+"Water Line Nearby",
+"Close to Main Road"
+],
+
+Commercial: [
+"Parking",
+"CCTV",
+"Air Conditioning",
+"Fiber Internet",
+"Three Phase Electricity",
+"Loading Area",
+"Fire Safety System",
+"Elevator",
+"Staff Washrooms",
+"Backup Generator"
+],
+
+Hotel: [
+"Swimming Pool",
+"Restaurant",
+"Bar",
+"Parking",
+"Free WiFi",
+"Air Conditioning",
+"CCTV",
+"Event Hall",
+"Gym",
+"Garden"
+]
+
+};
+function renderAmenities(group){
+
+const container =
+document.getElementById("amenitiesContainer");
+
+container.innerHTML="";
+
+if(!amenityLists[group]) return;
+
+amenityLists[group].forEach(function(item){
+
+container.innerHTML += `
+
+<label class="checkboxLabel">
+
+<input
+type="checkbox"
+value="${item}"
+class="amenity">
+
+<span>${item}</span>
+
+</label>
+
+`;
+
+});
+
+}
       document.getElementById("propertyType").onchange=function(){
 
     const propertyType = this.value;
+
+    let amenityGroup="";
+
+if(
+["House","Villa","Bungalow","Annex"].includes(propertyType)
+){
+
+amenityGroup="Residential";
+
+}
+else if(propertyType==="Apartment"){
+
+amenityGroup="Apartment";
+
+}
+else if(propertyType==="Land"){
+
+amenityGroup="Land";
+
+}
+else if(
+["Commercial","Office","Shop","Warehouse","Building"].includes(propertyType)
+){
+
+amenityGroup="Commercial";
+
+}
+else if(propertyType==="Hotel"){
+
+amenityGroup="Hotel";
+
+}
+
+renderAmenities(amenityGroup);
 
     const bedroomSection =
         document.getElementById("bedroomSection");
