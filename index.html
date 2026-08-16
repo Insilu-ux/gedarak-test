@@ -1612,24 +1612,29 @@ box-shadow:0 4px 12px rgba(0,0,0,.08); margin-top: 10px;">
         placeholder="Enter Address"
         oninput="searchProperty()">
         <br><br>
-        <label>Minimum Price</label>
-        <br>
-     <input
+       <label>Minimum Price</label>
+<br>
+<input
 type="text"
 id="minPrice"
 placeholder="Minimum Rs."
 inputmode="numeric"
+onkeydown="return onlyNumbers(event)"
 oninput="formatPriceInput(this); searchProperty();">
-        <br><br>
-        <label>Maximum Price</label>
-        <br>
-        <input
+
+<br><br>
+
+<label>Maximum Price</label>
+<br>
+<input
 type="text"
 id="maxPrice"
-inputmode="numeric"
 placeholder="Maximum Rs."
+inputmode="numeric"
+onkeydown="return onlyNumbers(event)"
 oninput="formatPriceInput(this); searchProperty();">
-        <br><br>
+
+<br><br>
         <div id="bedroomFilterSection">
         <h3>Bedrooms</h3>
         <button class="bedroom-btn" onclick="setBedroomFilter('')">Any</button>
@@ -1664,7 +1669,7 @@ oninput="formatPriceInput(this); searchProperty();">
               id="maxPerches"
               placeholder="Maximum Perches"
               oninput="searchProperty()">
-              <div id="buildingSizeFilterSection">
+             <div id="buildingSizeFilterSection">
 
     <h3>Building Size(Sqft)</h3>
 
@@ -1673,6 +1678,7 @@ oninput="formatPriceInput(this); searchProperty();">
     inputmode="numeric"
     id="minSqft"
     placeholder="Minimum Sqft"
+    onkeydown="return onlyNumbers(event)"
     oninput="formatPriceInput(this); searchProperty()">
 
     <br><br>
@@ -1682,6 +1688,7 @@ oninput="formatPriceInput(this); searchProperty();">
     inputmode="numeric"
     id="maxSqft"
     placeholder="Maximum Sqft"
+    onkeydown="return onlyNumbers(event)"
     oninput="formatPriceInput(this); searchProperty()">
 
 </div>
@@ -2253,6 +2260,45 @@ value = value.replace(/\D/g,"");
 
 input.value = Number(value).toLocaleString();
 
+}
+function onlyNumbers(event){
+
+    // Allow:
+    // Backspace, Delete, Tab, Escape, Enter
+    // Arrow keys, Home, End
+    const allowedKeys = [
+        "Backspace",
+        "Delete",
+        "Tab",
+        "Escape",
+        "Enter",
+        "ArrowLeft",
+        "ArrowRight",
+        "ArrowUp",
+        "ArrowDown",
+        "Home",
+        "End"
+    ];
+
+    if(allowedKeys.includes(event.key)){
+        return true;
+    }
+
+    // Allow Ctrl+A, Ctrl+C, Ctrl+V, Ctrl+X
+    if(
+        event.ctrlKey ||
+        event.metaKey
+    ){
+        return true;
+    }
+
+    // Allow only digits 0-9
+    if(!/^[0-9]$/.test(event.key)){
+        event.preventDefault();
+        return false;
+    }
+
+    return true;
 }
       function toggleOtherTags(){
 
@@ -6614,7 +6660,33 @@ input.dispatchEvent(new Event("input", {
 }));
 
 }
+// Allow only digits and automatically format Price + Sqft fields
+[
+    "minPrice",
+    "maxPrice",
+    "minSqft",
+    "maxSqft"
+].forEach(function(id){
 
+    const input = document.getElementById(id);
+
+    if(!input) return;
+
+    input.addEventListener("input", function(){
+
+        // Remove anything that is not a digit
+        let value = this.value.replace(/\D/g, "");
+
+        // Add commas every 3 digits
+        if(value !== ""){
+            value = Number(value).toLocaleString("en-US");
+        }
+
+        this.value = value;
+
+    });
+
+});
 window.openMenu = openMenu;
 window.closeMenu = closeMenu;
 window.toggleFilters = toggleFilters;
