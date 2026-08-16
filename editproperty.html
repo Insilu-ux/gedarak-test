@@ -505,7 +505,7 @@ placeholder="Bathrooms">
  oninput="perchesOnly(this)"
  min="0"
  id="perches"
- placeholder="Example: 15 or 10.5">
+ placeholder="Example: 15">
          <br><br>
         <div id="sqftGroup">
 <label>
@@ -784,25 +784,20 @@ uploadBytes,
 getDownloadURL
 }
 from "https://www.gstatic.com/firebasejs/12.16.0/firebase-storage.js";
-        function priceChanged(){
+       function priceChanged(){
 
-let input =
-document.getElementById("propertyPrice");
+    const input = document.getElementById("propertyPrice");
 
-let numbers =
-input.value.replace(/\D/g,"");
+    // Keep digits only
+    let numbers = input.value.replace(/\D/g,"");
 
-if(numbers===""){
+    if(numbers === ""){
+        input.value = "";
+        return;
+    }
 
-input.value="";
-
-return;
-
-}
-
-input.value =
-Number(numbers).toLocaleString("en-US");
-
+    // Format with commas
+    input.value = Number(numbers).toLocaleString("en-US");
 }
 
 
@@ -810,14 +805,12 @@ window.formatSqft = function(input){
 
     let value = input.value.replace(/\D/g,"");
 
-    if(value===""){
-        input.value="";
-   
+    if(value === ""){
+        input.value = "";
         return;
     }
 
-    input.value = Number(value).toLocaleString();
-
+    input.value = Number(value).toLocaleString("en-US");
 }
 async function compressImage(file){
 
@@ -1085,8 +1078,7 @@ function renderAmenities(group){
         "Office",
         "Shop",
         "Warehouse",
-        "Building",
-        "Hotel"
+        "Building"
     ];
 
 
