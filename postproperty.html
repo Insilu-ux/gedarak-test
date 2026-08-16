@@ -453,7 +453,6 @@ color:#777;
 ">
 Open Google Maps → Find your property → Share → Copy Link → Paste here.
 </p>
-</p>
 <p style="
 font-size:15px;
 color:#330808;
@@ -779,10 +778,21 @@ animation:spin 1s linear infinite;
 ⏳
 </div>
 
-<h2 style="margin-top:15px;color:#222;">
+<h2
+id="uploadStatus"
+style="margin-top:15px;color:#222;">
 Posting Your Property...
 </h2>
-
+<p
+id="uploadProgress"
+style="
+font-size:16px;
+font-weight:bold;
+color:#8b008b;
+margin-top:12px;
+">
+Preparing images...
+</p>
 <p style="
 font-size:18px;
 color:#555;
@@ -1143,18 +1153,19 @@ window.perchesInput = function(input){
 }
         let selectedImages = [];
         let coverImageIndex = 0;
-        async function compressImage(file){
+       async function compressImage(file){
 
-    return new Promise((resolve)=>{
+    return new Promise((resolve, reject)=>{
 
         const img = new Image();
 
         img.onload = ()=>{
 
-            let canvas = document.createElement("canvas");
+            let canvas =
+                document.createElement("canvas");
 
-            const MAX_WIDTH = 1600;
-            const MAX_HEIGHT = 1600;
+            const MAX_WIDTH = 1400;
+            const MAX_HEIGHT = 1400;
 
             let width = img.width;
             let height = img.height;
@@ -1179,33 +1190,71 @@ window.perchesInput = function(input){
 
             }
 
-            canvas.width = width;
-            canvas.height = height;
+            canvas.width = Math.round(width);
+            canvas.height = Math.round(height);
 
-            const ctx = canvas.getContext("2d");
+            const ctx =
+                canvas.getContext("2d");
 
-            ctx.drawImage(img,0,0,width,height);
+            ctx.drawImage(
+                img,
+                0,
+                0,
+                canvas.width,
+                canvas.height
+            );
 
-            canvas.toBlob((blob)=>{
+            canvas.toBlob(
 
-                resolve(
+                (blob)=>{
 
-                    new File(
-                        [blob],
-                        file.name,
-                        {
-                            type:"image/jpeg",
-                            lastModified:Date.now()
-                        }
-                    )
+                    if(!blob){
 
-                );
+                        reject(
+                            new Error(
+                                "Image compression failed."
+                            )
+                        );
 
-            },"image/jpeg",0.8);
+                        return;
+                    }
+
+                    resolve(
+
+                        new File(
+                            [blob],
+                            file.name
+                                .replace(/\.[^/.]+$/, "")
+                                + ".jpg",
+                            {
+                                type:"image/jpeg",
+                                lastModified:Date.now()
+                            }
+                        )
+
+                    );
+
+                },
+
+                "image/jpeg",
+
+                0.72
+            );
 
         };
 
-        img.src = URL.createObjectURL(file);
+        img.onerror = ()=>{
+
+            reject(
+                new Error(
+                    "Could not process image."
+                )
+            );
+
+        };
+
+        img.src =
+            URL.createObjectURL(file);
 
     });
 
@@ -1810,6 +1859,19 @@ btn.innerHTML = "Posting Property...";
 
 const user = auth.currentUser;
 
+if(!user){
+
+    showAlert(
+        "Login Required",
+        "Please log in before posting a property."
+    );
+
+    btn.disabled = false;
+    btn.innerHTML = "Post Property";
+
+    return;
+}
+
 
 try{
 
@@ -2066,15 +2128,13 @@ showLoading();
 
 await new Promise(resolve => {
     requestAnimationFrame(() => {
-        setTimeout(resolve, 300);
+        setTimeout(resolve, 150);
     });
 });
 
 /*
-    Upload the selected cover image first.
-    This guarantees images[0] is always the cover photo.
+    Put the selected cover image first.
 */
-
 const orderedImages = [
     selectedImages[coverImageIndex],
     ...selectedImages.filter(
@@ -2082,7 +2142,15 @@ const orderedImages = [
     )
 ];
 
-for(const file of orderedImages){
+/*
+    Upload several images at the same time,
+    but limit concurrency so we don't overload
+    the user's connection.
+*/
+
+const MAX_CONCURRENT_UPLOADS = 4;
+
+async function uploadSingleImage(file){
 
     const imageRef = ref(
         storage,
@@ -2094,11 +2162,62 @@ for(const file of orderedImages){
 
     await uploadBytes(imageRef, file);
 
-    const url = await getDownloadURL(imageRef);
+    return await getDownloadURL(imageRef);
+}
 
-    imageUrls.push(url);
+
+
+const results = new Array(orderedImages.length);
+
+let nextIndex = 0;
+let completedUploads = 0;
+
+async function uploadWorker(){
+
+    while(true){
+
+        const index = nextIndex++;
+
+        if(index >= orderedImages.length){
+            return;
+        }
+
+        results[index] =
+            await uploadSingleImage(
+                orderedImages[index]
+            );
+
+        completedUploads++;
+
+        document.getElementById(
+            "uploadProgress"
+        ).textContent =
+            `Uploading image ${completedUploads} of ${orderedImages.length}...`;
+    }
+}
+/* =========================================
+   PARALLEL IMAGE UPLOAD WORKER
+========================================= */
+
+const workers = [];
+
+for(
+    let i = 0;
+    i < Math.min(
+        MAX_CONCURRENT_UPLOADS,
+        orderedImages.length
+    );
+    i++
+){
+
+    workers.push(uploadWorker());
 
 }
+
+await Promise.all(workers);
+
+imageUrls.push(...results);
+
 const userDoc = await getDoc(
 doc(db, "users", user.uid)
 );
@@ -2187,29 +2306,79 @@ btn.disabled=false;
 btn.innerHTML="Post Property";
 
 }
-    window.previewImages = function(){
+   window.previewImages = function(){
 
-    let input = document.getElementById("propertyImages");
+    const input =
+        document.getElementById("propertyImages");
 
     (async()=>{
 
-        for(const file of input.files){
+        const files = Array.from(input.files);
 
-            if(selectedImages.length >= 20){
+        if(files.length === 0){
+            return;
+        }
+
+        const remainingSlots =
+            20 - selectedImages.length;
+
+        if(remainingSlots <= 0){
+
+            showAlert(
+                "Maximum Images Reached",
+                "You can upload a maximum of 20 images."
+            );
+
+            return;
+        }
+
+        const filesToProcess =
+            files.slice(0, remainingSlots);
+
+        if(files.length > remainingSlots){
+
+            showAlert(
+                "Maximum Images Reached",
+                "Only 20 images can be uploaded."
+            );
+        }
+
+        /*
+            Maximum original file size:
+            10 MB per image
+        */
+
+        const MAX_FILE_SIZE =
+    5 * 1024 * 1024;
+
+        for(const file of filesToProcess){
+
+            if(file.size > MAX_FILE_SIZE){
 
                 showAlert(
-                    "Maximum Images Reached",
-                    "You can upload a maximum of 20 images."
+                    "Image Too Large",
+                    `"${file.name}" is larger than 5 MB. Please choose a smaller image.`
                 );
 
-                break;
+                return;
             }
 
-            const compressed = await compressImage(file);
-
-            selectedImages.push(compressed);
-
         }
+
+        /*
+            Compress several images at once.
+            This is much faster than compressing
+            them one by one.
+        */
+
+        const compressedImages =
+            await Promise.all(
+                filesToProcess.map(file =>
+                    compressImage(file)
+                )
+            );
+
+        selectedImages.push(...compressedImages);
 
         if(selectedImages.length > 0){
 
@@ -2233,7 +2402,6 @@ btn.innerHTML="Post Property";
     })();
 
 }
-
 window.removeSelectedImage = function(index){
 
     if(index < 0 || index >= selectedImages.length){
