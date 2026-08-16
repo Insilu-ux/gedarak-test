@@ -1664,20 +1664,27 @@ oninput="formatPriceInput(this); searchProperty();">
               id="maxPerches"
               placeholder="Maximum Perches"
               oninput="searchProperty()">
-               <h3>Building Size(Sqft)</h3>
-            <input
-type="text"
-inputmode="numeric"
-id="minSqft"
-placeholder="Minimum Sqft"
-oninput="formatPriceInput(this); searchProperty()">
-               <br><br>
-             <input
-type="text"
-inputmode="numeric"
-id="maxSqft"
-placeholder="Maximum Sqft"
-oninput="formatPriceInput(this); searchProperty()">
+              <div id="buildingSizeFilterSection">
+
+    <h3>Building Size(Sqft)</h3>
+
+    <input
+    type="text"
+    inputmode="numeric"
+    id="minSqft"
+    placeholder="Minimum Sqft"
+    oninput="formatPriceInput(this); searchProperty()">
+
+    <br><br>
+
+    <input
+    type="text"
+    inputmode="numeric"
+    id="maxSqft"
+    placeholder="Maximum Sqft"
+    oninput="formatPriceInput(this); searchProperty()">
+
+</div>
               <h3>Property Type</h3>
                <select
                id="typeFilter"
@@ -2325,9 +2332,13 @@ if(oldNoResults){
                 document.getElementById("maxPerches").value= "";
                  document.getElementById("minSqft").value= "";
                   document.getElementById("maxSqft").value= "";
-                     document.getElementById("amenityFilter").value= "";
-                     updateAmenityFilter();
-                     updateBedroomBathroomFilters();
+                    document.getElementById("amenityFilter").value = "";
+
+updateAmenityFilter();
+
+updateBedroomBathroomFilters();
+
+updateBuildingSizeFilter();
                         document.getElementById("propertyViewFilter").value= "";
                         document.querySelectorAll(".bedroom-btn")
 .forEach(btn => btn.classList.remove("selected-btn"));
@@ -2432,7 +2443,7 @@ function updateBedroomBathroomFilters(){
     }
 
 }
-    function filterProperty(type){
+   function filterProperty(type){
 
     selectedOtherType = "";
     selectedRentalType = "";
@@ -2443,6 +2454,8 @@ function updateBedroomBathroomFilters(){
     updateAmenityFilter();
 
     updateBedroomBathroomFilters();
+
+    updateBuildingSizeFilter();
 
     searchProperty();
 
@@ -3184,6 +3197,31 @@ Vavuniya: [
 
 };
 
+function updateBuildingSizeFilter(){
+
+    const type =
+        document.getElementById("typeFilter").value;
+
+    const buildingSizeSection =
+        document.getElementById("buildingSizeFilterSection");
+
+    if(type === "Land"){
+
+        buildingSizeSection.style.display = "none";
+
+        // Clear old sqft values
+        document.getElementById("minSqft").value = "";
+        document.getElementById("maxSqft").value = "";
+
+    }
+    else{
+
+        buildingSizeSection.style.display = "block";
+
+    }
+
+}
+
 function updateAmenityFilter(){
 
     const type =
@@ -3285,7 +3323,11 @@ document.getElementById("typeFilter")
 
     updateBedroomBathroomFilters();
 
+    updateBuildingSizeFilter();
+
 });
+
+
         const synonymMap = {
 
 
@@ -6581,6 +6623,7 @@ window.filterRentalType = filterRentalType;
 window.filterOthertype = filterOthertype;
 window.updateBedroomBathroomFilters = updateBedroomBathroomFilters;
 window.updateAmenityFilter = updateAmenityFilter;
+window.updateBuildingSizeFilter = updateBuildingSizeFilter;
 window.openPostProperty = openPostProperty;
 window.applyAndCloseFilters = applyAndCloseFilters;
 window.resetFilters = resetFilters;
