@@ -1630,6 +1630,7 @@ inputmode="numeric"
 placeholder="Maximum Rs."
 oninput="formatPriceInput(this); searchProperty();">
         <br><br>
+        <div id="bedroomFilterSection">
         <h3>Bedrooms</h3>
         <button class="bedroom-btn" onclick="setBedroomFilter('')">Any</button>
          <button class="bedroom-btn" onclick="setBedroomFilter('1')">1</button>
@@ -1638,7 +1639,9 @@ oninput="formatPriceInput(this); searchProperty();">
             <button class="bedroom-btn" onclick="setBedroomFilter('4')">4</button>
              <button class="bedroom-btn" onclick="setBedroomFilter('5')">5</button>
              <button class="bedroom-btn" onclick="setBedroomFilter('5+')">5+</button>
+        </div>
               <br><br>
+              <div id="bathroomFilterSection">
                <h3>Bathrooms</h3>
         <button class="bathroom-btn" onclick="setBathroomFilter('')">Any</button>
          <button class="bathroom-btn" onclick="setBathroomFilter('1')">1</button>
@@ -1647,6 +1650,7 @@ oninput="formatPriceInput(this); searchProperty();">
             <button class="bathroom-btn" onclick="setBathroomFilter('4')">4</button>
              <button class="bathroom-btn" onclick="setBathroomFilter('5')">5</button>
                <button class="bathroom-btn" onclick="setBathroomFilter('5+')">5+</button>
+              </div>
               <br><br>
               <h3>Land Size(Perches)</h3>
               <input
@@ -1699,41 +1703,17 @@ oninput="formatPriceInput(this); searchProperty()">
                 onchange="searchProperty()">
                 For Rent
                </label>
-                    <h3>Amenities</h3>
-                    <select
-                    id="amenityFilter"
-                    onchange="searchProperty()">
-                <option value="">
-                    Any Amenity
-                </option>
-                <option value="Parking">
-                    Parking
-                </option>
-                <option value="Garage">
-                    Garage
-                </option>
-                <option value="Pool">
-                    Swimming Pool
-                </option>
-                <option value="Garden">
-                    Garden
-                </option>
-                <option value="Gym">
-                    Gym
-                </option>
-                <option value="Elevator">
-                    Elevator
-                </option>
-                <option value="Furnished">
-                    Furnished
-                </option>
-                <option value="Basement">
-                    Basement
-                </option>
-                <option value="Outdoor Space">
-                    Outdoor Space
-                </option>
-                </select>
+                   <h3>Amenities</h3>
+
+<select
+id="amenityFilter"
+onchange="searchProperty()">
+
+<option value="">
+    Select Property Type First
+</option>
+
+</select>
 
                 <h3>Property Viewings</h3>
                     <select
@@ -2346,6 +2326,8 @@ if(oldNoResults){
                  document.getElementById("minSqft").value= "";
                   document.getElementById("maxSqft").value= "";
                      document.getElementById("amenityFilter").value= "";
+                     updateAmenityFilter();
+                     updateBedroomBathroomFilters();
                         document.getElementById("propertyViewFilter").value= "";
                         document.querySelectorAll(".bedroom-btn")
 .forEach(btn => btn.classList.remove("selected-btn"));
@@ -2399,15 +2381,70 @@ selectedRentalType = type;
 searchProperty();
 
 }
-     function filterProperty(type){
+function updateBedroomBathroomFilters(){
 
-selectedOtherType = "";
-selectedRentalType = "";
+    const type =
+        document.getElementById("typeFilter").value;
 
-document.getElementById("typeFilter").value =
-type==="all" ? "" : type;
+    const bedroomSection =
+        document.getElementById("bedroomFilterSection");
 
-searchProperty();
+    const bathroomSection =
+        document.getElementById("bathroomFilterSection");
+
+    const nonResidentialTypes = [
+        "Land",
+        "Commercial",
+        "Office",
+        "Shop",
+        "Warehouse",
+        "Building"
+    ];
+
+    if(nonResidentialTypes.includes(type)){
+
+        bedroomSection.style.display = "none";
+        bathroomSection.style.display = "none";
+
+        selectedBedroom = "";
+        selectedBathroom = "";
+
+        document.querySelectorAll(".bedroom-btn")
+        .forEach(function(btn){
+
+            btn.classList.remove("selected-btn");
+
+        });
+
+        document.querySelectorAll(".bathroom-btn")
+        .forEach(function(btn){
+
+            btn.classList.remove("selected-btn");
+
+        });
+
+    }
+    else{
+
+        bedroomSection.style.display = "";
+        bathroomSection.style.display = "";
+
+    }
+
+}
+    function filterProperty(type){
+
+    selectedOtherType = "";
+    selectedRentalType = "";
+
+    document.getElementById("typeFilter").value =
+        type === "all" ? "" : type;
+
+    updateAmenityFilter();
+
+    updateBedroomBathroomFilters();
+
+    searchProperty();
 
 }
      function openPostProperty(){
@@ -3077,6 +3114,178 @@ Vavuniya: [
 "Vavuniya Town"
 ]
         };
+
+        const propertyAmenities = {
+
+    residential: [
+        "Parking",
+        "Garden",
+        "Furnished",
+        "Air Conditioning",
+        "CCTV Security",
+        "Hot Water",
+        "Modern Kitchen",
+        "Fiber Internet",
+        "Solar Power",
+        "Pet Friendly"
+    ],
+
+    apartment: [
+        "Parking",
+        "Elevator",
+        "Swimming Pool",
+        "Gym",
+        "24/7 Security",
+        "Furnished",
+        "Air Conditioning",
+        "Fiber Internet",
+        "Rooftop/Common Area",
+        "Backup Generator"
+    ],
+
+    land: [
+        "Road Access",
+        "Electricity Available",
+        "Water Supply",
+        "Fiber Internet",
+        "Cleared Land",
+        "Boundary Wall",
+        "Clear Deeds",
+        "Corner Land",
+        "Water Line Nearby",
+        "Close to Main Road"
+    ],
+
+    commercial: [
+        "Parking",
+        "CCTV Security",
+        "Air Conditioning",
+        "Fiber Internet",
+        "Three Phase Electricity",
+        "Loading Area",
+        "Fire Safety System",
+        "Elevator",
+        "Staff Washrooms",
+        "Backup Generator"
+    ],
+
+    hotel: [
+        "Swimming Pool",
+        "Restaurant",
+        "Bar",
+        "Parking",
+        "Free WiFi",
+        "Air Conditioning",
+        "CCTV Security",
+        "Event Hall",
+        "Gym",
+        "Garden"
+    ]
+
+};
+
+function updateAmenityFilter(){
+
+    const type =
+        document.getElementById("typeFilter").value;
+
+    const amenityFilter =
+        document.getElementById("amenityFilter");
+
+    const previousValue =
+        amenityFilter.value;
+
+    amenityFilter.innerHTML = `
+    <option value="">
+        ${type ? "Any Amenity" : "Select Property Type First"}
+    </option>
+`;
+
+    let amenities = [];
+
+    if(
+        type === "House" ||
+        type === "Villa" ||
+        type === "Bungalow" ||
+        type === "Annex"
+    ){
+
+        amenities = propertyAmenities.residential;
+
+    }
+
+    else if(type === "Apartment"){
+
+        amenities = propertyAmenities.apartment;
+
+    }
+
+    else if(type === "Land"){
+
+        amenities = propertyAmenities.land;
+
+    }
+
+    else if(
+        type === "Commercial" ||
+        type === "Office" ||
+        type === "Shop" ||
+        type === "Warehouse" ||
+        type === "Building"
+    ){
+
+        amenities = propertyAmenities.commercial;
+
+    }
+
+    else if(type === "Hotel"){
+
+        amenities = propertyAmenities.hotel;
+
+    }
+
+    amenities.forEach(function(amenity){
+
+        const option =
+            document.createElement("option");
+
+        option.value = amenity;
+
+        option.textContent = amenity;
+
+        amenityFilter.appendChild(option);
+
+    });
+
+    /*
+    Keep the previous selection only if
+    it still exists for the new property type.
+    */
+
+    const stillExists =
+        amenities.includes(previousValue);
+
+    if(stillExists){
+
+        amenityFilter.value = previousValue;
+
+    }
+    else{
+
+        amenityFilter.value = "";
+
+    }
+
+}
+
+document.getElementById("typeFilter")
+.addEventListener("change", function(){
+
+    updateAmenityFilter();
+
+    updateBedroomBathroomFilters();
+
+});
         const synonymMap = {
 
 
@@ -3718,9 +3927,11 @@ for(let word of words){
     if(propertyMap[word]){
 
         document.getElementById("typeFilter").value =
-        propertyMap[word];
+    propertyMap[word];
 
-        break;
+updateAmenityFilter();
+
+break;
 
     }
 
@@ -3784,37 +3995,147 @@ district.slice(1);
 }
 
 });
-const amenities=[
+const amenitySearchMap = {
 
-"parking",
+    "parking": "Parking",
 
-"garage",
+    "garden": "Garden",
 
-"pool",
+    "furnished": "Furnished",
 
-"garden",
+    "air conditioning": "Air Conditioning",
+    "aircondition": "Air Conditioning",
+    "ac": "Air Conditioning",
 
-"gym",
+    "cctv security": "CCTV Security",
+    "cctv": "CCTV Security",
 
-"furnished",
+    "hot water": "Hot Water",
 
-"elevator",
+    "modern kitchen": "Modern Kitchen",
 
-"basement",
+    "fiber internet": "Fiber Internet",
+    "fibre internet": "Fiber Internet",
+    "wifi": "Fiber Internet",
 
-"outdoor space"
+    "solar power": "Solar Power",
+    "solar": "Solar Power",
 
-];
+    "pet friendly": "Pet Friendly",
+    "pets allowed": "Pet Friendly",
 
-amenities.forEach(function(item){
+    "elevator": "Elevator",
+    "lift": "Elevator",
 
-if(text.includes(item)){
+    "swimming pool": "Swimming Pool",
+    "pool": "Swimming Pool",
 
-document.getElementById("amenityFilter").value=item;
+    "gym": "Gym",
+
+    "24/7 security": "24/7 Security",
+    "24 7 security": "24/7 Security",
+    "security": "24/7 Security",
+
+    "rooftop": "Rooftop/Common Area",
+    "common area": "Rooftop/Common Area",
+
+    "backup generator": "Backup Generator",
+    "generator": "Backup Generator",
+
+    "road access": "Road Access",
+
+    "electricity available": "Electricity Available",
+    "electricity": "Electricity Available",
+
+    "water supply": "Water Supply",
+    "water": "Water Supply",
+
+    "cleared land": "Cleared Land",
+
+    "boundary wall": "Boundary Wall",
+
+    "clear deeds": "Clear Deeds",
+    "clear deed": "Clear Deeds",
+
+    "corner land": "Corner Land",
+    "corner": "Corner Land",
+
+    "water line nearby": "Water Line Nearby",
+
+    "close to main road": "Close to Main Road",
+    "main road": "Close to Main Road",
+
+    "three phase electricity": "Three Phase Electricity",
+    "three phase": "Three Phase Electricity",
+
+    "loading area": "Loading Area",
+
+    "fire safety system": "Fire Safety System",
+    "fire safety": "Fire Safety System",
+
+    "staff washrooms": "Staff Washrooms",
+    "staff washroom": "Staff Washrooms",
+
+    "restaurant": "Restaurant",
+
+    "bar": "Bar",
+
+    "free wifi": "Free WiFi",
+    "free wi-fi": "Free WiFi",
+
+    "event hall": "Event Hall"
+
+};
+
+
+let detectedAmenity = "";
+
+Object.keys(amenitySearchMap)
+.forEach(function(keyword){
+
+    if(
+        text.includes(keyword) &&
+        detectedAmenity === ""
+    ){
+
+        detectedAmenity =
+            amenitySearchMap[keyword];
+
+    }
+
+});
+
+
+if(detectedAmenity){
+
+    updateAmenityFilter();
+
+    const amenityFilter =
+        document.getElementById("amenityFilter");
+
+    /*
+    Only select the amenity if it exists
+    for the currently detected property type.
+    */
+
+    const optionExists =
+        Array.from(
+            amenityFilter.options
+        ).some(
+            option =>
+            option.value === detectedAmenity
+        );
+
+    if(optionExists){
+
+        amenityFilter.value =
+            detectedAmenity;
+
+    }
 
 }
 
-});
+
 const views=[
 
 "ocean view",
@@ -6258,6 +6579,8 @@ window.toggleFilters = toggleFilters;
 window.filterProperty = filterProperty;
 window.filterRentalType = filterRentalType;
 window.filterOthertype = filterOthertype;
+window.updateBedroomBathroomFilters = updateBedroomBathroomFilters;
+window.updateAmenityFilter = updateAmenityFilter;
 window.openPostProperty = openPostProperty;
 window.applyAndCloseFilters = applyAndCloseFilters;
 window.resetFilters = resetFilters;
