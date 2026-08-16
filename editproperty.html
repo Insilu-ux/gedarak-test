@@ -526,52 +526,9 @@ placeholder="Example: 2,500"
 inputmode="numeric"
 oninput="formatSqft(this)">
 </div>
-          <h3 class="sectionHeading">🏡 Amenities</h3>
+         <h3 class="sectionHeading">🏡 Amenities</h3>
 
-<label class="checkboxLabel">
-<input type="checkbox" value="Parking" class="amenity">
-<span>Parking</span>
-</label>
-
-<label class="checkboxLabel">
-<input type="checkbox" value="Garage" class="amenity">
-<span>Garage</span>
-</label>
-
-<label class="checkboxLabel">
-<input type="checkbox" value="Pool" class="amenity">
-<span>Swimming Pool</span>
-</label>
-
-<label class="checkboxLabel">
-<input type="checkbox" value="Garden" class="amenity">
-<span>Garden</span>
-</label>
-
-<label class="checkboxLabel">
-<input type="checkbox" value="Gym" class="amenity">
-<span>Gym</span>
-</label>
-
-<label class="checkboxLabel">
-<input type="checkbox" value="Elevator" class="amenity">
-<span>Elevator</span>
-</label>
-
-<label class="checkboxLabel">
-<input type="checkbox" value="Furnished" class="amenity">
-<span>Furnished</span>
-</label>
-
-<label class="checkboxLabel">
-<input type="checkbox" value="Basement" class="amenity">
-<span>Basement</span>
-</label>
-
-<label class="checkboxLabel">
-<input type="checkbox" value="Outdoor Space" class="amenity">
-<span>Outdoor Space</span>
-</label>
+<div id="amenitiesContainer"></div>
         <h3 class="sectionHeading">🌄 Property Viewings</h3>
 
 <label class="checkboxLabel">
@@ -943,6 +900,105 @@ window.numbersOnly = function(input){
     input.value = input.value.replace(/\D/g,"");
 
 }
+const amenityLists = {
+
+Residential: [
+    "Parking",
+    "Garden",
+    "Furnished",
+    "Air Conditioning",
+    "CCTV Security",
+    "Hot Water",
+    "Modern Kitchen",
+    "Fiber Internet",
+    "Solar Power",
+    "Pet Friendly"
+],
+
+Apartment: [
+    "Parking",
+    "Elevator",
+    "Swimming Pool",
+    "Gym",
+    "24/7 Security",
+    "Furnished",
+    "Air Conditioning",
+    "Fiber Internet",
+    "Rooftop/Common Area",
+    "Backup Generator"
+],
+
+Land: [
+    "Road Access",
+    "Electricity Available",
+    "Water Supply",
+    "Fiber Internet",
+    "Cleared Land",
+    "Boundary Wall",
+    "Clear Deeds",
+    "Corner Land",
+    "Water Line Nearby",
+    "Close to Main Road"
+],
+
+Commercial: [
+    "Parking",
+    "CCTV",
+    "Air Conditioning",
+    "Fiber Internet",
+    "Three Phase Electricity",
+    "Loading Area",
+    "Fire Safety System",
+    "Elevator",
+    "Staff Washrooms",
+    "Backup Generator"
+],
+
+Hotel: [
+    "Swimming Pool",
+    "Restaurant",
+    "Bar",
+    "Parking",
+    "Free WiFi",
+    "Air Conditioning",
+    "CCTV",
+    "Event Hall",
+    "Gym",
+    "Garden"
+]
+
+};
+
+
+function renderAmenities(group){
+
+    const container =
+        document.getElementById("amenitiesContainer");
+
+    container.innerHTML = "";
+
+    if(!amenityLists[group]) return;
+
+    amenityLists[group].forEach(function(item){
+
+        container.innerHTML += `
+
+        <label class="checkboxLabel">
+
+        <input
+        type="checkbox"
+        value="${item}"
+        class="amenity">
+
+        <span>${item}</span>
+
+        </label>
+
+        `;
+
+    });
+
+}
        function phoneInput(input){
 
     // Keep only numbers
@@ -963,6 +1019,46 @@ window.numbersOnly = function(input){
 
     const type =
         document.getElementById("propertyType").value;
+
+
+    // ===============================
+    // DYNAMIC AMENITIES
+    // ===============================
+
+    let amenityGroup = "";
+
+    if(
+        ["House","Villa","Bungalow","Annex"].includes(type)
+    ){
+
+        amenityGroup = "Residential";
+
+    }
+    else if(type === "Apartment"){
+
+        amenityGroup = "Apartment";
+
+    }
+    else if(type === "Land"){
+
+        amenityGroup = "Land";
+
+    }
+    else if(
+        ["Commercial","Office","Shop","Warehouse","Building"].includes(type)
+    ){
+
+        amenityGroup = "Commercial";
+
+    }
+    else if(type === "Hotel"){
+
+        amenityGroup = "Hotel";
+
+    }
+
+    renderAmenities(amenityGroup);
+
 
     const bedroomGroup =
         document.getElementById("bedroomGroup");
