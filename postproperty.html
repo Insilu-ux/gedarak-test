@@ -823,6 +823,89 @@ doc
 }
 from "https://www.gstatic.com/firebasejs/12.16.0/firebase-firestore.js";
 
+/* =========================================
+   USER TEXT SECURITY
+   Only allow normal text + emojis.
+   HTML tags are rejected.
+========================================= */
+
+function validatePlainText(value, fieldName){
+
+    if(typeof value !== "string"){
+        return {
+            valid:false,
+            message:`Invalid ${fieldName}.`
+        };
+    }
+
+    value = value.trim();
+
+    /*
+        Reject HTML tags / markup.
+        < and > are not needed for normal
+        property descriptions.
+    */
+
+    if(value.includes("<") || value.includes(">")){
+
+        return {
+            valid:false,
+            message:`${fieldName} contains characters that are not allowed. Please use normal text and emojis only.`
+        };
+
+    }
+
+    /*
+        Reject javascript: style payloads.
+    */
+
+    if(/javascript\s*:/i.test(value)){
+
+        return {
+            valid:false,
+            message:`Invalid content detected in ${fieldName}.`
+        };
+
+    }
+
+    /*
+        Reject HTML event-handler patterns such as:
+        onclick=
+        onerror=
+        onload=
+        onmouseover=
+    */
+
+    if(/\bon[a-z]+\s*=/i.test(value)){
+
+        return {
+            valid:false,
+            message:`Invalid content detected in ${fieldName}.`
+        };
+
+    }
+
+    /*
+        Reject obvious HTML entities that could be
+        deliberately used to construct markup later.
+    */
+
+    if(/&#x?[0-9a-f]+;/i.test(value)){
+
+        return {
+            valid:false,
+            message:`Invalid encoded content detected in ${fieldName}.`
+        };
+
+    }
+
+    return {
+        valid:true,
+        value:value
+    };
+
+}
+
        window.phoneInput = function(input){
 
     // Keep only numbers
@@ -1893,6 +1976,23 @@ return;
 
 }
 
+const nameCheck = validatePlainText(name, "Property Name");
+
+if(!nameCheck.valid){
+
+    showAlert(
+        "Invalid Property Name",
+        nameCheck.message
+    );
+
+    btn.disabled=false;
+    btn.innerHTML="Post Property";
+
+    return;
+}
+
+name = nameCheck.value;
+
 let negotiable =
 document.getElementById("negotiablePrice").checked;
 
@@ -1971,20 +2071,39 @@ return;
 
 let address =
 document.getElementById("address").value.trim();
+
 if(address===""){
 
-showAlert(
-"Property Address Required",
-"Please enter your property address."
-);
+    showAlert(
+        "Property Address Required",
+        "Please enter your property address."
+    );
 
-btn.disabled=false;
+    btn.disabled=false;
+    btn.innerHTML="Post Property";
 
-btn.innerHTML="Post Property";
-
-return;
+    return;
 
 }
+
+const addressCheck =
+    validatePlainText(address, "Property Address");
+
+if(!addressCheck.valid){
+
+    showAlert(
+        "Invalid Property Address",
+        addressCheck.message
+    );
+
+    btn.disabled=false;
+    btn.innerHTML="Post Property";
+
+    return;
+
+}
+
+address = addressCheck.value;
 let bedrooms =
 parseInt(document.getElementById("bedrooms").value)||0;
 
@@ -2002,18 +2121,36 @@ document.getElementById("description").value.trim();
 
 if(description===""){
 
-showAlert(
-"Property Description Required",
-"Please enter a property description."
-);
+    showAlert(
+        "Property Description Required",
+        "Please enter a property description."
+    );
 
-btn.disabled=false;
+    btn.disabled=false;
+    btn.innerHTML="Post Property";
 
-btn.innerHTML="Post Property";
-
-return;
+    return;
 
 }
+
+const descriptionCheck =
+    validatePlainText(description, "Property Description");
+
+if(!descriptionCheck.valid){
+
+    showAlert(
+        "Invalid Description",
+        descriptionCheck.message
+    );
+
+    btn.disabled=false;
+    btn.innerHTML="Post Property";
+
+    return;
+
+}
+
+description = descriptionCheck.value;
 let status =
 document.getElementById("status").value;
 
@@ -2061,20 +2198,58 @@ return;
 }
 
 let mapLink =
-document.getElementById("mapLink").value.trim();
-if(
-    mapLink !== "" &&
-    !mapLink.includes("maps.google") &&
-    !mapLink.includes("goo.gl/maps") &&
-    !mapLink.includes("maps.app.goo.gl")
-){
-    showAlert(
-    "Invalid Google Maps Link",
-    "Please paste a valid Google Maps location."
-);
-btn.disabled = false;
-btn.innerHTML = "Post Property";
-    return;
+    document.getElementById("mapLink").value.trim();
+
+if(mapLink !== ""){
+
+    try{
+
+        const parsedURL = new URL(mapLink);
+
+        const hostname =
+            parsedURL.hostname.toLowerCase();
+
+        const allowedHosts = [
+            "google.com",
+            "www.google.com",
+            "maps.google.com",
+            "goo.gl",
+            "maps.app.goo.gl"
+        ];
+
+        const validHost =
+            allowedHosts.some(host =>
+                hostname === host ||
+                hostname.endsWith("." + host)
+            );
+
+        if(!validHost){
+
+            throw new Error("Invalid host");
+
+        }
+
+        if(parsedURL.protocol !== "https:"){
+
+            throw new Error("Invalid protocol");
+
+        }
+
+    }
+    catch(error){
+
+        showAlert(
+            "Invalid Google Maps Link",
+            "Please paste a valid Google Maps location."
+        );
+
+        btn.disabled=false;
+        btn.innerHTML="Post Property";
+
+        return;
+
+    }
+
 }
 let amenities=[];
 
@@ -2632,23 +2807,23 @@ window.location.href="index.html";
 }
 window.showAlert = function(title,message,type="warning"){
 
-let icon="⚠️";
+    let icon="⚠️";
 
-if(type==="error"){
-icon="❌";
-}
+    if(type==="error"){
+        icon="❌";
+    }
 
-if(type==="success"){
-icon="✅";
-}
+    if(type==="success"){
+        icon="✅";
+    }
 
-document.getElementById("alertIcon").innerHTML=icon;
+    document.getElementById("alertIcon").textContent = icon;
 
-document.getElementById("alertTitle").innerHTML=title;
+    document.getElementById("alertTitle").textContent = title;
 
-document.getElementById("alertMessage").innerHTML=message;
+    document.getElementById("alertMessage").textContent = message;
 
-document.getElementById("customAlert").style.display="flex";
+    document.getElementById("customAlert").style.display="flex";
 
 }
 
