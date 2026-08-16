@@ -587,8 +587,18 @@ id="propertyImages"
 multiple
 accept="image/*"
 onchange="previewImages()">
+
 <br>
 
+<h2
+id="uploadStatus"
+style="
+margin-top:15px;
+color:#222;
+font-size:18px;
+display:none;
+">
+</h2>
 
 
 <p
@@ -820,78 +830,147 @@ window.formatSqft = function(input){
 }
 async function compressImage(file){
 
-return new Promise((resolve)=>{
+    return new Promise((resolve, reject)=>{
 
-const img=new Image();
+        const img = new Image();
 
-const reader=new FileReader();
+        const objectUrl =
+            URL.createObjectURL(file);
 
-reader.onload=function(e){
+        img.onload = ()=>{
 
-img.src=e.target.result;
+            URL.revokeObjectURL(objectUrl);
 
-};
+            let width = img.width;
+            let height = img.height;
 
-img.onload=function(){
+            const MAX_WIDTH = 1400;
+            const MAX_HEIGHT = 1400;
 
-const canvas=document.createElement("canvas");
+            if(width > height){
 
-let width=img.width;
+                if(width > MAX_WIDTH){
 
-let height=img.height;
+                    height *= MAX_WIDTH / width;
+                    width = MAX_WIDTH;
 
-const MAX_WIDTH=1920;
+                }
 
-if(width>MAX_WIDTH){
+            }else{
 
-height=height*(MAX_WIDTH/width);
+                if(height > MAX_HEIGHT){
 
-width=MAX_WIDTH;
+                    width *= MAX_HEIGHT / height;
+                    height = MAX_HEIGHT;
+
+                }
+
+            }
+
+            const canvas =
+                document.createElement("canvas");
+
+            canvas.width =
+                Math.round(width);
+
+            canvas.height =
+                Math.round(height);
+
+            const ctx =
+                canvas.getContext("2d");
+
+            ctx.drawImage(
+                img,
+                0,
+                0,
+                canvas.width,
+                canvas.height
+            );
+
+            canvas.toBlob(
+
+                blob=>{
+
+                    if(!blob){
+
+                        reject(
+                            new Error(
+                                "Image compression failed."
+                            )
+                        );
+
+                        return;
+                    }
+
+                    const newName =
+                        file.name
+                            .replace(/\.[^/.]+$/, "")
+                            + ".jpg";
+
+                    resolve(
+
+                        new File(
+                            [blob],
+                            newName,
+                            {
+                                type:"image/jpeg",
+                                lastModified:Date.now()
+                            }
+                        )
+
+                    );
+
+                },
+
+                "image/jpeg",
+
+                0.72
+
+            );
+
+        };
+
+        img.onerror = ()=>{
+
+            URL.revokeObjectURL(objectUrl);
+
+            reject(
+                new Error(
+                    "Could not process image."
+                )
+            );
+
+        };
+
+        img.src = objectUrl;
+
+    });
 
 }
+function updateUploadStatus(message){
 
-canvas.width=width;
-canvas.height=height;
+    const status =
+        document.getElementById("uploadStatus");
 
-const ctx=canvas.getContext("2d");
+    if(!status){
+        return;
+    }
 
-ctx.drawImage(img,0,0,width,height);
-
-canvas.toBlob(
-
-function(blob){
-
-const compressedFile=new File(
-
-[blob],
-
-file.name,
-
-{
-
-type:"image/jpeg",
-
-lastModified:Date.now()
+    status.style.display = "block";
+    status.textContent = message;
 
 }
+function hideUploadStatus(){
 
-);
+    const status =
+        document.getElementById("uploadStatus");
 
-resolve(compressedFile);
+    if(!status){
+        return;
+    }
 
-},
-
-"image/jpeg",
-
-0.82
-
-);
-
-};
-
-reader.readAsDataURL(file);
-
-});
+    status.style.display = "none";
+    status.textContent = "";
 
 }
 window.numbersOnly = function(input){
@@ -1849,6 +1928,156 @@ hideLoading();
         });
         }
        }
+       let completedUploads = 0;
+let nextUploadIndex = 0;
+
+async function uploadWorker(
+    orderedImages,
+    results,
+    totalNewImages
+){
+
+    while(true){
+
+        const index =
+            nextUploadIndex++;
+
+        if(
+            index >=
+            orderedImages.length
+        ){
+
+            return;
+
+        }
+
+        const item =
+            orderedImages[index];
+
+        /*
+            Existing Firebase image.
+            No upload required.
+        */
+
+        if(typeof item === "string"){
+
+            results[index] = item;
+
+            continue;
+
+        }
+
+        /*
+            Newly compressed image.
+        */
+
+        if(item instanceof File){
+
+            const storageRef =
+                ref(
+                    storage,
+                    "propertyImages/" +
+                    crypto.randomUUID() +
+                    "_" +
+                    item.name
+                );
+
+            await uploadBytes(
+                storageRef,
+                item
+            );
+
+            const url =
+                await getDownloadURL(
+                    storageRef
+                );
+
+            results[index] = url;
+
+            completedUploads++;
+
+            updateUploadStatus(
+                `Uploading image ${completedUploads} of ${totalNewImages}...`
+            );
+
+        }
+
+    }
+
+}
+async function uploadImagesParallel(
+    orderedImages
+){
+
+    const results =
+        new Array(
+            orderedImages.length
+        );
+
+    const totalNewImages =
+        orderedImages.filter(
+            item =>
+                item instanceof File
+        ).length;
+
+    /*
+        Nothing new to upload.
+    */
+
+    if(totalNewImages === 0){
+
+        return orderedImages.slice();
+
+    }
+
+    completedUploads = 0;
+    nextUploadIndex = 0;
+
+    updateUploadStatus(
+        `Uploading image 0 of ${totalNewImages}...`
+    );
+
+    /*
+        Four simultaneous Firebase uploads.
+    */
+
+    const WORKER_COUNT = 4;
+
+    const workerCount =
+        Math.min(
+            WORKER_COUNT,
+            totalNewImages
+        );
+
+    const workers = [];
+
+    for(
+        let i = 0;
+        i < workerCount;
+        i++
+    ){
+
+        workers.push(
+
+            uploadWorker(
+                orderedImages,
+                results,
+                totalNewImages
+            )
+
+        );
+
+    }
+
+    await Promise.all(workers);
+
+    updateUploadStatus(
+        `Uploaded ${totalNewImages} image(s) successfully.`
+    );
+
+    return results;
+
+}
         async function saveChanges(){
             const btn = document.getElementById("saveBtn");
 
@@ -1856,8 +2085,8 @@ btn.disabled = true;
 btn.textContent = "⏳ Saving...";
 
 showLoading(
-"Saving Changes...",
-"Please wait while we update your property."
+    "Saving Changes...",
+    "Preparing your property..."
 );
 
 if(document.getElementById("propertyName").value.trim() === ""){
@@ -2093,55 +2322,79 @@ hideLoading();
 // Keep the visual order of selectedImages unchanged.
 // Only create the Firebase image order separately.
 
-const finalImages = [];
+/* ===============================
+   SAVE IMAGES WITH SELECTED COVER
+   =============================== */
 
 const orderedImages = [
 
     selectedImages[coverImageIndex],
 
     ...selectedImages.filter(
-        (_, index) => index !== coverImageIndex
+        (_, index) =>
+            index !== coverImageIndex
     )
 
 ];
 
-for(const item of orderedImages){
+/*
+    Upload new images in parallel.
 
-    // Existing Firebase image
-    if(typeof item === "string"){
+    Existing Firebase URLs are kept
+    exactly as they are.
+*/
 
-        finalImages.push(item);
+const finalImages =
+    await uploadImagesParallel(
+        orderedImages
+    );
 
-    }
+    if(
+    orderedImages.some(
+        item => item instanceof File
+    )
+){
 
-    // Newly selected image
-    else if(item instanceof File){
+    showLoading(
+        "Uploading Images...",
+        "Please wait while your new property images are uploaded."
+    );
 
-        const compressedFile =
-            await compressImage(item);
+}
+/*
+    Make sure every image uploaded
+    successfully.
+*/
 
-        const storageRef = ref(
-            storage,
-            "propertyImages/" +
-            crypto.randomUUID() +
-            "_" +
-            compressedFile.name
-        );
+if(
+    finalImages.length === 0 ||
+    finalImages.some(
+        image => !image
+    )
+){
 
-        await uploadBytes(
-            storageRef,
-            compressedFile
-        );
+    showAlert(
+        "Image Upload Failed",
+        "One or more images could not be uploaded. Please try again."
+    );
 
-        const url =
-            await getDownloadURL(storageRef);
+    btn.disabled = false;
+    btn.textContent = "Save Changes";
 
-        finalImages.push(url);
+    hideLoading();
+    hideUploadStatus();
 
-    }
+    return;
 
 }
 
+/*
+    Save images in EXACTLY the
+    seller-selected order.
+*/
+
+property.images =
+    finalImages;
 
 // Make sure at least one image exists
 if(finalImages.length === 0){
@@ -2168,7 +2421,9 @@ await saveEditedProperty();
 
 btn.disabled = false;
 btn.textContent = "Save Changes";
+
 hideLoading();
+hideUploadStatus();
 
 }
 async function saveEditedProperty(){
@@ -2213,60 +2468,174 @@ function removeSelectedImage(index){
     selectedImages.splice(index,1);
 
     if(selectedImages.length === 0){
+
         coverImageIndex = 0;
+
     }
     else if(index === coverImageIndex){
+
         coverImageIndex = 0;
+
     }
     else if(index < coverImageIndex){
+
         coverImageIndex--;
+
     }
 
-    const dt = new DataTransfer();
+    refreshPreview();
 
-    selectedImages.forEach(file => {
-        if(file instanceof File){
-            dt.items.add(file);
+}
+window.previewImages = function(){
+
+    const input =
+        document.getElementById("propertyImages");
+
+    (async()=>{
+
+        const files =
+            Array.from(input.files);
+
+        if(files.length === 0){
+            return;
         }
-    });
 
-    document.getElementById("propertyImages").files = dt.files;
+        const remainingSlots =
+            20 - selectedImages.length;
 
-    refreshPreview();
+        if(remainingSlots <= 0){
+
+            showAlert(
+                "Maximum Images Reached",
+                "You can upload a maximum of 20 images."
+            );
+
+            input.value = "";
+
+            return;
+        }
+
+        const filesToProcess =
+            files.slice(0, remainingSlots);
+
+        if(files.length > remainingSlots){
+
+            showAlert(
+                "Maximum Images Reached",
+                "Only 20 images can be uploaded."
+            );
+
+        }
+
+        /*
+            Maximum ORIGINAL file size:
+            10 MB per image
+        */
+
+        const MAX_FILE_SIZE =
+            10 * 1024 * 1024;
+
+        for(const file of filesToProcess){
+
+            if(file.size > MAX_FILE_SIZE){
+
+                showAlert(
+                    "Image Too Large",
+                    `"${file.name}" is larger than 10 MB. Please choose a smaller image.`
+                );
+
+                input.value = "";
+
+                return;
+
+            }
+
+        }
+
+        try{
+
+            updateUploadStatus(
+                `Preparing ${filesToProcess.length} image(s)...`
+            );
+
+            /*
+                Compress several images at the same time.
+            */
+
+            const compressedImages =
+                await Promise.all(
+
+                    filesToProcess.map(
+                        file =>
+                            compressImage(file)
+                    )
+
+                );
+
+            selectedImages.push(
+                ...compressedImages
+            );
+
+            /*
+                Make sure the cover index
+                remains valid.
+            */
+
+            if(selectedImages.length > 0){
+
+                if(
+                    coverImageIndex >=
+                    selectedImages.length ||
+                    coverImageIndex === undefined
+                ){
+
+                    coverImageIndex = 0;
+
+                }
+
+            }else{
+
+                coverImageIndex = 0;
+
+            }
+
+            /*
+                Clear the input so the same file
+                can be selected again later if needed.
+            */
+
+            input.value = "";
+
+            refreshPreview();
+
+            updateUploadStatus(
+                `${selectedImages.length} image(s) ready.`
+            );
+
+            setTimeout(
+                hideUploadStatus,
+                2500
+            );
+
+        }catch(error){
+
+            console.error(
+                "Image compression error:",
+                error
+            );
+
+            hideUploadStatus();
+
+            showAlert(
+                "Image Processing Failed",
+                "One or more images could not be processed. Please try again."
+            );
+
+        }
+
+    })();
 
 }
-window.previewImages = function () {
-
-    const input = document.getElementById("propertyImages");
-    const files = Array.from(input.files);
-
-    selectedImages = [
-    ...selectedImages,
-    ...files
-];
-
-    if (selectedImages.length > 20) {
-
-        showAlert(
-    "Maximum Images Reached",
-    "You can upload up to 20 images."
-);
-
-        selectedImages = selectedImages.slice(0,20);
-
-        const dt = new DataTransfer();
-
-        selectedImages.forEach(file=>{
-            dt.items.add(file);
-        });
-
-        input.files = dt.files;
-    }
-
-    refreshPreview();
-
-}
-
 function refreshPreview(){
 
     const preview =
