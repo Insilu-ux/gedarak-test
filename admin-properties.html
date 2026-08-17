@@ -226,6 +226,18 @@ opacity:1;
 
 }
 
+@keyframes spin{
+
+    from{
+        transform:rotate(0deg);
+    }
+
+    to{
+        transform:rotate(360deg);
+    }
+
+}
+
 </style>
 
 </head>
@@ -334,31 +346,43 @@ Actions
 
    <div id="gedarakModal">
 
-<div class="modal-box">
+    <div class="modal-box">
 
-<h2 id="modalTitle">
-Gedarak.lk
-</h2>
+        <div
+            id="modalSpinner"
+            style="
+                display:none;
+                font-size:50px;
+                margin-bottom:15px;
+                animation:spin 1s linear infinite;
+            "
+        >
+            ⏳
+        </div>
 
-<p id="modalMessage"></p>
+        <h2 id="modalTitle">
+            Gedarak.lk
+        </h2>
 
-<div class="modal-buttons">
+        <p id="modalMessage"></p>
 
-<button
-id="modalOk"
-class="modal-ok">
-OK
-</button>
+        <div class="modal-buttons">
 
-<button
-id="modalLater"
-class="modal-later">
-Cancel
-</button>
+            <button
+                id="modalOk"
+                class="modal-ok">
+                OK
+            </button>
 
-</div>
+            <button
+                id="modalLater"
+                class="modal-later">
+                Cancel
+            </button>
 
-</div>
+        </div>
+
+    </div>
 
 </div>
 
@@ -421,159 +445,596 @@ loadProperties();
 
 async function loadProperties(){
 
-const snapshot = await getDocs(collection(db,"properties"));
+    const table =
+        document.getElementById("propertyTable");
 
-let table = document.getElementById("propertyTable");
 
-table.innerHTML = "";
+    /* =====================================================
+       SHOW LOADING
+       ===================================================== */
 
-let search =
-document.getElementById("search").value.toLowerCase();
+    table.innerHTML = `
 
-snapshot.forEach((document)=>{
+        <tr>
 
-const p = {
-id: document.id,
-...document.data()
-};
+            <td
+                colspan="10"
+                style="
+                    text-align:center;
+                    padding:45px;
+                    font-size:18px;
+                    color:#666;
+                "
+            >
 
-let searchable = (
-(p.name || "") + " " +
-(p.city || "") + " " +
-(p.district || "") + " " +
-(p.propertyType || "") + " " +
-(p.status || "")
-).toLowerCase();
+                <div
+                    style="
+                        font-size:38px;
+                        margin-bottom:12px;
+                        animation:spin 1s linear infinite;
+                    "
+                >
+                    ⏳
+                </div>
 
-if(!searchable.includes(search)){
-return;
-}
+                <strong>
+                    Loading properties...
+                </strong>
 
-table.innerHTML += `
+                <div
+                    style="
+                        margin-top:8px;
+                        font-size:14px;
+                        color:#999;
+                    "
+                >
+                    Please wait while we retrieve the properties.
+                </div>
 
-<tr>
+            </td>
 
-<td>
-<img src="${p.images?.[0] || ''}">
-</td>
+        </tr>
 
-<td>${p.name}</td>
+    `;
 
-<td>${p.district}</td>
 
-<td>${p.city}</td>
+    try{
 
-<td>${p.propertyType}</td>
+        /* =================================================
+           GET PROPERTIES
+           ================================================= */
 
-<td>
+        const snapshot =
+            await getDocs(
+                collection(db,"properties")
+            );
 
-${
-p.negotiable
-?
-"💬 Negotiable"
-:
-"💸 Rs. " + Number(p.price).toLocaleString()
-}
 
-</td>
+        table.innerHTML = "";
 
-<td>
 
-<span style="
-font-weight:bold;
-color:
-${p.status=="For Sale"?"green":
-p.status=="For Rent"?"blue":
-"orange"};
-">
+        const search =
+            document
+                .getElementById("search")
+                .value
+                .trim()
+                .toLowerCase();
 
-${p.status}
 
-</span>
+        let visibleProperties = 0;
 
-</td>
 
-<td>
+        /* =================================================
+           DISPLAY PROPERTIES
+           ================================================= */
 
-${p.views || 0}
+        snapshot.forEach((document)=>{
 
-</td>
+            const p = {
 
-<td>
+                id:document.id,
 
-${
-p.createdAt
-?
-new Date(
-p.createdAt.toMillis()
-).toLocaleDateString()
-:
-"-"
-}
+                ...document.data()
 
-</td>
+            };
 
-<td>
 
-<button
-style="background:#1976d2;color:white;"
-onclick="viewProperty('${p.id}')">
-👁 View
-</button>
+            const searchable = (
 
-<button
-style="background:#2e7d32;color:white;"
-onclick="editProperty('${p.id}')">
-✏ Edit
-</button>
+                (p.name || "") + " " +
 
-<button
-style="background:#d32f2f;color:white;"
-onclick="deleteProperty('${p.id}')">
-🗑 Delete
-</button>
+                (p.city || "") + " " +
 
-</td>
+                (p.district || "") + " " +
 
-</tr>
+                (p.propertyType || "") + " " +
 
-`;
+                (p.status || "")
 
-});
+            ).toLowerCase();
+
+
+            /* SEARCH */
+
+            if(
+                search &&
+                !searchable.includes(search)
+            ){
+
+                return;
+
+            }
+
+
+            visibleProperties++;
+
+
+            /* =================================================
+               DATE
+               ================================================= */
+
+            let postedDate = "-";
+
+
+            if(p.createdAt){
+
+                try{
+
+                    if(
+                        typeof p.createdAt.toDate ===
+                        "function"
+                    ){
+
+                        postedDate =
+                            p.createdAt
+                            .toDate()
+                            .toLocaleDateString(
+                                "en-LK"
+                            );
+
+                    }
+
+                    else if(
+                        typeof p.createdAt.toMillis ===
+                        "function"
+                    ){
+
+                        postedDate =
+                            new Date(
+                                p.createdAt.toMillis()
+                            )
+                            .toLocaleDateString(
+                                "en-LK"
+                            );
+
+                    }
+
+                }
+                catch(error){
+
+                    console.error(
+                        "Date formatting error:",
+                        error
+                    );
+
+                }
+
+            }
+
+
+            /* =================================================
+               STATUS COLOR
+               ================================================= */
+
+            let statusColor = "orange";
+
+
+            if(p.status === "For Sale"){
+
+                statusColor = "green";
+
+            }
+
+            else if(p.status === "For Rent"){
+
+                statusColor = "blue";
+
+            }
+
+
+            /* =================================================
+               FIRST IMAGE
+               ================================================= */
+
+            const firstImage =
+                p.images?.[0] || "";
+
+
+            /* =================================================
+               ADD ROW
+               ================================================= */
+
+            table.innerHTML += `
+
+                <tr>
+
+
+                    <!-- IMAGE -->
+
+                    <td>
+
+                        ${
+                            firstImage
+                            ?
+
+                            `
+                            <img
+                                src="${firstImage}"
+                                alt="Property"
+                            >
+                            `
+
+                            :
+
+                            `
+                            <div
+                                style="
+                                    width:120px;
+                                    height:80px;
+                                    display:flex;
+                                    align-items:center;
+                                    justify-content:center;
+                                    background:#f1f1f1;
+                                    border-radius:8px;
+                                    color:#999;
+                                "
+                            >
+                                No Image
+                            </div>
+                            `
+                        }
+
+                    </td>
+
+
+                    <!-- NAME -->
+
+                    <td>
+
+                        ${p.name || "-"}
+
+                    </td>
+
+
+                    <!-- DISTRICT -->
+
+                    <td>
+
+                        ${p.district || "-"}
+
+                    </td>
+
+
+                    <!-- CITY -->
+
+                    <td>
+
+                        ${p.city || "-"}
+
+                    </td>
+
+
+                    <!-- TYPE -->
+
+                    <td>
+
+                        ${p.propertyType || "-"}
+
+                    </td>
+
+
+                    <!-- PRICE -->
+
+                    <td>
+
+                        ${
+                            p.negotiable
+
+                            ?
+
+                            "💬 Negotiable"
+
+                            :
+
+                            "💸 Rs. " +
+                            Number(
+                                p.price || 0
+                            ).toLocaleString()
+
+                        }
+
+                    </td>
+
+
+                    <!-- STATUS -->
+
+                    <td>
+
+                        <span
+                            style="
+                                font-weight:bold;
+                                color:${statusColor};
+                            "
+                        >
+
+                            ${p.status || "-"}
+
+                        </span>
+
+                    </td>
+
+
+                    <!-- VIEWS -->
+
+                    <td>
+
+                        ${p.views || 0}
+
+                    </td>
+
+
+                    <!-- POSTED -->
+
+                    <td>
+
+                        ${postedDate}
+
+                    </td>
+
+
+                    <!-- ACTIONS -->
+
+                    <td>
+
+                        <button
+                            style="
+                                background:#1976d2;
+                                color:white;
+                            "
+                            onclick="
+                                viewProperty('${p.id}')
+                            "
+                        >
+
+                            👁 View
+
+                        </button>
+
+
+                        <button
+                            style="
+                                background:#2e7d32;
+                                color:white;
+                            "
+                            onclick="
+                                editProperty('${p.id}')
+                            "
+                        >
+
+                            ✏ Edit
+
+                        </button>
+
+
+                        <button
+                            style="
+                                background:#d32f2f;
+                                color:white;
+                            "
+                            onclick="
+                                deleteProperty('${p.id}')
+                            "
+                        >
+
+                            🗑 Delete
+
+                        </button>
+
+                    </td>
+
+
+                </tr>
+
+            `;
+
+        });
+
+
+        /* =================================================
+           NO RESULTS
+           ================================================= */
+
+        if(visibleProperties === 0){
+
+            table.innerHTML = `
+
+                <tr>
+
+                    <td
+                        colspan="10"
+                        style="
+                            text-align:center;
+                            padding:40px;
+                            color:#777;
+                            font-size:17px;
+                        "
+                    >
+
+                        ${
+                            search
+
+                            ?
+
+                            "🔎 No properties match your search."
+
+                            :
+
+                            "🏠 No properties have been posted yet."
+
+                        }
+
+                    </td>
+
+                </tr>
+
+            `;
+
+        }
+
+    }
+
+    catch(error){
+
+        console.error(
+            "Error loading properties:",
+            error
+        );
+
+
+        table.innerHTML = `
+
+            <tr>
+
+                <td
+                    colspan="10"
+                    style="
+                        text-align:center;
+                        padding:40px;
+                        color:#b00020;
+                        font-size:17px;
+                    "
+                >
+
+                    ❌ Unable to load properties.
+
+                    <br><br>
+
+                    <span
+                        style="
+                            font-size:14px;
+                            color:#777;
+                        "
+                    >
+
+                        Please check your internet connection
+                        and try again.
+
+                    </span>
+
+                </td>
+
+            </tr>
+
+        `;
+
+    }
 
 }
 
 async function deleteProperty(id){
 
-showAlert(
+    showAlert(
 
-"🗑 Delete this property permanently?",
+        "🗑 Delete this property permanently?",
 
-async function(){
+        async function(){
 
-await deletePropertyCompletely(id);
+            /* =================================================
+               SHOW DELETING LOADING POPUP
+               ================================================= */
 
-loadProperties();
+            showAlert(
 
-showAlert(
+                "The property and its images are being permanently deleted.\n\nPlease wait...",
 
-"✅ Property deleted successfully.",
+                null,
 
-null,
+                true,
 
-true,
+                "🗑 Deleting Property...",
 
-"Deleted"
+                true
 
-);
+            );
 
-},
 
-false,
+            try{
 
-"Delete Property"
+                /* =================================================
+                   DELETE PROPERTY + ALL IMAGES
+                   ================================================= */
 
-);
+                await deletePropertyCompletely(id);
+
+
+                /* =================================================
+                   REFRESH PROPERTY LIST
+                   ================================================= */
+
+                await loadProperties();
+
+
+                /* =================================================
+                   SUCCESS MESSAGE
+                   ================================================= */
+
+                showAlert(
+
+                    "The property and its associated images have been permanently deleted.",
+
+                    null,
+
+                    true,
+
+                    "✅ Property Deleted"
+
+                );
+
+            }
+
+            catch(error){
+
+                console.error(
+                    "Property deletion error:",
+                    error
+                );
+
+
+                /* =================================================
+                   ERROR MESSAGE
+                   ================================================= */
+
+                showAlert(
+
+                    "The property could not be deleted.\n\nPlease check your internet connection and try again.",
+
+                    null,
+
+                    true,
+
+                    "❌ Deletion Failed"
+
+                );
+
+            }
+
+        },
+
+        false,
+
+        "Delete Property"
+
+    );
 
 }
 
@@ -627,29 +1088,95 @@ true,
     message,
     okAction,
     hideLater = false,
-    title = "Gedarak.lk"
+    title = "Gedarak.lk",
+    hideButtons = false
 ){
 
     const modal =
-    document.getElementById("gedarakModal");
+        document.getElementById("gedarakModal");
 
-    document.getElementById("modalTitle").textContent =
-    title;
 
-    document.getElementById("modalMessage").textContent =
-    message;
+    const buttons =
+        document.querySelector(".modal-buttons");
+
+
+    const spinner =
+        document.getElementById("modalSpinner");
+
+
+    /* =====================================================
+       BUTTONS
+       ===================================================== */
+
+    buttons.style.display =
+        hideButtons
+        ? "none"
+        : "flex";
+
+
+    /* =====================================================
+       SPINNER
+       ===================================================== */
+
+    spinner.style.display =
+        hideButtons
+        ? "block"
+        : "none";
+
+
+    /* =====================================================
+       TITLE
+       ===================================================== */
+
+    document.getElementById(
+        "modalTitle"
+    ).textContent =
+        title;
+
+
+    /* =====================================================
+       MESSAGE
+       ===================================================== */
+
+    document.getElementById(
+        "modalMessage"
+    ).textContent =
+        message;
+
+
+    /* =====================================================
+       CANCEL / LATER BUTTON
+       ===================================================== */
 
     const laterBtn =
-    document.getElementById("modalLater");
+        document.getElementById("modalLater");
+
 
     laterBtn.style.display =
-    hideLater ? "none" : "inline-block";
+        hideLater
+        ? "none"
+        : "inline-block";
 
-    modal.style.display = "flex";
 
-    document.getElementById("modalOk").onclick = function(){
+    /* =====================================================
+       SHOW MODAL
+       ===================================================== */
 
-        modal.style.display = "none";
+    modal.style.display =
+        "flex";
+
+
+    /* =====================================================
+       OK BUTTON
+       ===================================================== */
+
+    document.getElementById(
+        "modalOk"
+    ).onclick = function(){
+
+        modal.style.display =
+            "none";
+
 
         if(okAction){
 
@@ -659,17 +1186,22 @@ true,
 
     };
 
+
+    /* =====================================================
+       LATER / CANCEL BUTTON
+       ===================================================== */
+
     laterBtn.onclick = function(){
 
-        modal.style.display = "none";
+        modal.style.display =
+            "none";
 
     };
 
-}
+};
 
 
 window.deleteProperty = deleteProperty;
-window.editProperty = editProperty;
 window.viewProperty = viewProperty;
 window.loadProperties = loadProperties;
 
