@@ -1250,20 +1250,62 @@ window.deleteProperty = function(key){
 
         async function(){
 
+            /*
+            ==========================================
+            USER CONFIRMED DELETE
+            ==========================================
+            */
+
+            showMyListingsLoader(
+                "Deleting property..."
+            );
+
+
             try{
+
+                /*
+                ==========================================
+                DELETE PROPERTY FROM FIREBASE
+                ==========================================
+                */
 
                 await deletePropertyCompletely(key);
 
+
+                /*
+                ==========================================
+                HIDE LOADING POPUP
+                ==========================================
+                */
+
+                hideMyListingsLoader();
+
+
+                /*
+                ==========================================
+                SHOW SUCCESS POPUP
+                ==========================================
+                */
+
                 showAlert(
+
                     "Property deleted successfully.",
 
                     function(){
+
+                        /*
+                        Refresh the page so the deleted
+                        property disappears from My Listings
+                        and the count updates.
+                        */
 
                         location.reload();
 
                     },
 
-                    true
+                    true,
+
+                    "✅ Deleted"
 
                 );
 
@@ -1276,11 +1318,32 @@ window.deleteProperty = function(key){
                     error
                 );
 
+
+                /*
+                ==========================================
+                HIDE LOADING POPUP IF DELETE FAILS
+                ==========================================
+                */
+
+                hideMyListingsLoader();
+
+
+                /*
+                ==========================================
+                SHOW ERROR POPUP
+                ==========================================
+                */
+
                 showAlert(
+
                     "Unable to delete this property right now. Please try again.",
+
                     null,
+
                     true,
+
                     "⚠️ Error"
+
                 );
 
             }
@@ -1290,6 +1353,7 @@ window.deleteProperty = function(key){
         false,
 
         "⚠️ Warning"
+
     );
 
 };
@@ -1552,7 +1616,45 @@ function timeAgo(date){
 
 }
 
+/*
+==========================================
+SHOW MY LISTINGS LOADING POPUP
+==========================================
+*/
 
+function showMyListingsLoader(message = "Loading your listings..."){
+
+    const loader =
+        document.getElementById(
+            "myListingsLoadingOverlay"
+        );
+
+
+    if(!loader){
+
+        return;
+
+    }
+
+
+    const messageElement =
+        loader.querySelector(
+            ".my-listings-loading-box p"
+        );
+
+
+    if(messageElement){
+
+        messageElement.textContent =
+            message;
+
+    }
+
+
+    loader.style.display =
+        "flex";
+
+}
 
 /*
 ==========================================
