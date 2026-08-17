@@ -5,7 +5,6 @@
 <meta charset="UTF-8">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-     <meta name="robots" content="noindex, nofollow">
 <title>
 
 Manage Reports
@@ -258,11 +257,109 @@ cursor:pointer;
 
 }
 
+#reportsLoading{
+
+position:fixed;
+
+top:0;
+left:0;
+
+width:100%;
+height:100%;
+
+background:rgba(0,0,0,.35);
+
+display:flex;
+
+align-items:center;
+justify-content:center;
+
+z-index:999998;
+
+}
+
+.reports-loading-box{
+
+background:white;
+
+padding:25px 35px;
+
+border-radius:16px;
+
+text-align:center;
+
+box-shadow:0 10px 35px rgba(0,0,0,.25);
+
+min-width:250px;
+
+}
+
+.reports-spinner{
+
+width:38px;
+height:38px;
+
+border:4px solid #ddd;
+
+border-top:4px solid #009688;
+
+border-radius:50%;
+
+animation:reportsSpin .8s linear infinite;
+
+margin:0 auto 15px;
+
+}
+
+.reports-loading-box h3{
+
+margin:0 0 8px;
+
+font-size:20px;
+
+}
+
+.reports-loading-box p{
+
+margin:0;
+
+color:#666;
+
+font-size:14px;
+
+}
+
+@keyframes reportsSpin{
+
+from{
+transform:rotate(0deg);
+}
+
+to{
+transform:rotate(360deg);
+}
+
+}
+
 </style>
 
 </head>
 
 <body>
+
+<div id="reportsLoading">
+
+    <div class="reports-loading-box">
+
+        <div class="reports-spinner"></div>
+
+        <h3>Loading Reports</h3>
+
+        <p>Please wait...</p>
+
+    </div>
+
+</div>
 
 <a href="admin.html">
 
@@ -429,271 +526,620 @@ loadReports();
 
 });
 
+function formatReportDate(timestamp) {
+
+    if (!timestamp) {
+        return "-";
+    }
+
+    let date;
+
+    // Firestore Timestamp
+    if (typeof timestamp.toDate === "function") {
+
+        date = timestamp.toDate();
+
+    }
+
+    // Firestore timestamp represented as seconds/nanoseconds
+    else if (
+        typeof timestamp.seconds === "number"
+    ) {
+
+        date = new Date(
+            timestamp.seconds * 1000
+        );
+
+    }
+
+    // Normal JavaScript Date
+    else if (timestamp instanceof Date) {
+
+        date = timestamp;
+
+    }
+
+    // String date
+    else {
+
+        date = new Date(timestamp);
+
+    }
+
+    if (isNaN(date.getTime())) {
+        return "-";
+    }
+
+    return date.toLocaleString("en-LK", {
+        year: "numeric",
+        month: "short",
+        day: "numeric",
+        hour: "2-digit",
+        minute: "2-digit",
+        second: "2-digit",
+        hour12: true,
+        timeZone: "Asia/Colombo"
+    });
+
+}
+
 async function loadReports(){
 
-const snapshot =
+    const table =
+        document.getElementById("reportTable");
 
-await getDocs(collection(db,"reports"));
+    const searchInput =
+        document.getElementById("searchReport");
 
-const reports=[];
+    const statusInput =
+        document.getElementById("statusFilter");
 
-snapshot.forEach(d=>{
 
-reports.push({
+    /* =====================================================
+       SHOW LOADING
+       ===================================================== */
 
-docId:d.id,
-...d.data()
+    table.innerHTML = `
 
-});
+        <tr>
 
-});
+            <td
+                colspan="7"
+                style="
+                    text-align:center;
+                    padding:45px;
+                    font-size:18px;
+                    color:#666;
+                "
+            >
 
-let search=
+                <div
+                    style="
+                        font-size:38px;
+                        margin-bottom:12px;
+                        animation:spin 1s linear infinite;
+                    "
+                >
+                    ⏳
+                </div>
 
-document.getElementById(
+                <strong>
+                    Loading reports...
+                </strong>
 
-"searchReport"
+                <div
+                    style="
+                        margin-top:8px;
+                        font-size:14px;
+                        color:#999;
+                    "
+                >
+                    Please wait while we retrieve the reports.
+                </div>
 
-).value.toLowerCase();
+            </td>
 
-let status=
+        </tr>
 
-document.getElementById(
+    `;
 
-"statusFilter"
 
-).value;
+    try {
 
-let table=
+        /* =================================================
+           GET REPORTS
+           ================================================= */
 
-document.getElementById("reportTable");
+        const snapshot =
+            await getDocs(
+                collection(db, "reports")
+            );
 
-table.innerHTML="";
 
-reports.forEach(function(report,index){
+        const reports = [];
 
-    let searchable=(
 
-report.name+" "+
+        snapshot.forEach(d => {
 
-report.email+" "+
+            reports.push({
 
-report.type+" "+
+                docId: d.id,
 
-report.property+" "+
+                ...d.data()
 
-report.message
+            });
 
-).toLowerCase();
+        });
 
-if(
 
-!searchable.includes(search)
+        /* =================================================
+           SEARCH + FILTER
+           ================================================= */
 
-){
+        const search =
+            searchInput.value
+                .trim()
+                .toLowerCase();
 
-return;
 
-}
+        const status =
+            statusInput.value;
 
-if(
 
-status!="" &&
+        table.innerHTML = "";
 
-(report.status || "Pending")!=status
 
-){
+        let visibleReports = 0;
 
-return;
 
-}
+        /* =================================================
+           DISPLAY REPORTS
+           ================================================= */
 
-table.innerHTML+=`
+        reports.forEach(function(report){
 
-<tr>
+            const searchable = (
 
-<td>
+                (report.name || "") + " " +
 
-<div
-style="
-max-width:180px;
-max-height:70px;
-overflow:auto;
-font-weight:bold;
-word-break:break-word;
-">
+                (report.email || "") + " " +
 
-${report.name}
+                (report.phone || "") + " " +
 
-</div>
+                (report.type || "") + " " +
 
-<br>
+                (report.property || "") + " " +
 
-<div
-style="
-word-break:break-word;
-">
+                (report.message || "") + " " +
 
-${report.email}
+                (report.id || "")
 
-</div>
+            ).toLowerCase();
 
-</td>
 
-<td>
+            /* SEARCH */
 
-<span
+            if(
+                search &&
+                !searchable.includes(search)
+            ){
 
-style="
+                return;
 
-display:inline-block;
+            }
 
-max-width:150px;
 
-padding:8px 12px;
+            /* STATUS FILTER */
 
-border-radius:8px;
+            if(
+                status !== "" &&
+                (report.status || "Pending") !== status
+            ){
 
-font-weight:bold;
+                return;
 
-background:
+            }
 
-${report.type=="Scam / Fraud"
 
-?"#ffb3b3":
+            visibleReports++;
 
-report.type=="Bug / Error"
 
-?"#ffe599":
+            /* =================================================
+               PROBLEM TYPE STYLE
+               ================================================= */
 
-report.type=="Suggestion"
+            let typeBackground = "#dddddd";
 
-?"#b6d7ff":
 
-"#dddddd"};
+            if(report.type === "Scam / Fraud"){
 
-word-break:break-word;
+                typeBackground = "#ffb3b3";
 
-white-space:normal;
+            }
 
-text-align:center;
+            else if(report.type === "Bug / Error"){
 
-">
+                typeBackground = "#ffe599";
 
-${report.type}
+            }
 
-</span>
+            else if(report.type === "Suggestion"){
 
-<br><br>
+                typeBackground = "#b6d7ff";
 
-<div
-style="
-max-height:170px;
-overflow-y:auto;
-padding:8px;
-margin-top:10px;
-border:1px solid #ddd;
-border-radius:8px;
-background:#fafafa;
-white-space:pre-wrap;
-word-break:break-word;
-">
+            }
 
-${report.message}
 
-</div>
+            /* =================================================
+               ADD ROW
+               ================================================= */
 
-</td>
+            table.innerHTML += `
 
-<td>
+                <tr>
 
-${report.property || "-"}
+                    <!-- NAME / EMAIL -->
 
-<br><br>
+                    <td>
 
-<button
+                        <div
+                            style="
+                                max-width:180px;
+                                max-height:70px;
+                                overflow:auto;
+                                font-weight:bold;
+                                word-break:break-word;
+                            "
+                        >
 
-onclick="findProperty('${report.property}')">
+                            ${report.name || "-"}
 
-Open
+                        </div>
 
-</button>
+                        <br>
 
-</td>
+                        <div
+                            style="
+                                word-break:break-word;
+                            "
+                        >
 
-<td>
+                            ${report.email || "-"}
 
-${report.date}
+                        </div>
 
-</td>
+                        ${
+                            report.phone
+                            ?
+                            `
+                            <br>
 
+                            <div
+                                style="
+                                    color:#666;
+                                    font-size:14px;
+                                "
+                            >
 
-<td>
+                                ${report.phone}
 
-${report.image ?
+                            </div>
+                            `
+                            :
+                            ""
+                        }
 
-`
-<img
+                    </td>
 
-src="${report.image}"
 
-onclick="openImage('${report.image}')"
+                    <!-- PROBLEM -->
 
-style="
-width:90px;
-height:70px;
-object-fit:cover;
-border-radius:8px;
-cursor:pointer;
-border:1px solid #ccc;
-">
+                    <td>
 
-`
+                        <span
 
-:
+                            style="
+                                display:inline-block;
+                                max-width:150px;
+                                padding:8px 12px;
+                                border-radius:8px;
+                                font-weight:bold;
+                                background:${typeBackground};
+                                word-break:break-word;
+                                white-space:normal;
+                                text-align:center;
+                            "
 
-"No Image"
+                        >
 
-}
+                            ${report.type || "-"}
 
-</td>
+                        </span>
 
-<td>
 
-<span
-style="
-font-weight:bold;
-color:
-${report.status=="Solved" ? "green" : "red"};
-">
+                        <br><br>
 
-${report.status || "Pending"}
 
-</span>
+                        <div
 
-</td>
+                            style="
+                                max-height:170px;
+                                overflow-y:auto;
+                                padding:8px;
+                                margin-top:10px;
+                                border:1px solid #ddd;
+                                border-radius:8px;
+                                background:#fafafa;
+                                white-space:pre-wrap;
+                                word-break:break-word;
+                            "
 
-<td>
+                        >
 
-<button
-style="background:#2e7d32;color:white;"
-onclick="solveReport('${report.docId}')">
-✔ Mark Solved
-</button>
+                            ${report.message || "-"}
 
-<button
-style="background:#d32f2f;color:white;"
-onclick="deleteReport('${report.docId}')">
-🗑 Delete
-</button>
+                        </div>
 
-</td>
+                    </td>
 
-</tr>
 
-`;
+                    <!-- PROPERTY -->
 
-});
+                    <td>
+
+                        ${
+                            report.property
+                            ?
+                            `
+                            <div
+                                style="
+                                    max-width:220px;
+                                    word-break:break-word;
+                                "
+                            >
+
+                                ${report.property}
+
+                            </div>
+
+                            <br>
+
+                            <button
+
+                                onclick="findProperty('${String(report.property).replace(/'/g, "\\'")}')"
+
+                            >
+
+                                Open
+
+                            </button>
+                            `
+                            :
+                            "-"
+                        }
+
+                    </td>
+
+
+                    <!-- DATE -->
+
+                    <td>
+
+                        ${formatReportDate(report.date)}
+
+                    </td>
+
+
+                    <!-- SCREENSHOT -->
+
+                    <td>
+
+                        ${
+                            report.image
+
+                            ?
+
+                            `
+
+                            <img
+
+                                src="${report.image}"
+
+                                onclick="openImage('${report.image}')"
+
+                                style="
+                                    width:90px;
+                                    height:70px;
+                                    object-fit:cover;
+                                    border-radius:8px;
+                                    cursor:pointer;
+                                    border:1px solid #ccc;
+                                "
+
+                            >
+
+                            `
+
+                            :
+
+                            `
+
+                            <span
+                                style="
+                                    color:#999;
+                                "
+                            >
+
+                                No Image
+
+                            </span>
+
+                            `
+
+                        }
+
+                    </td>
+
+
+                    <!-- STATUS -->
+
+                    <td>
+
+                        <span
+
+                            style="
+                                font-weight:bold;
+                                color:
+                                ${
+                                    report.status === "Solved"
+                                    ?
+                                    "green"
+                                    :
+                                    "red"
+                                };
+                            "
+
+                        >
+
+                            ${report.status || "Pending"}
+
+                        </span>
+
+                    </td>
+
+
+                    <!-- ACTIONS -->
+
+                    <td>
+
+                        <button
+
+                            style="
+                                background:#2e7d32;
+                                color:white;
+                            "
+
+                            onclick="solveReport('${report.docId}')"
+
+                        >
+
+                            ✔ Mark Solved
+
+                        </button>
+
+
+                        <button
+
+                            style="
+                                background:#d32f2f;
+                                color:white;
+                            "
+
+                            onclick="deleteReport('${report.docId}')"
+
+                        >
+
+                            🗑 Delete
+
+                        </button>
+
+                    </td>
+
+                </tr>
+
+            `;
+
+        });
+
+
+        /* =================================================
+           NO RESULTS
+           ================================================= */
+
+        if(visibleReports === 0){
+
+            table.innerHTML = `
+
+                <tr>
+
+                    <td
+                        colspan="7"
+                        style="
+                            text-align:center;
+                            padding:40px;
+                            color:#777;
+                            font-size:17px;
+                        "
+                    >
+
+                        ${
+                            search || status
+                            ?
+                            "🔎 No reports match your search or filter."
+                            :
+                            "📭 No reports have been submitted yet."
+                        }
+
+                    </td>
+
+                </tr>
+
+            `;
+
+        }
+
+    }
+
+
+    /* =====================================================
+       ERROR
+       ===================================================== */
+
+    catch(error){
+
+        console.error(
+            "Error loading reports:",
+            error
+        );
+
+
+        table.innerHTML = `
+
+            <tr>
+
+                <td
+                    colspan="7"
+                    style="
+                        text-align:center;
+                        padding:40px;
+                        color:#b00020;
+                        font-size:17px;
+                    "
+                >
+
+                    ❌ Unable to load reports.
+
+                    <br><br>
+
+                    <span
+                        style="
+                            font-size:14px;
+                            color:#777;
+                        "
+                    >
+
+                        Please check your internet connection
+                        and try again.
+
+                    </span>
+
+                </td>
+
+            </tr>
+
+        `;
+
+    }
 
 }
 
