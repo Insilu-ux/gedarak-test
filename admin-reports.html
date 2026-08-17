@@ -595,9 +595,25 @@ async function loadReports(){
     const statusInput =
         document.getElementById("statusFilter");
 
+    const loadingOverlay =
+        document.getElementById("reportsLoading");
+
 
     /* =====================================================
-       SHOW LOADING
+       GET SEARCH + FILTER VALUES
+       ===================================================== */
+
+    const search =
+        searchInput.value
+            .trim()
+            .toLowerCase();
+
+    const status =
+        statusInput.value;
+
+
+    /* =====================================================
+       SHOW TABLE LOADING
        ===================================================== */
 
     table.innerHTML = `
@@ -615,14 +631,11 @@ async function loadReports(){
             >
 
                 <div
+                    class="reports-spinner"
                     style="
-                        font-size:38px;
-                        margin-bottom:12px;
-                        animation:spin 1s linear infinite;
+                        margin:0 auto 15px;
                     "
-                >
-                    ⏳
-                </div>
+                ></div>
 
                 <strong>
                     Loading reports...
@@ -648,7 +661,7 @@ async function loadReports(){
     try {
 
         /* =================================================
-           GET REPORTS
+           GET REPORTS FROM FIRESTORE
            ================================================= */
 
         const snapshot =
@@ -671,20 +684,6 @@ async function loadReports(){
             });
 
         });
-
-
-        /* =================================================
-           SEARCH + FILTER
-           ================================================= */
-
-        const search =
-            searchInput.value
-                .trim()
-                .toLowerCase();
-
-
-        const status =
-            statusInput.value;
 
 
         table.innerHTML = "";
@@ -838,7 +837,6 @@ async function loadReports(){
                     <td>
 
                         <span
-
                             style="
                                 display:inline-block;
                                 max-width:150px;
@@ -850,7 +848,6 @@ async function loadReports(){
                                 white-space:normal;
                                 text-align:center;
                             "
-
                         >
 
                             ${report.type || "-"}
@@ -862,7 +859,6 @@ async function loadReports(){
 
 
                         <div
-
                             style="
                                 max-height:170px;
                                 overflow-y:auto;
@@ -874,7 +870,6 @@ async function loadReports(){
                                 white-space:pre-wrap;
                                 word-break:break-word;
                             "
-
                         >
 
                             ${report.message || "-"}
@@ -906,9 +901,7 @@ async function loadReports(){
                             <br>
 
                             <button
-
                                 onclick="findProperty('${String(report.property).replace(/'/g, "\\'")}')"
-
                             >
 
                                 Open
@@ -941,13 +934,9 @@ async function loadReports(){
                             ?
 
                             `
-
                             <img
-
                                 src="${report.image}"
-
                                 onclick="openImage('${report.image}')"
-
                                 style="
                                     width:90px;
                                     height:70px;
@@ -956,15 +945,12 @@ async function loadReports(){
                                     cursor:pointer;
                                     border:1px solid #ccc;
                                 "
-
                             >
-
                             `
 
                             :
 
                             `
-
                             <span
                                 style="
                                     color:#999;
@@ -974,9 +960,7 @@ async function loadReports(){
                                 No Image
 
                             </span>
-
                             `
-
                         }
 
                     </td>
@@ -987,7 +971,6 @@ async function loadReports(){
                     <td>
 
                         <span
-
                             style="
                                 font-weight:bold;
                                 color:
@@ -999,7 +982,6 @@ async function loadReports(){
                                     "red"
                                 };
                             "
-
                         >
 
                             ${report.status || "Pending"}
@@ -1014,14 +996,11 @@ async function loadReports(){
                     <td>
 
                         <button
-
                             style="
                                 background:#2e7d32;
                                 color:white;
                             "
-
                             onclick="solveReport('${report.docId}')"
-
                         >
 
                             ✔ Mark Solved
@@ -1030,14 +1009,11 @@ async function loadReports(){
 
 
                         <button
-
                             style="
                                 background:#d32f2f;
                                 color:white;
                             "
-
                             onclick="deleteReport('${report.docId}')"
-
                         >
 
                             🗑 Delete
@@ -1075,10 +1051,15 @@ async function loadReports(){
 
                         ${
                             search || status
+
                             ?
+
                             "🔎 No reports match your search or filter."
+
                             :
+
                             "📭 No reports have been submitted yet."
+
                         }
 
                     </td>
@@ -1089,12 +1070,19 @@ async function loadReports(){
 
         }
 
+
+        /* =================================================
+           HIDE INITIAL FULL-SCREEN LOADING
+           ================================================= */
+
+        if(loadingOverlay){
+
+            loadingOverlay.style.display = "none";
+
+        }
+
     }
 
-
-    /* =====================================================
-       ERROR
-       ===================================================== */
 
     catch(error){
 
@@ -1140,71 +1128,171 @@ async function loadReports(){
 
         `;
 
+
+        /* =================================================
+           HIDE INITIAL LOADING EVEN IF FIREBASE FAILS
+           ================================================= */
+
+        if(loadingOverlay){
+
+            loadingOverlay.style.display = "none";
+
+        }
+
     }
 
 }
-
 async function solveReport(docId){
 
-await updateDoc(
+    showAlert(
 
-doc(db,"reports",docId),
+        "The report is being marked as solved.\n\nPlease wait...",
 
-{
-status:"Solved"
-}
+        null,
 
-);
+        true,
 
-loadReports();
+        "✔ Solving Report",
 
-showAlert(
+        true
 
-"✅ Report marked as solved.",
+    );
 
-null,
 
-true,
+    try{
 
-"Success"
+        await updateDoc(
 
-);
+            doc(db,"reports",docId),
+
+            {
+                status:"Solved"
+            }
+
+        );
+
+
+        await loadReports();
+
+
+        showAlert(
+
+            "The report has been successfully marked as solved.",
+
+            null,
+
+            true,
+
+            "✅ Report Solved"
+
+        );
+
+    }
+
+    catch(error){
+
+        console.error(
+            "Report solving error:",
+            error
+        );
+
+
+        showAlert(
+
+            "The report could not be marked as solved.\n\nPlease check your internet connection and try again.",
+
+            null,
+
+            true,
+
+            "❌ Update Failed"
+
+        );
+
+    }
 
 }
 
 async function deleteReport(docId){
 
-showAlert(
+    showAlert(
 
-"🗑 Delete this report permanently?",
+        "🗑 Delete this report permanently?",
 
-async function(){
+        async function(){
 
-await deleteDoc(
-doc(db,"reports",docId)
-);
+            /* =================================================
+               SHOW DELETING LOADING
+               ================================================= */
 
-loadReports();
+            showAlert(
 
-showAlert(
+                "The report is being permanently deleted.\n\nPlease wait...",
 
-"🗑 Report deleted successfully.",
+                null,
 
-null,
+                true,
 
-true,
+                "🗑 Deleting Report...",
 
-"Deleted"
+                true
 
-);
+            );
 
-},
 
-false,
+            try{
 
-"Delete Report"
+                await deleteDoc(
+                    doc(db,"reports",docId)
+                );
 
-);
+
+                await loadReports();
+
+
+                showAlert(
+
+                    "The report has been permanently deleted.",
+
+                    null,
+
+                    true,
+
+                    "🗑 Report Deleted"
+
+                );
+
+            }
+
+            catch(error){
+
+                console.error(
+                    "Report deletion error:",
+                    error
+                );
+
+
+                showAlert(
+
+                    "The report could not be deleted.\n\nPlease check your internet connection and try again.",
+
+                    null,
+
+                    true,
+
+                    "❌ Deletion Failed"
+
+                );
+
+            }
+
+        },
+
+        false,
+
+        "Delete Report"
+
+    );
 
 }
 async function findProperty(name){
@@ -1300,29 +1388,123 @@ zoomed = false;
     message,
     okAction,
     hideLater = false,
-    title = "Gedarak.lk"
+    title = "Gedarak.lk",
+    hideButtons = false
 ){
 
     const modal =
-    document.getElementById("gedarakModal");
+        document.getElementById("gedarakModal");
 
-    document.getElementById("modalTitle").textContent =
-    title;
 
-    document.getElementById("modalMessage").textContent =
-    message;
+    /* =====================================================
+       BUTTONS
+       ===================================================== */
+
+    const buttons =
+        document.querySelector(".modal-buttons");
+
+
+    buttons.style.display =
+        hideButtons
+        ? "none"
+        : "flex";
+
+
+    /* =====================================================
+       SPINNER
+       ===================================================== */
+
+    let spinner =
+        document.getElementById("reportActionSpinner");
+
+
+    if(!spinner){
+
+        spinner =
+            document.createElement("div");
+
+        spinner.id =
+            "reportActionSpinner";
+
+        spinner.innerHTML =
+            "⏳";
+
+        spinner.style.cssText = `
+            display:none;
+            font-size:50px;
+            margin-bottom:15px;
+            animation:reportsSpin .8s linear infinite;
+        `;
+
+        document
+            .querySelector(".modal-box")
+            .insertBefore(
+                spinner,
+                document.getElementById("modalTitle")
+            );
+
+    }
+
+
+    spinner.style.display =
+        hideButtons
+        ? "block"
+        : "none";
+
+
+    /* =====================================================
+       TITLE
+       ===================================================== */
+
+    document.getElementById(
+        "modalTitle"
+    ).textContent =
+        title;
+
+
+    /* =====================================================
+       MESSAGE
+       ===================================================== */
+
+    document.getElementById(
+        "modalMessage"
+    ).textContent =
+        message;
+
+
+    /* =====================================================
+       CANCEL BUTTON
+       ===================================================== */
 
     const laterBtn =
-    document.getElementById("modalLater");
+        document.getElementById("modalLater");
+
 
     laterBtn.style.display =
-    hideLater ? "none" : "inline-block";
+        hideLater
+        ? "none"
+        : "inline-block";
 
-    modal.style.display = "flex";
 
-    document.getElementById("modalOk").onclick = function(){
+    /* =====================================================
+       SHOW MODAL
+       ===================================================== */
 
-        modal.style.display = "none";
+    modal.style.display =
+        "flex";
+
+
+    /* =====================================================
+       OK BUTTON
+       ===================================================== */
+
+    document.getElementById(
+        "modalOk"
+    ).onclick = function(){
+
+        modal.style.display =
+            "none";
+
 
         if(okAction){
 
@@ -1332,13 +1514,19 @@ zoomed = false;
 
     };
 
+
+    /* =====================================================
+       CANCEL BUTTON
+       ===================================================== */
+
     laterBtn.onclick = function(){
 
-        modal.style.display = "none";
+        modal.style.display =
+            "none";
 
     };
 
-}
+};
 
 
 window.solveReport = solveReport;
