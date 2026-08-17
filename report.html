@@ -359,12 +359,13 @@ fake listings or other issues.
    <form id="reportForm">
 
 <input
-type="text"
-id="reportName"
-placeholder="Your Name"
-maxlength="100"
-required>
-
+    type="text"
+    id="reportName"
+    placeholder="Your Name"
+    maxlength="60"
+    minlength="2"
+    autocomplete="name"
+    required>
 <br><br>
 
 <div style="display:flex;align-items:center;">
@@ -453,14 +454,10 @@ required>
 <br><br>
 
 <input
-type="text"
-id="propertyID"
-maxlength="100"
-placeholder="
-Property Name - 
-
-Ex:
-Luxury Villa - Colombo 7">
+    type="text"
+    id="propertyID"
+    maxlength="100"
+    placeholder="Property Name - Example: Luxury Villa - Colombo 7">
 
 <br><br>
 
@@ -469,10 +466,10 @@ Luxury Villa - Colombo 7">
 <br><br>
 
 <input
-type="file"
-id="reportImage"
-accept="image/*"
-onchange="previewReportImage()">
+    type="file"
+    id="reportImage"
+    accept="image/png,image/jpeg,image/webp,image/gif"
+    onchange="previewReportImage()">
 
 <br><br>
 
@@ -522,10 +519,12 @@ font-weight:bold;
 <br><br>
 
 <textarea
-id="reportMessage"
-rows="8"
-placeholder="Describe the problem..."
-required></textarea>
+    id="reportMessage"
+    rows="8"
+    maxlength="1500"
+    minlength="10"
+    placeholder="Describe the problem clearly..."
+    required></textarea>
 
 <br><br>
 
@@ -670,294 +669,1046 @@ Later
     <footer>
         <p>&copy; 2026 Gedarak.lk</p>
     </footer>
-    <script type="module">
 
-        import { db } from "./firebase-config.js";
+<script type="module">
+
+    import { db } from "./firebase-config.js";
 
 import {
-collection,
-addDoc
-}
-from "https://www.gstatic.com/firebasejs/12.16.0/firebase-firestore.js";
+    collection,
+    addDoc,
+    serverTimestamp
+} from "https://www.gstatic.com/firebasejs/12.16.0/firebase-firestore.js";
+
 
 let isSubmitting = false;
 
-        async function submitReport(){
 
-            if(isSubmitting){
-    return;
-}
+/* =========================================================
+   SECURITY / VALIDATION HELPERS
+   ========================================================= */
 
-isSubmitting = true;
+function cleanText(value) {
 
-const submitBtn =
-document.querySelector(
-'button[onclick="submitReport()"]'
-);
-
-submitBtn.disabled = true;
-submitBtn.innerHTML = "⏳ Reporting...";
-
-let name=
-document.getElementById("reportName").value.trim();
-
-let email=
-document.getElementById("reportEmail").value.trim();
-
-let emailPattern =
-/^[^\s@]+@([gG][mM][aA][iI][lL])\.com$/;
-
-if(!emailPattern.test(email)){
-
-    showAlert(
-"Please enter a valid Gmail address.",
-null,
-true
-);
-isSubmitting = false;
-
-submitBtn.disabled = false;
-
-submitBtn.innerHTML = "🚩 Report Issue";
-return;
+    return value
+        .normalize("NFKC")
+        .replace(/[\u0000-\u0008\u000B\u000C\u000E-\u001F\u007F]/g, "")
+        .replace(/<[^>]*>/g, "")
+        .trim();
 
 }
 
 
-let type=
-document.getElementById("reportType").value;
+function containsDangerousContent(value) {
 
-let priority =
-document.getElementById("reportPriority").value;
+    const dangerousPatterns = [
 
-let property=
-document.getElementById("propertyID").value.trim();
+        /<\s*script/i,
+        /<\s*iframe/i,
+        /<\s*object/i,
+        /<\s*embed/i,
+        /<\s*svg/i,
+        /<\s*style/i,
+        /javascript\s*:/i,
+        /vbscript\s*:/i,
+        /data\s*:\s*text\/html/i,
+        /on[a-z]+\s*=/i
 
-let message=
-document.getElementById("reportMessage").value.trim();
+    ];
 
-let phone =
-document.getElementById("reportPhone")
-.value
-.trim();
-
-let phonePattern = /^7[0-9]{8}$/;
-
-if(!phonePattern.test(phone)){
-
-showAlert(
-"Please enter a valid Sri Lankan mobile number.\n\nExample:\n771234567",
-null,
-true
-);
-isSubmitting = false;
-
-submitBtn.disabled = false;
-
-submitBtn.innerHTML = "🚩 Report Issue";
-return;
-
-}
-
-if(
-name==""||
-email==""||
-type==""||
-message==""
-){
-
-showAlert(
-"Please complete all required fields.",
-null,
-true
-);
-isSubmitting = false;
-
-submitBtn.disabled = false;
-
-submitBtn.innerHTML = "🚩 Report Issue";
-return;
+    return dangerousPatterns.some(
+        pattern => pattern.test(value)
+    );
 
 }
 
 
+function hasExcessiveRepetition(value) {
 
-const report={
+    /*
+       Detect things such as:
 
-id:"REP-"+Date.now(),
+       aaaaaaaaaaaaaaaaaaaaaaaaa
+       !!!!!!!!!!..............
+       111111111111111111111111
+    */
 
-name:name,
-
-email:email,
-
-phone:"+94"+phone,
-
-image:
-document.getElementById("reportPreview").src,
-
-type:type,
-
-priority:priority,
-
-property:property,
-
-message:message,
-
-status:"Pending",
-
-date:new Date().toLocaleString()
-
-
-};
-
-try{
-
-showAlert(
-"Please wait while we securely submit your report.",
-null,
-true,
-"📤 Reporting Issue...",
-true
-);
-
-await addDoc(
-collection(db,"reports"),
-report
-);
-
-showAlert(
-
-"🎉 Thank you for helping improve Gedarak.lk!\n\n" +
-
-"━━━━━━━━━━━━━━━━\n\n" +
-
-"🆔 Reference ID\n" +
-
-report.id +
-
-"\n\n━━━━━━━━━━━━━━━━\n\n" +
-
-"📋 Our team will review your report shortly.",
-
-function(){
-
-document.getElementById("reportForm").reset();
-removeReportImage();
-
-},
-
-true,
-
-"✅ Report Submitted"
-
-);
-
-}
-catch(error){
-
-showAlert(
-
-"Unable to submit your report.\n\nPlease check your internet connection and try again.",
-
-null,
-
-true,
-
-"❌ Submission Failed"
-
-);
-
-}
-finally{
-
-isSubmitting = false;
-
-submitBtn.disabled = false;
-
-submitBtn.innerHTML="🚩 Report Issue";
+    return /(.)\1{14,}/u.test(value);
 
 }
 
 
-}
-function showNotification(message){
+function validateTextField(
+    value,
+    fieldName,
+    minLength,
+    maxLength
+) {
 
-let box =
-document.getElementById("notification");
+    if (!value) {
 
-box.innerHTML = message;
+        return `${fieldName} is required.`;
 
-box.style.opacity="1";
+    }
 
-setTimeout(function(){
+    if (value.length < minLength) {
 
-box.style.opacity="0";
+        return `${fieldName} is too short.`;
 
-},2500);
+    }
 
-}
+    if (value.length > maxLength) {
 
-function previewReportImage(){
+        return `${fieldName} is too long.`;
 
-let file =
-document.getElementById("reportImage").files[0];
+    }
 
-if(!file){
-    return;
-}
+    if (containsDangerousContent(value)) {
 
-let reader = new FileReader();
+        return `${fieldName} contains invalid content.`;
 
-reader.onload = function(e){
+    }
 
-document.getElementById("reportPreview").src =
-e.target.result;
+    if (hasExcessiveRepetition(value)) {
 
-document.getElementById(
-"reportPreviewContainer"
-).style.display="block";
+        return `${fieldName} contains excessive repeated characters.`;
 
-};
+    }
 
-reader.readAsDataURL(file);
+    return null;
 
 }
+
+
+/* =========================================================
+   SUBMIT REPORT
+   ========================================================= */
+
+async function submitReport() {
+
+    if (isSubmitting) {
+        return;
+    }
+
+
+    const submitBtn =
+        document.querySelector(
+            'button[onclick="submitReport()"]'
+        );
+
+
+    isSubmitting = true;
+
+    submitBtn.disabled = true;
+    submitBtn.innerHTML = "⏳ Reporting...";
+
+
+    /* =====================================================
+       GET VALUES
+       ===================================================== */
+
+    let name =
+        cleanText(
+            document.getElementById("reportName").value
+        );
+
+
+    let email =
+        document.getElementById("reportEmail")
+        .value
+        .trim()
+        .toLowerCase();
+
+
+    let phone =
+        document.getElementById("reportPhone")
+        .value
+        .trim();
+
+
+    let type =
+        document.getElementById("reportType").value;
+
+
+    let priority =
+        document.getElementById("reportPriority").value;
+
+
+    let property =
+        cleanText(
+            document.getElementById("propertyID").value
+        );
+
+
+    let message =
+        cleanText(
+            document.getElementById("reportMessage").value
+        );
+
+
+    /* =====================================================
+       NAME VALIDATION
+       ===================================================== */
+
+    const nameError =
+        validateTextField(
+            name,
+            "Your name",
+            2,
+            60
+        );
+
+
+    if (nameError) {
+
+        showAlert(
+            nameError,
+            null,
+            true,
+            "⚠️ Invalid Name"
+        );
+
+        resetSubmitButton(submitBtn);
+
+        return;
+
+    }
+
+
+    /*
+       Names can contain:
+
+       John Perera
+       Anne-Marie
+       O'Connor
+       José
+
+       But not HTML/code.
+    */
+
+    const namePattern =
+        /^[\p{L}\p{M}][\p{L}\p{M}' .-]*$/u;
+
+
+    if (!namePattern.test(name)) {
+
+        showAlert(
+            "Please enter a valid name.",
+            null,
+            true,
+            "⚠️ Invalid Name"
+        );
+
+        resetSubmitButton(submitBtn);
+
+        return;
+
+    }
+
+
+    /* =====================================================
+       EMAIL VALIDATION
+       ===================================================== */
+
+    if (email.length > 120) {
+
+        showAlert(
+            "Your email address is too long.",
+            null,
+            true,
+            "⚠️ Invalid Email"
+        );
+
+        resetSubmitButton(submitBtn);
+
+        return;
+
+    }
+
+
+    const emailPattern =
+        /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@gmail\.com$/i;
+
+
+    if (!emailPattern.test(email)) {
+
+        showAlert(
+            "Please enter a valid Gmail address.",
+            null,
+            true,
+            "⚠️ Invalid Email"
+        );
+
+        resetSubmitButton(submitBtn);
+
+        return;
+
+    }
+
+
+    /* =====================================================
+       PHONE VALIDATION
+       ===================================================== */
+
+    const phonePattern =
+        /^7[0-9]{8}$/;
+
+
+    if (!phonePattern.test(phone)) {
+
+        showAlert(
+            "Please enter a valid Sri Lankan mobile number.\n\nExample:\n771234567",
+            null,
+            true,
+            "⚠️ Invalid Phone"
+        );
+
+        resetSubmitButton(submitBtn);
+
+        return;
+
+    }
+
+
+    /* =====================================================
+       PROBLEM TYPE
+       ===================================================== */
+
+    const allowedTypes = [
+
+        "Bug / Error",
+        "Property Information Incorrect",
+        "Fake Listing",
+        "Scam / Fraud",
+        "Inappropriate Images",
+        "Spam Listing",
+        "Account Problem",
+        "Suggestion",
+        "Other"
+
+    ];
+
+
+    if (!allowedTypes.includes(type)) {
+
+        showAlert(
+            "Please select a valid problem type.",
+            null,
+            true,
+            "⚠️ Invalid Problem Type"
+        );
+
+        resetSubmitButton(submitBtn);
+
+        return;
+
+    }
+
+
+    /* =====================================================
+       PRIORITY
+       ===================================================== */
+
+    const allowedPriorities = [
+        "Low",
+        "Medium",
+        "High"
+    ];
+
+
+    if (!allowedPriorities.includes(priority)) {
+
+        showAlert(
+            "Please select a valid priority.",
+            null,
+            true,
+            "⚠️ Invalid Priority"
+        );
+
+        resetSubmitButton(submitBtn);
+
+        return;
+
+    }
+
+
+    /* =====================================================
+       PROPERTY NAME / ID
+       ===================================================== */
+
+    if (property.length > 100) {
+
+        showAlert(
+            "The property name is too long.\n\nMaximum: 100 characters.",
+            null,
+            true,
+            "⚠️ Invalid Property"
+        );
+
+        resetSubmitButton(submitBtn);
+
+        return;
+
+    }
+
+
+    if (
+        property &&
+        (
+            containsDangerousContent(property) ||
+            hasExcessiveRepetition(property)
+        )
+    ) {
+
+        showAlert(
+            "The property information contains invalid content.",
+            null,
+            true,
+            "⚠️ Invalid Property"
+        );
+
+        resetSubmitButton(submitBtn);
+
+        return;
+
+    }
+
+
+    /* =====================================================
+       MESSAGE / DESCRIPTION
+       ===================================================== */
+
+    const messageError =
+        validateTextField(
+            message,
+            "Problem description",
+            10,
+            1500
+        );
+
+
+    if (messageError) {
+
+        showAlert(
+            messageError,
+            null,
+            true,
+            "⚠️ Invalid Description"
+        );
+
+        resetSubmitButton(submitBtn);
+
+        return;
+
+    }
+
+
+    /* =====================================================
+       SCREENSHOT VALIDATION
+       ===================================================== */
+
+    const imageInput =
+        document.getElementById("reportImage");
+
+
+    const file =
+        imageInput.files[0];
+
+
+    let imageData = "";
+
+
+    if (file) {
+
+        if (!file.type.startsWith("image/")) {
+
+            showAlert(
+                "Please attach a valid image file.",
+                null,
+                true,
+                "⚠️ Invalid Screenshot"
+            );
+
+            resetSubmitButton(submitBtn);
+
+            return;
+
+        }
+
+
+        /*
+           Maximum original screenshot size:
+           5 MB
+        */
+
+        const maxImageSize =
+            5 * 1024 * 1024;
+
+
+        if (file.size > maxImageSize) {
+
+            showAlert(
+                "The screenshot is too large.\n\nMaximum size: 5 MB.",
+                null,
+                true,
+                "⚠️ Screenshot Too Large"
+            );
+
+            resetSubmitButton(submitBtn);
+
+            return;
+
+        }
+
+
+        try {
+
+            imageData =
+                await compressReportImage(file);
+
+        }
+        catch (error) {
+
+            showAlert(
+                "The screenshot could not be processed.",
+                null,
+                true,
+                "⚠️ Image Error"
+            );
+
+            resetSubmitButton(submitBtn);
+
+            return;
+
+        }
+
+    }
+
+
+    /* =====================================================
+       FINAL OBJECT
+       ===================================================== */
+
+    const report = {
+
+        id:
+            "REP-" +
+            crypto.randomUUID(),
+
+        name:
+            name,
+
+        email:
+            email,
+
+        phone:
+            "+94" + phone,
+
+        image:
+            imageData,
+
+        type:
+            type,
+
+        priority:
+            priority,
+
+        property:
+            property,
+
+        message:
+            message,
+
+        status:
+            "Pending",
+
+        date:
+            serverTimestamp()
+
+    };
+
+
+    /* =====================================================
+       SEND TO FIRESTORE
+       ===================================================== */
+
+    try {
+
+        showAlert(
+            "Please wait while we securely submit your report.",
+            null,
+            true,
+            "📤 Reporting Issue...",
+            true
+        );
+
+
+        await addDoc(
+            collection(db, "reports"),
+            report
+        );
+
+
+        showAlert(
+
+            "🎉 Thank you for helping improve Gedarak.lk!\n\n" +
+
+            "━━━━━━━━━━━━━━━━\n\n" +
+
+            "🆔 Reference ID\n" +
+
+            report.id +
+
+            "\n\n━━━━━━━━━━━━━━━━\n\n" +
+
+            "📋 Our team will review your report shortly.",
+
+            function() {
+
+                document
+                    .getElementById("reportForm")
+                    .reset();
+
+                removeReportImage();
+
+            },
+
+            true,
+
+            "✅ Report Submitted"
+
+        );
+
+    }
+
+
+    catch (error) {
+
+        console.error(
+            "Report submission error:",
+            error
+        );
+
+
+        showAlert(
+
+            "Unable to submit your report.\n\n" +
+            "Please check your internet connection and try again.",
+
+            null,
+
+            true,
+
+            "❌ Submission Failed"
+
+        );
+
+    }
+
+
+    finally {
+
+        resetSubmitButton(submitBtn);
+
+    }
+
+}
+
+
+/* =========================================================
+   RESET BUTTON
+   ========================================================= */
+
+function resetSubmitButton(button) {
+
+    isSubmitting = false;
+
+    button.disabled = false;
+
+    button.innerHTML =
+        "🚩 Report Issue";
+
+}
+
+
+/* =========================================================
+   IMAGE COMPRESSION
+   ========================================================= */
+
+function compressReportImage(file) {
+
+    return new Promise((resolve, reject) => {
+
+        const reader =
+            new FileReader();
+
+
+        reader.onload = function(event) {
+
+            const img =
+                new Image();
+
+
+            img.onload = function() {
+
+                const maxWidth = 1200;
+                const maxHeight = 1200;
+
+
+                let width =
+                    img.width;
+
+                let height =
+                    img.height;
+
+
+                if (width > maxWidth) {
+
+                    height =
+                        height *
+                        (maxWidth / width);
+
+                    width =
+                        maxWidth;
+
+                }
+
+
+                if (height > maxHeight) {
+
+                    width =
+                        width *
+                        (maxHeight / height);
+
+                    height =
+                        maxHeight;
+
+                }
+
+
+                const canvas =
+                    document.createElement("canvas");
+
+
+                canvas.width =
+                    Math.round(width);
+
+                canvas.height =
+                    Math.round(height);
+
+
+                const ctx =
+                    canvas.getContext("2d");
+
+
+                ctx.drawImage(
+                    img,
+                    0,
+                    0,
+                    canvas.width,
+                    canvas.height
+                );
+
+
+                /*
+                   JPEG compression keeps screenshots
+                   small enough for Firestore.
+                */
+
+                let quality = 0.75;
+
+
+                let result =
+                    canvas.toDataURL(
+                        "image/jpeg",
+                        quality
+                    );
+
+
+                /*
+                   Keep the stored image comfortably
+                   below Firestore's 1 MiB document limit.
+                */
+
+                while (
+                    result.length > 700000 &&
+                    quality > 0.35
+                ) {
+
+                    quality -= 0.05;
+
+                    result =
+                        canvas.toDataURL(
+                            "image/jpeg",
+                            quality
+                        );
+
+                }
+
+
+                if (result.length > 700000) {
+
+                    reject(
+                        new Error(
+                            "Compressed image is still too large."
+                        )
+                    );
+
+                    return;
+
+                }
+
+
+                /*
+                   Show compressed version in preview.
+                */
+
+                document
+                    .getElementById("reportPreview")
+                    .src = result;
+
+
+                document
+                    .getElementById(
+                        "reportPreviewContainer"
+                    )
+                    .style.display = "block";
+
+
+                resolve(result);
+
+            };
+
+
+            img.onerror = function() {
+
+                reject(
+                    new Error(
+                        "Invalid image."
+                    )
+                );
+
+            };
+
+
+            img.src =
+                event.target.result;
+
+        };
+
+
+        reader.onerror = function() {
+
+            reject(
+                new Error(
+                    "Could not read image."
+                )
+            );
+
+        };
+
+
+        reader.readAsDataURL(file);
+
+    });
+
+}
+
+
+/* =========================================================
+   IMAGE PREVIEW
+   ========================================================= */
+
+function previewReportImage() {
+
+    const file =
+        document
+            .getElementById("reportImage")
+            .files[0];
+
+
+    if (!file) {
+
+        return;
+
+    }
+
+
+    if (!file.type.startsWith("image/")) {
+
+        showAlert(
+            "Please select a valid image file.",
+            null,
+            true,
+            "⚠️ Invalid Screenshot"
+        );
+
+        removeReportImage();
+
+        return;
+
+    }
+
+
+    const maxImageSize =
+        5 * 1024 * 1024;
+
+
+    if (file.size > maxImageSize) {
+
+        showAlert(
+            "The screenshot is too large.\n\nMaximum size: 5 MB.",
+            null,
+            true,
+            "⚠️ Screenshot Too Large"
+        );
+
+        removeReportImage();
+
+        return;
+
+    }
+
+
+    /*
+       We only create the preview here.
+       The image is compressed again during submission.
+    */
+
+    const reader =
+        new FileReader();
+
+
+    reader.onload = function(e) {
+
+        document
+            .getElementById("reportPreview")
+            .src = e.target.result;
+
+
+        document
+            .getElementById(
+                "reportPreviewContainer"
+            )
+            .style.display = "block";
+
+    };
+
+
+    reader.readAsDataURL(file);
+
+}
+
+
+/* =========================================================
+   REMOVE IMAGE
+   ========================================================= */
+
+function removeReportImage() {
+
+    const input =
+        document.getElementById("reportImage");
+
+
+    const preview =
+        document.getElementById("reportPreview");
+
+
+    const container =
+        document.getElementById(
+            "reportPreviewContainer"
+        );
+
+
+    input.value = "";
+
+    preview.removeAttribute("src");
+
+    container.style.display =
+        "none";
+
+}
+
+
+/* =========================================================
+   MODAL
+   ========================================================= */
+
 window.showAlert = function(
-message,
-okAction,
-hideLater=false,
-title="⚠️",
-hideButtons=false
-){
+    message,
+    okAction,
+    hideLater = false,
+    title = "⚠️",
+    hideButtons = false
+) {
 
     const modal =
-    document.getElementById("gedarakModal");
+        document.getElementById(
+            "gedarakModal"
+        );
+
 
     const buttons =
-document.querySelector(".modal-buttons");
+        document.querySelector(
+            ".modal-buttons"
+        );
 
-buttons.style.display =
-hideButtons ? "none" : "flex";
 
-    document.getElementById("modalTitle").textContent =
-    title;
+    buttons.style.display =
+        hideButtons
+            ? "none"
+            : "flex";
 
-    document.getElementById("modalMessage").textContent =
-    message;
+
+    document.getElementById(
+        "modalTitle"
+    ).textContent =
+        title;
+
+
+    /*
+       IMPORTANT:
+
+       textContent is intentionally used.
+       NEVER replace this with innerHTML.
+
+       If a malicious user submits:
+
+       it will be displayed as text,
+       not executed.
+    */
+
+    document.getElementById(
+        "modalMessage"
+    ).textContent =
+        message;
+
 
     const laterBtn =
-    document.getElementById("modalLater");
+        document.getElementById(
+            "modalLater"
+        );
+
 
     laterBtn.style.display =
-    hideLater ? "none" : "inline-block";
+        hideLater
+            ? "none"
+            : "inline-block";
 
-    modal.style.display = "flex";
 
-    document.getElementById("modalOk").onclick = function(){
+    modal.style.display =
+        "flex";
 
-        modal.style.display = "none";
 
-        if(okAction){
+    document.getElementById(
+        "modalOk"
+    ).onclick = function() {
+
+        modal.style.display =
+            "none";
+
+
+        if (okAction) {
 
             okAction();
 
@@ -965,29 +1716,61 @@ hideButtons ? "none" : "flex";
 
     };
 
-    laterBtn.onclick = function(){
 
-        modal.style.display = "none";
+    laterBtn.onclick = function() {
+
+        modal.style.display =
+            "none";
 
     };
 
+};
+
+
+/* =========================================================
+   NOTIFICATION
+   ========================================================= */
+
+function showNotification(message) {
+
+    const box =
+        document.getElementById(
+            "notification"
+        );
+
+
+    box.textContent =
+        message;
+
+
+    box.style.opacity =
+        "1";
+
+
+    setTimeout(function() {
+
+        box.style.opacity =
+            "0";
+
+    }, 2500);
+
 }
-function removeReportImage(){
 
-const input = document.getElementById("reportImage");
-const preview = document.getElementById("reportPreview");
-const container = document.getElementById("reportPreviewContainer");
 
-input.value = "";
-preview.removeAttribute("src");
-container.style.display = "none";
+/* =========================================================
+   GLOBAL FUNCTIONS
+   ========================================================= */
 
-}
+window.previewReportImage =
+    previewReportImage;
 
-window.previewReportImage = previewReportImage;
-window.removeReportImage = removeReportImage;
-window.submitReport = submitReport;
-    </script>
+window.removeReportImage =
+    removeReportImage;
+
+window.submitReport =
+    submitReport;
+
+</script>
    <div id="notification"
 
 style="
