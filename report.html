@@ -386,14 +386,16 @@ font-weight:bold;
 <input
 type="tel"
 id="reportPhone"
-placeholder="771234567"
+placeholder="7XXXXXXXX"
 maxlength="9"
 inputmode="numeric"
+autocomplete="tel"
 oninput="
-this.value=this.value.replace(/[^0-9]/g,'');
+this.value = this.value.replace(/\D/g, '').slice(0, 9);
 
-if(this.value.length>0 && this.value.charAt(0)!=='7'){
-this.value='7'+this.value.substring(1);
+if(this.value.length > 0 && this.value.charAt(0) !== '7'){
+    this.value = '7' + this.value.substring(1);
+    this.value = this.value.slice(0, 9);
 }
 "
 style="
