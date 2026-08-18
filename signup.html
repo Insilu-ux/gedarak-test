@@ -629,8 +629,9 @@ post properties and contact sellers.
       <input 
 type="text"
 id="newUsername"
-placeholder="Choose a Username"
-autocomplete="username">
+placeholder="Enter Your Real Name"
+autocomplete="name"
+maxlength="30">
 
 <p style="
 margin-top:-7px;
@@ -640,10 +641,10 @@ font-size:16px;
 line-height:1.5;
 color:#575555;
 ">
-This username will appear publicly with your posted properties on Gedarak.lk.
+Your name will appear publicly with your posted properties on Gedarak.lk.
 <br>
 <strong style="color:#2b2a2a;">
-Please choose carefully, as it cannot be changed later.
+Please enter your real name. It cannot be changed later.
 </strong>
 </p>
 
@@ -765,18 +766,62 @@ window.signup = async function () {
         btn.innerHTML = "Create Account";
         return;
     }
-let usernamePattern = /^[a-zA-Z0-9_ .]+$/;
+/* =====================================================
+   USERNAME FORMAT
+   ===================================================== */
+
+const usernamePattern = /^[A-Za-zÀ-ÖØ-öø-ÿ .'-]+$/;
 
 if(!usernamePattern.test(username)){
 
-showSignupMessage(
-"👤 Invalid Username",
-"Username can only contain letters, numbers, spaces and underscores."
-);
+    showSignupMessage(
+        "👤 Invalid Username",
+        "Please enter your real name using letters, spaces, hyphens or apostrophes only."
+    );
 
-btn.disabled = false;
-btn.innerHTML = "Create Account";
-return;
+    btn.disabled = false;
+    btn.innerHTML = "Create Account";
+    return;
+
+}
+
+
+/* =====================================================
+   USERNAME MUST CONTAIN LETTERS
+   ===================================================== */
+
+if(!/[A-Za-zÀ-ÖØ-öø-ÿ]/.test(username)){
+
+    showSignupMessage(
+        "👤 Invalid Username",
+        "Please enter a valid name containing letters."
+    );
+
+    btn.disabled = false;
+    btn.innerHTML = "Create Account";
+    return;
+
+}
+
+
+/* =====================================================
+   NO EXCESSIVE SPACES
+   ===================================================== */
+
+if(
+    username.startsWith(" ") ||
+    username.endsWith(" ") ||
+    /\s{2,}/.test(username)
+){
+
+    showSignupMessage(
+        "👤 Invalid Username",
+        "Please enter your name using normal spacing."
+    );
+
+    btn.disabled = false;
+    btn.innerHTML = "Create Account";
+    return;
 
 }
 
@@ -807,16 +852,102 @@ btn.innerHTML = "Create Account";
 return;
 
 }
+
+/* =====================================================
+   RESERVED / OFFICIAL USERNAME PROTECTION
+   ===================================================== */
+
+/*
+   Create a normalized version of the username.
+
+   This removes spaces, dots, hyphens, apostrophes
+   and other punctuation so users cannot bypass
+   the protection with things like:
+
+   Gedarak
+   Gedarak.lk
+   Gedarak-LK
+   Gedarak LK
+   G.e.d.a.r.a.k
+*/
+
+const normalizedUsername =
+    username
+        .toLowerCase()
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "")
+        .replace(/[^a-z0-9]/g, "");
+
+
+/* =====================================================
+   RESERVED WORDS
+   ===================================================== */
+
+const reservedUsernameWords = [
+
+    "gedarak",
+    "admin",
+    "administrator",
+    "moderator",
+    "moderation",
+    "member",
+    "user",
+    "staff",
+    "support",
+    "official",
+    "owner",
+    "developer",
+    "dev",
+    "system",
+    "root",
+    "superadmin",
+    "superuser",
+    "manager",
+    "management",
+    "security",
+    "helpdesk",
+    "customer",
+
+];
+
+
+/* =====================================================
+   CHECK RESERVED WORDS
+   ===================================================== */
+
+const isReservedUsername =
+    reservedUsernameWords.some(word =>
+        normalizedUsername.includes(word)
+    );
+
+
+if(isReservedUsername){
+
+    showSignupMessage(
+
+        "🚫 Username Not Allowed",
+
+        "This username contains a reserved word or official term. Please use your real name instead."
+
+    );
+
+    btn.disabled = false;
+    btn.innerHTML = "Create Account";
+
+    return;
+
+}
+
 if(/^(.)\1+$/.test(username)){
 
-showSignupMessage(
-"👤 Invalid Username",
-"Please choose a more unique username."
-);
+    showSignupMessage(
+        "👤 Invalid Name",
+        "Please enter a real name instead of repeating the same character."
+    );
 
-btn.disabled = false;
-btn.innerHTML = "Create Account";
-return;
+    btn.disabled = false;
+    btn.innerHTML = "Create Account";
+    return;
 
 }
     const emailPattern =
